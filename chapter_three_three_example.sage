@@ -3,7 +3,7 @@ from hyperelliptic_split import HyperellipticCurveSplit
 F = GF(97)
 R.<x> = PolynomialRing(F)
 
-# Example curve and divisors D1, D2 from Example 3.2.1
+# Example curve and divisors D1, D2 from Example 3.3.1
 f = x^6 + 13*x^2 + 92*x + 7
 H = HyperellipticCurveSplit(f)
 J = H.jacobian()
