@@ -106,7 +106,8 @@ class MumfordDivisorSplit():
         else:
             d_inverse = s.inverse_mod(u)
             v = (v * d_inverse) % u
-        return (u, v), (s.degree(), s.degree())
+        D3 = self.parent()(u, v)
+        return D3, (s.degree(), s.degree())
 
     def cantor_reduction(self):
         """
