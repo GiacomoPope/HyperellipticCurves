@@ -9,6 +9,7 @@ class HyperellipticCurveSplit:
         self._alphas = None
         self._genus = None
         self._projective_model = None
+        self._infinte_polynomials = None
 
         # Check the curve is well formed
         disc = h**2 + 4*f
@@ -130,6 +131,9 @@ class HyperellipticCurveSplit:
 
         Computes G^±(x) for curves in the split degree model
         """
+        if self._infinte_polynomials is not None:
+            return self._infinte_polynomials
+
         alphas = self.roots_at_infinity()
 
         # This function only makes sense for the split model
@@ -151,7 +155,8 @@ class HyperellipticCurveSplit:
         G_plus = self._polynomial_ring(g)
         G_minus = - G_plus - h
 
-        return G_plus, G_minus
+        self._infinte_polynomials = G_plus, G_minus
+        return self._infinte_polynomials
 
     def points_at_infinity(self):
         """

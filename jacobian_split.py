@@ -41,13 +41,16 @@ class MumfordDivisorSplit():
             raise TypeError(f"arguments {u = } and {v = } must be polynomials")
 
         self._parent = parent
+        g = parent.curve().genus()
+
         self._u = u
         self._v = v
+
+        # assert 0 <= n <= (g - u.degree())
         self._n = n
 
-        g = parent.curve().genus()
         # FIXME: is having n=0 by default OK? I have no idea!
-        self._m = g - n # FIXME how to compute from n? is it g - n?
+        self._m = g - u.degree() - n
 
     def parent(self):
         return self._parent
@@ -144,7 +147,7 @@ class MumfordDivisorSplit():
         u0, v0 = self.uv()
 
         # Ensure D is a semi-reduced divisor
-        assert u0.degree() >= g + 2, "Divisor has incorrect degree"
+        # assert u0.degree() >= g + 2, "Divisor has incorrect degree"
         assert (v0**2 + v0 * h - f) % u0 == 0, "D is not a valid divisor"
 
         # Compute u' and v'
@@ -197,8 +200,8 @@ class MumfordDivisorSplit():
         D1 = self.parent()(u1, v1)
 
         # Compute the counter weights
-        d0 = u0.degree()
-        d1 = u1.degree()
+        d0 = self.degree()
+        d1 = D1.degree()
         if plus:
             omega_plus, omega_minus = (d0 - g - 1, g + 1 - d1)
         else:
@@ -246,17 +249,22 @@ class MumfordDivisorSplit():
         # Step two: cantor reduction of the above to ensure
         # the degree of u is smaller than g + 1
         while D.degree() > (g + 1):
-            D, (a, b) = self.cantor_reduction()
+            D, (a, b) = D.cantor_reduction()
             omega_plus += a
             omega_minus += b
 
         # Step three: compose and then reduce at infinity to ensure
         # unique representation of D
         while (omega_plus < g/2) or (omega_minus < (g-1)/2):
+            # TODO the paper has omega_plus > omega_minus
+            # is this a typo? what happens for equal weight?
+            # For example 3.2 after composition and reduction
+            # the weights are (1, 1) and they reduce using + infty
+            # which makes me thing this should be >= instead of >
             if omega_plus > omega_minus:
-                D, (a, b) = self.cantor_compose_at_infinity()
+                D, (a, b) = D.cantor_compose_at_infinity()
             else:
-                D, (a, b) = self.cantor_compose_at_infinity(plus=False)
+                D, (a, b) = D.cantor_compose_at_infinity(plus=False)
             omega_plus += a
             omega_minus += b
 
@@ -265,8 +273,13 @@ class MumfordDivisorSplit():
         # Algorithm states
         # E := D + omega^+ \infty^+ + omega^- \infty^- - D_\infty
         # Write E = D + n3 \infty^+ + m3 \infty^-
+        # I believe D_\infty = (g/2)(\infty^+ + \infty^-) when g is even
+        #                      ((g+1)/2)(\infty^+ + \infty^-) when g is odd
+        # So I think we want:
+        # n3 = (omega^+ - (g/2).ceil())
+        # m3 = (omega^- - (g/2).ceil())
         u3, v3 = D.uv()
-        n3 = 0 # FIX ME
+        n3 = omega_plus - (g/2).ceil() # FIX ME?
         return self._parent(u3, v3, n3)
 
     def __neg__(self):
@@ -289,17 +302,19 @@ class MumfordDivisorSplit():
         u1, v1 = self.uv()
         n1, m1 = self.nm()
 
-        if (g % 2) == 0:
+        # Case for even genus
+        if not (g % 2):
             v1 = (-h - v1) % u1
             n1 = g - u1.degree() - n1
             return self.parent()(u1, v1, n1)
+        # Odd genus, positive n1
         elif n1 > 0:
             v1 = (-h - v1) % u1
             n1 = g - m1 - u1.degree() + 1
             return self.parent()(u1, v1, n1)
-
-        # TODO: should this always be done with plus=True
-        # (using G^+ as the polynomial?)
-        # Note by default n = 0, so this should work.
-        D, _ = self.cantor_compose_at_infinity()
-        return D
+        else:
+            # TODO: should this always be done with plus=True
+            # (using G^+ as the polynomial?)
+            # Note by default n = 0, so this should work.
+            D, _ = self.cantor_compose_at_infinity()
+            return D
