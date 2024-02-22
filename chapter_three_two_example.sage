@@ -35,7 +35,7 @@ assert omega_plus == omega_minus == 1
 
 # Ensure reduction at infinity at G^+ matches example 3.2.3
 #
-D5, (omega_plus, omega_minus) = D4.cantor_reduction_at_infinity()
+D5, (omega_plus, omega_minus) = D4.cantor_compose_at_infinity()
 u5, v5 = D5.uv()
 
 assert u5 == x^2 + 8*x + 57

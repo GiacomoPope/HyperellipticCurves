@@ -22,15 +22,19 @@ class JacobianSplit:
             X, Y = P.xy()
             u = x - X
             v = R(Y)
+            n = 0 # FIXME
         elif len(args) == 2:
             u, v = args
+            n = 0 # FIXME
+        elif len(args) == 3:
+            u, v, n = args
         else:
             raise NotImplementedError
-        return self._element(self, u, v)
+        return self._element(self, u, v, n=n)
 
 
 class MumfordDivisorSplit():
-    def __init__(self, parent, u, v):
+    def __init__(self, parent, u, v, n=0):
         if not isinstance(parent, JacobianSplit):
             raise TypeError(f"parent must be of type ")
         if not isinstance(u, Polynomial) or not isinstance(v, Polynomial):
@@ -39,15 +43,29 @@ class MumfordDivisorSplit():
         self._parent = parent
         self._u = u
         self._v = v
+        self._n = n
+
+        g = parent.curve().genus()
+        # FIXME: is having n=0 by default OK? I have no idea!
+        self._m = g - n # FIXME how to compute from n? is it g - n?
 
     def parent(self):
         return self._parent
 
     def __repr__(self) -> str:
-        return f"({self._u}, {self._v})"
+        return f"({self._u}, {self._v} : {self._n})"
 
     def uv(self):
         return (self._u, self._v)
+
+    def nm(self):
+        return (self._n, self._m)
+
+    def degree(self):
+        """
+        TODO: is this correct?
+        """
+        return self._u.degree()
 
     def cantor_composition(self, other):
         """
@@ -136,8 +154,8 @@ class MumfordDivisorSplit():
         D1 = self.parent()(u1, v1)
 
         # Compute the counter weights
-        d0 = u0.degree()
-        d1 = u1.degree()
+        d0 = self.degree()
+        d1 = D1.degree()
         a_plus, a_minus = self.parent().curve().roots_at_infinity()
 
         if v0.leading_coefficient() == a_plus:
@@ -150,7 +168,14 @@ class MumfordDivisorSplit():
         return D1, (omega_plus, omega_minus)
 
 
-    def cantor_reduction_at_infinity(self, plus=True):
+    def cantor_compose_at_infinity(self, plus=True):
+        """
+        Follows algorithm 3.6 of
+
+        Efficient Arithmetic on Hyperelliptic Curves With Real Representation
+        David J. Mireles Morales (2008)
+        https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
+        """
         # Collect data from HyperellipticCurve
         H = self.parent().curve()
         f, h = H.hyperelliptic_polynomials()
@@ -180,3 +205,101 @@ class MumfordDivisorSplit():
             omega_plus, omega_minus = (g + 1 - d1, d0 - g - 1)
 
         return D1, (omega_plus, omega_minus)
+
+    def __add__(self, other):
+        r"""
+        TODO: this is not going to work until I really understand
+        the relationship between (u,v) with n and m in the representation
+        div(u,v) + n*\infty^+ + m*\infty^- - F_\infty
+
+        Follows algorithm 3.7 of
+
+        Efficient Arithmetic on Hyperelliptic Curves With Real Representation
+        David J. Mireles Morales (2008)
+        https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
+        """
+        # Ensure we are adding two divisors
+        if not isinstance(other, MumfordDivisorSplit):
+            raise ValueError("TODO")
+
+        # Collect data from HyperellipticCurve
+        H = self.parent().curve()
+        _, h = H.hyperelliptic_polynomials()
+        g = H.genus()
+
+        # Extract out Mumford polynomials
+        u1, v1 = self.uv()
+        u2, v2 = other.uv()
+
+        # Extract out integers for weights
+        n1, m1 = self.nm()
+        n2, m2 = other.nm()
+
+        omega_plus = n1 + n2
+        omega_minus = m1 + m2
+
+        # Step one: cantor composition of the two divisors
+        D, (a, b) = self.cantor_composition(other)
+        omega_plus += a
+        omega_minus += b
+
+        # Step two: cantor reduction of the above to ensure
+        # the degree of u is smaller than g + 1
+        while D.degree() > (g + 1):
+            D, (a, b) = self.cantor_reduction()
+            omega_plus += a
+            omega_minus += b
+
+        # Step three: compose and then reduce at infinity to ensure
+        # unique representation of D
+        while (omega_plus < g/2) or (omega_minus < (g-1)/2):
+            if omega_plus > omega_minus:
+                D, (a, b) = self.cantor_compose_at_infinity()
+            else:
+                D, (a, b) = self.cantor_compose_at_infinity(plus=False)
+            omega_plus += a
+            omega_minus += b
+
+        # TODO:
+        # How to do compute n3 from this?
+        # Algorithm states
+        # E := D + omega^+ \infty^+ + omega^- \infty^- - D_\infty
+        # Write E = D + n3 \infty^+ + m3 \infty^-
+        u3, v3 = D.uv()
+        n3 = 0 # FIX ME
+        return self._parent(u3, v3, n3)
+
+    def __neg__(self):
+        r"""
+        TODO: this is not going to work until I really understand
+        the relationship between (u,v) with n and m in the representation
+        div(u,v) + n*\infty^+ + m*\infty^- - F_\infty
+
+        Follows algorithm 3.8 of
+
+        Efficient Arithmetic on Hyperelliptic Curves With Real Representation
+        David J. Mireles Morales (2008)
+        https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
+        """
+        # Collect data from HyperellipticCurve
+        H = self.parent().curve()
+        _, h = H.hyperelliptic_polynomials()
+        g = H.genus()
+
+        u1, v1 = self.uv()
+        n1, m1 = self.nm()
+
+        if (g % 2) == 0:
+            v1 = (-h - v1) % u1
+            n1 = g - u1.degree() - n1
+            return self.parent()(u1, v1, n1)
+        elif n1 > 0:
+            v1 = (-h - v1) % u1
+            n1 = g - m1 - u1.degree() + 1
+            return self.parent()(u1, v1, n1)
+
+        # TODO: should this always be done with plus=True
+        # (using G^+ as the polynomial?)
+        # Note by default n = 0, so this should work.
+        D, _ = self.cantor_compose_at_infinity()
+        return D
