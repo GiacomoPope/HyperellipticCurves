@@ -22,10 +22,10 @@ class JacobianSplit:
             X, Y = P.xy()
             u = x - X
             v = R(Y)
-            n = 0 # FIXME
+            n = 0
         elif len(args) == 2:
             u, v = args
-            n = 0 # FIXME
+            n = 0
         elif len(args) == 3:
             u, v, n = args
         else:
@@ -53,7 +53,6 @@ class MumfordDivisorSplit():
         # assert 0 <= n <= (g - u.degree())
         self._n = n
 
-        # FIXME: is having n=0 by default OK? I have no idea!
         self._m = g - u.degree() - n
 
     def parent(self):
@@ -70,7 +69,7 @@ class MumfordDivisorSplit():
 
     def degree(self):
         """
-        TODO: is this correct?
+        Returns the degree of the affine part of the divisor. 
         """
         return self._u.degree()
 
@@ -211,10 +210,6 @@ class MumfordDivisorSplit():
 
     def __add__(self, other):
         r"""
-        TODO: this is not going to work until I really understand
-        the relationship between (u,v) with n and m in the representation
-        div(u,v) + n*\infty^+ + m*\infty^- - F_\infty
-
         Follows algorithm 3.7 of
 
         Efficient Arithmetic on Hyperelliptic Curves With Real Representation
@@ -268,31 +263,23 @@ class MumfordDivisorSplit():
             omega_plus += a
             omega_minus += b
 
-        # TODO:
-        # How to do compute n3 from this?
+        # Computing n3:
         # Algorithm states
         # E := D + omega^+ \infty^+ + omega^- \infty^- - D_\infty
         # Write E = D + n3 \infty^+ + m3 \infty^-
-        # I believe D_\infty = (g/2)(\infty^+ + \infty^-) when g is even
-        #                      ((g+1)/2)(\infty^+ + \infty^-) when g is odd
-        # So I think we want:
+        # D_\infty = (g/2)(\infty^+ + \infty^-) when g is even
+        #            (g+1)/2 \infty^+ + (g-1)/2 \infty_- when g is odd
+        # So:
         # n3 = (omega^+ - (g/2).ceil())
-        # m3 = (omega^- - (g/2).ceil())
+        # m3 = (omega^- - (g/2).floor())
 
-        # EDIT:
-        # In the odd genus case, D_\infty = (g+1)/2 \infty_+ + (g-1)/2 \infty_-
-        # so m3 = (omega^- - (g/2).floor())
         u3, v3 = D.uv()
-        n3 = omega_plus - (g/2).ceil() # FIX ME?
-        m3 = omega_minus - (g/2).floor()
+        n3 = omega_plus - (g/2).ceil()
+        #m3 = omega_minus - (g/2).floor()
         return self._parent(u3, v3, n3)
 
     def __neg__(self):
         r"""
-        TODO: this is not going to work until I really understand
-        the relationship between (u,v) with n and m in the representation
-        div(u,v) + n*\infty^+ + m*\infty^- - D_\infty
-
         Follows algorithm 3.8 of
 
         Efficient Arithmetic on Hyperelliptic Curves With Real Representation
