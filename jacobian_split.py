@@ -39,6 +39,10 @@ class MumfordDivisorSplit():
             raise TypeError(f"parent must be of type ")
         if not isinstance(u, Polynomial) or not isinstance(v, Polynomial):
             raise TypeError(f"arguments {u = } and {v = } must be polynomials")
+        #TODO: 
+        # 1. allow elements of the base field as input 
+        #   (in particular something like (u,v) = (x-alpha, 0))
+        # 2. define J(0) = (1,0:(g/2).ceil())
 
         self._parent = parent
         g = parent.curve().genus()
@@ -118,16 +122,12 @@ class MumfordDivisorSplit():
         u = (u1 * u2) // (s**2)
         v = (f1 * u1 * v2 + f2 * u2 * v1 + f3 * (v1 * v2 + f))
 
-        # TODO:
-        # Sometimes I cannot invert d mod a, but it seems like in these cases
-        # I can always just divide it out (at least experimentally). Potentially
-        # edge cases...
-        if s.divides(v):
-            v = (v // s) % u
-        else:
-            d_inverse = s.inverse_mod(u)
-            v = (v * d_inverse) % u
+        # computation of v/s (mod u)
+        c, d_inverse, _ = s.xgcd(u)
+        assert c.divides(v)
+        v = (v // c * d_inverse) % u
         D3 = self.parent()(u, v)
+
         return D3, (s.degree(), s.degree())
 
     def cantor_reduction(self):
@@ -278,15 +278,20 @@ class MumfordDivisorSplit():
         # So I think we want:
         # n3 = (omega^+ - (g/2).ceil())
         # m3 = (omega^- - (g/2).ceil())
+
+        # EDIT:
+        # In the odd genus case, D_\infty = (g+1)/2 \infty_+ + (g-1)/2 \infty_-
+        # so m3 = (omega^- - (g/2).floor())
         u3, v3 = D.uv()
         n3 = omega_plus - (g/2).ceil() # FIX ME?
+        m3 = omega_minus - (g/2).floor()
         return self._parent(u3, v3, n3)
 
     def __neg__(self):
         r"""
         TODO: this is not going to work until I really understand
         the relationship between (u,v) with n and m in the representation
-        div(u,v) + n*\infty^+ + m*\infty^- - F_\infty
+        div(u,v) + n*\infty^+ + m*\infty^- - D_\infty
 
         Follows algorithm 3.8 of
 
@@ -305,16 +310,20 @@ class MumfordDivisorSplit():
         # Case for even genus
         if not (g % 2):
             v1 = (-h - v1) % u1
-            n1 = g - u1.degree() - n1
+            n1 = m1
             return self.parent()(u1, v1, n1)
         # Odd genus, positive n1
         elif n1 > 0:
             v1 = (-h - v1) % u1
-            n1 = g - m1 - u1.degree() + 1
+            #Note: I think this is a typo in the paper 
+            #n1 = g - m1 - u1.degree() + 1 
+            n1 = m1 + 1
             return self.parent()(u1, v1, n1)
         else:
-            # TODO: should this always be done with plus=True
-            # (using G^+ as the polynomial?)
-            # Note by default n = 0, so this should work.
-            D, _ = self.cantor_compose_at_infinity()
+            # Composition at infinity always with plus=True. 
+            # want to "substract" \infty_+ - \infty_-
+            D = self.parent()(u1, -h-v1)
+            D, (a, b) = D.cantor_compose_at_infinity(plus=True)
+            u, v = D.uv()
+            D = self.parent()(u, v, m1 + 1 + a)
             return D
