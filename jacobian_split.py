@@ -30,8 +30,8 @@ class JacobianSplit:
         g = self._curve.genus()
         R = self._curve.polynomial_ring()
         # TODO: should n be random here?
-        n = randint(0, (g/2).ceil())
-        return self._element(self, R.one(), R.zero(), ZZ(n))
+        n = (g/2).ceil()
+        return self._element(self, R.one(), R.zero(), n)
 
     def __call__(self, *args):
         if isinstance(args[0], HyperellipticPoint):
@@ -102,7 +102,9 @@ class JacobianSplit:
                             pass
 
                         try:
-                            D += e * self(x, R(y))
+                            g = self.curve().genus()
+                            n = randint(0, g - x.degree())
+                            D += e * self(x, R(y), n)
                         except (ValueError, TypeError):
                             raise IndexError
 
