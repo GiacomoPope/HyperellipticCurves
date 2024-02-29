@@ -2,6 +2,9 @@ from sage.misc.prandom import choice
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RR
+from sage.functions.other import binomial
+from sage.misc.cachefunc import cached_method
 
 class HyperellipticCurveSplit:
     def __init__(self, f, h=0):
@@ -275,12 +278,41 @@ class HyperellipticCurveSplit:
         from jacobian_split import JacobianSplit
         return JacobianSplit(self)
 
+    def frobenius_polynomial(self):
+        """
+        TODO: very lazy but just for now
+        """
+        f, h = self._hyperelliptic_polynomials
+        from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
+        H_tmp = HyperellipticCurve(f, h)
+        return H_tmp.frobenius_polynomial()
+
+    def points(self):
+        """
+        TODO: couldn't be more stupid
+        """
+        # TODO: this is very silly but works
+        points = self.points_at_infinity()
+        for x in self.base_ring():
+            points.extend(self.lift_x(x, all=True))
+        return points
+
+    def cardinality(self):
+        """
+        TODO: couldn't be more stupid
+        """
+        return len(self.points())
+
+    order = cardinality
 
 class HyperellipticPoint:
     def __init__(self, X, Y, Z=1):
         self._X = X
         self._Y = Y
         self._Z = Z
+
+    def coords(self):
+        return (self._X, self._Y, self._Z)
 
     def xy(self):
         if not self._Z:
@@ -292,3 +324,9 @@ class HyperellipticPoint:
 
     def __repr__(self):
         return f"({self._X} : {self._Y} : {self._Z})"
+
+    def __getitem__(self, n):
+        try:
+            return self.coords()[n]
+        except IndexError:
+            raise IndexError("todo")
