@@ -45,12 +45,14 @@ class JacobianSplit:
             [X,Y,Z] = P.coords()
             # TODO:
             # we use the embedding P \mapsto P - \infty_+
-            # do we want a different embedding?
-            n = (g/2).floor()
+            # note: P - \inft_+ = P + n*\infty_+ + m*\infty_- - D_\infty,
+            # where n = ((g-1)/2).floor() 
+            # do we want a different embedding by default?
+            n = ((g-1)/2).floor()
             if Z == 0:
                 alpha = Y/X
                 if alpha == self._curve._alphas[0]:
-                    n = (g/2).ceil()
+                    n = n + 1
                 u = R(1)
                 v = R(0)
             else:
