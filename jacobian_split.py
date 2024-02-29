@@ -272,9 +272,17 @@ class MumfordDivisorSplit():
         v = (f1 * u1 * v2 + f2 * u2 * v1 + f3 * (v1 * v2 + f))
 
         # computation of v/s (mod u)
-        c, d_inverse, _ = s.xgcd(u)
-        assert c.divides(v)
-        v = (v // c * d_inverse) % u
+        # c, d_inverse, _ = s.xgcd(u)
+        # assert c.divides(v)
+        # v = (v // c * d_inverse) % u
+        #
+        if s.divides(v):
+            v //= s
+        else:
+            s_inverse = s.inverse_mod(u)
+            v *= s_inverse
+
+        v = v % u
         D3 = self.parent()(u, v)
 
         return D3, (s.degree(), s.degree())

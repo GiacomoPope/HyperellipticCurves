@@ -5,6 +5,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 from sage.functions.other import binomial
 from sage.misc.cachefunc import cached_method
+from sage.rings.integer import Integer
 
 class HyperellipticCurveSplit:
     def __init__(self, f, h=0):
@@ -324,6 +325,15 @@ class HyperellipticPoint:
 
     def __repr__(self):
         return f"({self._X} : {self._Y} : {self._Z})"
+
+    def __eq__(self, other):
+        if not isinstance(other, HyperellipticPoint):
+            return False
+        # TODO: this is dumb but works fine as Z is always either 0 or 1 currently
+        return self.coords() == other.coords()
+
+    def __hash__(self):
+        return hash(self.coords())
 
     def __getitem__(self, n):
         try:
