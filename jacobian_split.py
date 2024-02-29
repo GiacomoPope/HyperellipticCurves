@@ -34,22 +34,28 @@ class JacobianSplit:
         """
         g = self._curve.genus()
         R = self._curve.polynomial_ring()
-        # TODO: should n be random here?
         n = (g/2).ceil()
         return self._element(self, R.one(), R.zero(), n)
 
     def __call__(self, *args):
         if isinstance(args[0], HyperellipticPoint):
-            P = args[0]
-            try:
-                X, Y = P.xy()
-            except: # TODO: point at infinity
-                return self.zero()
             R, x = self._curve.polynomial_ring().objgen()
-
-            u = x - X
-            v = R(Y)
-            n = 0
+            g = self._curve.genus()
+            P = args[0]
+            [X,Y,Z] = P.coords()
+            # TODO:
+            # we use the embedding P \mapsto P - \infty_+
+            # do we want a different embedding?
+            n = (g/2).floor()
+            if Z == 0:
+                alpha = Y/X
+                if alpha == self._curve._alphas[0]:
+                    n = (g/2).ceil()
+                u = R(1)
+                v = R(0)
+            else:
+                u = x - X
+                v = R(Y)
         elif len(args) == 1:
             return self.zero()
         elif len(args) == 2:
@@ -91,7 +97,8 @@ class JacobianSplit:
         while True:
             u = uniform_random_polynomial(R, degree=degree)
             if u.is_zero():
-                return self.zero()
+                n = randint(0, g)
+                return self(R(1),R(0),n)
             u = u.monic()
             try:
                 D = self.zero()
@@ -112,8 +119,9 @@ class JacobianSplit:
 
                         try:
                             g = self.curve().genus()
-                            n = randint(0, g - x.degree())
-                            D += e * self(x, R(y), n)
+                            for i in range(e):
+                                n = randint(0, g - x.degree())
+                                D += self(x, R(y), n)
                         except (ValueError, TypeError):
                             raise IndexError
 
