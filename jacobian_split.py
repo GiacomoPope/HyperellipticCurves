@@ -80,13 +80,13 @@ class JacobianSplit:
         f, h = H.hyperelliptic_polynomials()
 
         if degree is None:
-            degree = (-1, g + 1)
+            # until the random sampling is uniform (open PR for sage)
+            # this is bad.
+            # degree = (-1, g)
+            degree = g # TODO: for odd genus this may need to be g + 1
 
         while True:
-            u = R.random_element(degree=degree)
-            if u == 0:
-                return self.zero()
-            u = u.monic()
+            u = R.random_element(degree=degree).monic()
             try:
                 D = self.zero()
                 for x, e in u.factor():
@@ -115,7 +115,6 @@ class JacobianSplit:
                         # This shouldn't be reachable - blocked by :meth:`random_element`.
                         raise NotImplementedError("root finding over function fields are not"
                                                   "implemented!")
-
                 return D
 
             except IndexError:
