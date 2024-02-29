@@ -77,7 +77,7 @@ class JacobianSplit:
         f, h = H.hyperelliptic_polynomials()
 
         if degree is None:
-            degree = (-1, g)
+            degree = (-1, g + 1)
 
         while True:
             u = R.random_element(degree=degree)
@@ -95,16 +95,14 @@ class JacobianSplit:
                         h_ = K_ext(h % x)
                         f_ = K_ext(f % x)
                         y = choice((y_ext**2 + h_ * y_ext - f_).roots(multiplicities=False))
-
                         try:
                             # Quotient ring elements
                             y = y.lift()
                         except AttributeError:
                             pass
 
-                        # This narrows down the error range
                         try:
-                            D += e * self([x, R(y)])
+                            D += e * self(x, R(y))
                         except (ValueError, TypeError):
                             raise IndexError
 
