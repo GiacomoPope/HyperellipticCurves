@@ -9,6 +9,9 @@ from sage.misc.prandom import choice
 from sage.groups.generic import order_from_multiple
 from sage.misc.cachefunc import cached_method
 
+# Needed until https://github.com/sagemath/sage/pull/37118 is merged.
+from uniform_random_sampling import uniform_random_polynomial
+
 class JacobianSplit:
     def __init__(self, H):
         if not isinstance(H, HyperellipticCurveSplit):
@@ -82,11 +85,14 @@ class JacobianSplit:
         if degree is None:
             # until the random sampling is uniform (open PR for sage)
             # this is bad.
-            # degree = (-1, g)
-            degree = g # TODO: for odd genus this may need to be g + 1
+            degree = (-1, g)
+            # degree = g # TODO: for odd genus this may need to be g + 1
 
         while True:
-            u = R.random_element(degree=degree).monic()
+            u = uniform_random_polynomial(R, degree=degree)
+            if u.is_zero():
+                return self.zero()
+            u = u.monic()
             try:
                 D = self.zero()
                 for x, e in u.factor():
