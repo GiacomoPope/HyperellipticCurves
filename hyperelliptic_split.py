@@ -288,6 +288,7 @@ class HyperellipticCurveSplit:
         H_tmp = HyperellipticCurve(f, h)
         return H_tmp.frobenius_polynomial()
 
+    @cached_method
     def points(self):
         """
         TODO: couldn't be more stupid
@@ -298,6 +299,7 @@ class HyperellipticCurveSplit:
             points.extend(self.lift_x(x, all=True))
         return points
 
+    @cached_method
     def cardinality(self):
         """
         TODO: couldn't be more stupid

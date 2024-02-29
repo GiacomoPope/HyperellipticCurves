@@ -6,6 +6,8 @@ from sage.rings.integer import Integer
 from sage.misc.prandom import randint
 from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
 from sage.misc.prandom import choice
+from sage.groups.generic import order_from_multiple
+from sage.misc.cachefunc import cached_method
 
 class JacobianSplit:
     def __init__(self, H):
@@ -56,6 +58,7 @@ class JacobianSplit:
             raise NotImplementedError
         return self._element(self, u, v, n=n)
 
+    @cached_method
     def cardinality(self):
         """
         TODO: currently using lazy methods by calling sage
@@ -216,6 +219,11 @@ class MumfordDivisorSplit():
     def __hash__(self):
         data = (self._u, self._v, self._n)
         return hash(data)
+
+    @cached_method
+    def order(self):
+        n = self.parent().order()
+        return order_from_multiple(self, n)
 
     def degree(self):
         """
@@ -473,15 +481,29 @@ class MumfordDivisorSplit():
             D = self.parent()(u, v, m1 + 1 + a)
             return D
 
-    def __mul__(self, other):
+    def __mul__(self, n):
         """
-        TODO: do double and add!!!
         """
-        if not isinstance (other, (int, Integer)):
+        if not isinstance (n, (int, Integer)):
             raise ValueError
-        D = self._parent.zero()
-        for _ in range(other):
-            D += self
-        return D
+
+        P = self
+
+        # Handle negative scalars
+        if n < 0:
+            n = -n
+            P = - P
+
+        # Double and Add
+        Q = P
+        R = self.parent().zero()
+        while n > 0:
+            if n % 2 == 1:
+                R = R + Q
+            Q = Q + Q
+            n = n // 2
+        return R
+
+
 
     __rmul__ = __mul__
