@@ -19,9 +19,7 @@ for _ in range(5000):
 print(f"{len(set(hmm)) = }")
 print(f"{J.order() = }")
 
-# TODO:
-# Something is seriously wrong with the random element as we find almost no
-# solutions!
+# The slow method seems OK though
 hmm = []
 for _ in range(5000):
     try:
