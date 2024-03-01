@@ -156,6 +156,12 @@ class HyperellipticCurveSplit:
         G_plus = self._polynomial_ring(g)
         G_minus = - G_plus - h
 
+        # Checks for the assumptions on G^±
+        genus = self.genus()
+        assert G_plus.degree() == (genus + 1)
+        assert (G_plus**2 + h * G_plus - f).degree() <= genus
+        assert G_minus.leading_coefficient() == alpha_minus
+
         self._infinte_polynomials = G_plus, G_minus
         return self._infinte_polynomials
 
