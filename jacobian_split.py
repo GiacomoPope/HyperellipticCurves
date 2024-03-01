@@ -388,12 +388,13 @@ class MumfordDivisorSplit():
         d0 = self.degree()
         d1 = D1.degree()
         if plus:
-            #print("plus")
+            #print("plus",d1,d0)
             omega_plus, omega_minus = (g + 1 - d1, d0 - g - 1)
+            #print("omega", omega_plus, omega_minus)
         else:
-            #print("minus")
+            #print("minus", d1,d0)
             omega_plus, omega_minus = (d0 - g - 1, g + 1 - d1)
-
+            #print("omega", omega_plus, omega_minus)
         return D1, (omega_plus, omega_minus)
 
     def __add__(self, other):
@@ -451,8 +452,10 @@ class MumfordDivisorSplit():
             # the weights are (1, 1) and they reduce using + infty
             # which makes me thing this should be >= instead of >
             if omega_plus > omega_minus:
+                #print("case 1", omega_plus, omega_minus)
                 D, (a, b) = D.cantor_compose_at_infinity(plus=False)
             else:
+                #print("case 2", omega_plus, omega_minus)
                 D, (a, b) = D.cantor_compose_at_infinity(plus=True)
             omega_plus += a
             omega_minus += b
