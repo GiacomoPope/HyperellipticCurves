@@ -1,7 +1,5 @@
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from hyperelliptic_split import HyperellipticCurveSplit, HyperellipticPoint
-from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.misc.prandom import randint
 from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
@@ -179,7 +177,7 @@ class JacobianSplit:
 class MumfordDivisorSplit():
     def __init__(self, parent, u, v, n=0):
         if not isinstance(parent, JacobianSplit):
-            raise TypeError(f"parent must be of type ")
+            raise TypeError("parent must be of type ")
         if not isinstance(u, Polynomial) or not isinstance(v, Polynomial):
             raise TypeError(f"arguments {u = } and {v = } must be polynomials")
         #TODO:
@@ -261,7 +259,6 @@ class MumfordDivisorSplit():
         # Collect data from HyperellipticCurve
         H = self.parent().curve()
         f, h = H.hyperelliptic_polynomials()
-        g = H.genus()
 
         u1, v1 = self.uv()
         u2, v2 = other.uv()
@@ -295,10 +292,6 @@ class MumfordDivisorSplit():
         v = (f1 * u1 * v2 + f2 * u2 * v1 + f3 * (v1 * v2 + f))
 
         # computation of v/s (mod u)
-        # c, d_inverse, _ = s.xgcd(u)
-        # assert c.divides(v)
-        # v = (v // c * d_inverse) % u
-        #
         if s.divides(v):
             v //= s
         else:
@@ -403,17 +396,13 @@ class MumfordDivisorSplit():
 
         # Collect data from HyperellipticCurve
         H = self.parent().curve()
-        _, h = H.hyperelliptic_polynomials()
         g = H.genus()
-
-        # Extract out Mumford polynomials
-        u1, v1 = self.uv()
-        u2, v2 = other.uv()
 
         # Extract out integers for weights
         n1, m1 = self.nm()
         n2, m2 = other.nm()
 
+        # Compute weights for the sum
         omega_plus = n1 + n2
         omega_minus = m1 + m2
 

@@ -1,5 +1,5 @@
 from hyperelliptic_split import HyperellipticCurveSplit
-R.<x> = PolynomialRing(GF(7))
+R.<x> = PolynomialRing(GF(3))
 
 def random_sample(J, n=2000, fast=True):
     p = []
@@ -7,11 +7,12 @@ def random_sample(J, n=2000, fast=True):
         p.append(J.random_element(fast=fast))
     return len(set(p))
 
-def random_curve(use_h=True):
+def random_curve(use_h=True, genus=2):
+    d = 2*genus + 2
     while True:
         while True:
-            f = R.random_element(degree=6)
-            if f.degree() == 6:
+            f = R.random_element(degree=d)
+            if f.degree() == d:
                 f = f.monic()
                 break
         if use_h:
@@ -25,13 +26,13 @@ def random_curve(use_h=True):
             continue
 
 # Test that randomly sampling gets all elements in the group
-for _ in range(1):
-    f, h, H = random_curve()
+for _ in range(3):
+    f, h, H = random_curve(genus=3)
     J = H.jacobian()
     o = J.order()
 
     fast = random_sample(J)
-    slow = random_sample(J, n=5000, fast=False)
+    slow = random_sample(J, fast=False)
 
     print(f"{f = }")
     print(f"{h = }")
@@ -42,7 +43,25 @@ for _ in range(1):
 
 # Test all points have order dividing the Jacobian order
 for _ in range(1):
-    f, h, H = random_curve()
+    f, h, H = random_curve(genus=3)
     J = H.jacobian()
     o = J.order()
     assert all([(o * J.random_element()).is_zero() for _ in range(100)])
+
+
+# Test all points have order dividing the Jacobian order
+for _ in range(1):
+    f, h, H = random_curve(use_h=True, genus=3)
+    J = H.jacobian()
+    o = J.order()
+
+    print(f"Testing with: {J}")
+    bad = []
+    for _ in range(100):
+        D = J.random_element()
+        if not (o * D).is_zero():
+            bad.append(D)
+    print(f"Bad elements of 100: {len(bad)}")
+    print(f"Number of unique bad elements: {len(set(bad))}")
+
+    print()
