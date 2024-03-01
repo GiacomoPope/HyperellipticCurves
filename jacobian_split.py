@@ -174,6 +174,132 @@ class JacobianSplit:
         return self._random_element_cover(*args, **kwargs)
 
 
+    def cantor_composition(self, u1, v1, u2, v2):
+        """
+        Follows algorithm 3.4 of
+
+        Efficient Arithmetic on Hyperelliptic Curves With Real Representation
+        David J. Mireles Morales (2008)
+        https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
+        """
+        # Collect data from HyperellipticCurve
+        H = self.curve()
+        f, h = H.hyperelliptic_polynomials()
+
+        # Ensure D1 and D2 are semi-reduced divisors
+        assert (
+            v1.degree() < u1.degree() and v2.degree() < u2.degree()
+        ), "The degree of bi must be smaller than ai"
+        assert (
+            u1.degree() <= f.degree() and u2.degree() <= f.degree()
+        ), f"The degree of ai must be smaller than f, {u1.degree()}, {u2.degree()}"
+        assert (v1**2 + v1 * h - f) % u1 == 0, "D1 is not a valid divisor"
+        assert (v2**2 + v2 * h - f) % u2 == 0, "D2 is not a valid divisor"
+
+        # Step One
+        s0, e1, e2 = u1.xgcd(u2)
+        assert s0 == e1 * u1 + e2 * u2
+
+        # Step Two
+        s, c1, c2 = s0.xgcd(v1 + v2 + h)
+        assert s == c1 * s0 + c2 * (v1 + v2 + h)
+
+        # Step Three
+        f1 = c1 * e1
+        f2 = c1 * e2
+        f3 = c2
+        assert s == f1 * u1 + f2 * u2 + f3 * (v1 + v2 + h)
+
+        # Step Four
+        u3 = (u1 * u2) // (s**2)
+        v3 = (f1 * u1 * v2 + f2 * u2 * v1 + f3 * (v1 * v2 + f))
+
+        # computation of v/s (mod u)
+        if s.divides(v3):
+            v3 //= s
+        else:
+            s_inverse = s.inverse_mod(u3)
+            v3 *= s_inverse
+
+        v3 = v3 % u3
+
+        return (u3, v3), (s.degree(), s.degree())
+
+    def cantor_reduction(self, u0, v0):
+        """
+        Follows algorithm 3.5 of
+
+        Efficient Arithmetic on Hyperelliptic Curves With Real Representation
+        David J. Mireles Morales (2008)
+        https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
+        """
+        # Collect data from HyperellipticCurve
+        H = self.curve()
+        f, h = H.hyperelliptic_polynomials()
+        g = H.genus()
+
+        # Ensure D is a semi-reduced divisor
+        # assert u0.degree() >= g + 2, "Divisor has incorrect degree"
+        assert (v0**2 + v0 * h - f) % u0 == 0, "D is not a valid divisor"
+
+        # Compute u' and v'
+        u1 = (v0**2 + h * v0 - f) // u0
+        u1 = u1.monic()
+        v1 = (-h - v0) % u1
+        
+        # Compute the counter weights
+        d0 = u0.degree()
+        d1 = u1.degree()
+        a_plus, a_minus = self.curve().roots_at_infinity()
+
+        if v0.leading_coefficient() == a_plus:
+            omega_plus, omega_minus = (d0 - g - 1, g + 1 - d1)
+        elif v0.leading_coefficient() == a_minus:
+            omega_plus, omega_minus = (g + 1 - d1, d0 - g - 1)
+        else:
+            omega = (d0 - d1) // 2
+            omega_plus, omega_minus = (omega, omega)
+        return (u1, v1), (omega_plus, omega_minus)
+
+
+    def cantor_compose_at_infinity(self, u0, v0, plus=True):
+        """
+        Follows algorithm 3.6 of
+
+        Efficient Arithmetic on Hyperelliptic Curves With Real Representation
+        David J. Mireles Morales (2008)
+        https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
+        """
+        # Collect data from HyperellipticCurve
+        H = self.curve()
+        f, h = H.hyperelliptic_polynomials()
+        g = H.genus()
+
+        # Pick either G_plus or G_minus for reduction
+        G_plus, G_minus = H.infinite_polynomials()
+        if plus:
+            G = G_plus
+        else:
+            G = G_minus
+
+        v1_prime = G + ((v0 - G) % u0)
+        u1 = (v1_prime**2 + h * v1_prime - f) // u0
+        u1 = u1.monic()
+        v1 = (-h - v1_prime) % u1
+
+        # Compute the counter weights
+        d0 = u0.degree()
+        d1 = u1.degree()
+        if plus:
+            omega_plus, omega_minus = (d0 - g - 1, g + 1 - d1)
+        else:
+            omega_plus, omega_minus = (g + 1 - d1, d0 - g - 1)
+
+        return (u1, v1), (omega_plus, omega_minus)
+
+
+
+
 class MumfordDivisorSplit():
     def __init__(self, parent, u, v, n=0, check=True):
         if not isinstance(parent, JacobianSplit):
@@ -249,144 +375,6 @@ class MumfordDivisorSplit():
         """
         return self._u.degree()
 
-    def cantor_composition(self, other):
-        """
-        Follows algorithm 3.4 of
-
-        Efficient Arithmetic on Hyperelliptic Curves With Real Representation
-        David J. Mireles Morales (2008)
-        https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
-        """
-        # Ensure we are composing two divisors
-        if not isinstance(other, MumfordDivisorSplit):
-            raise ValueError("TODO")
-
-        # Collect data from HyperellipticCurve
-        H = self.parent().curve()
-        f, h = H.hyperelliptic_polynomials()
-
-        u1, v1 = self.uv()
-        u2, v2 = other.uv()
-
-        # Ensure D1 and D2 are semi-reduced divisors
-        assert (
-            v1.degree() < u1.degree() and v2.degree() < u2.degree()
-        ), "The degree of bi must be smaller than ai"
-        assert (
-            u1.degree() <= f.degree() and u2.degree() <= f.degree()
-        ), f"The degree of ai must be smaller than f, {u1.degree()}, {u2.degree()}"
-        assert (v1**2 + v1 * h - f) % u1 == 0, "D1 is not a valid divisor"
-        assert (v2**2 + v2 * h - f) % u2 == 0, "D2 is not a valid divisor"
-
-        # Step One
-        s0, e1, e2 = u1.xgcd(u2)
-        assert s0 == e1 * u1 + e2 * u2
-
-        # Step Two
-        s, c1, c2 = s0.xgcd(v1 + v2 + h)
-        assert s == c1 * s0 + c2 * (v1 + v2 + h)
-
-        # Step Three
-        f1 = c1 * e1
-        f2 = c1 * e2
-        f3 = c2
-        assert s == f1 * u1 + f2 * u2 + f3 * (v1 + v2 + h)
-
-        # Step Four
-        u = (u1 * u2) // (s**2)
-        v = (f1 * u1 * v2 + f2 * u2 * v1 + f3 * (v1 * v2 + f))
-
-        # computation of v/s (mod u)
-        if s.divides(v):
-            v //= s
-        else:
-            s_inverse = s.inverse_mod(u)
-            v *= s_inverse
-
-        v = v % u
-        D3 = self.parent()(u, v)
-
-        return D3, (s.degree(), s.degree())
-
-    def cantor_reduction(self):
-        """
-        Follows algorithm 3.5 of
-
-        Efficient Arithmetic on Hyperelliptic Curves With Real Representation
-        David J. Mireles Morales (2008)
-        https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
-        """
-        # Collect data from HyperellipticCurve
-        H = self.parent().curve()
-        f, h = H.hyperelliptic_polynomials()
-        g = H.genus()
-
-        # Mumford polynomials
-        u0, v0 = self.uv()
-
-        # Ensure D is a semi-reduced divisor
-        # assert u0.degree() >= g + 2, "Divisor has incorrect degree"
-        assert (v0**2 + v0 * h - f) % u0 == 0, "D is not a valid divisor"
-
-        # Compute u' and v'
-        u1 = (f - v0 * h - v0**2) // u0
-        u1 = u1.monic()
-        v1 = (-h - v0) % u1
-        D1 = self.parent()(u1, v1)
-
-        # Compute the counter weights
-        d0 = self.degree()
-        d1 = D1.degree()
-        a_plus, a_minus = self.parent().curve().roots_at_infinity()
-
-        if v0.leading_coefficient() == a_plus:
-            omega_plus, omega_minus = (d0 - g - 1, g + 1 - d1)
-        elif v0.leading_coefficient() == a_minus:
-            omega_plus, omega_minus = (g + 1 - d1, d0 - g - 1)
-        else:
-            omega = (d0 - d1) // 2
-            omega_plus, omega_minus = (omega, omega)
-        return D1, (omega_plus, omega_minus)
-
-
-    def cantor_compose_at_infinity(self, plus=True):
-        """
-        Follows algorithm 3.6 of
-
-        Efficient Arithmetic on Hyperelliptic Curves With Real Representation
-        David J. Mireles Morales (2008)
-        https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
-        """
-        # Collect data from HyperellipticCurve
-        H = self.parent().curve()
-        f, h = H.hyperelliptic_polynomials()
-        g = H.genus()
-
-        # Pick either G_plus or G_minus for reduction
-        G_plus, G_minus = H.infinite_polynomials()
-        if plus:
-            G = G_plus
-        else:
-            G = G_minus
-
-        u0, v0 = self.uv()
-        v1_prime = G + (v0 - G) % u0
-
-        u1 = (v1_prime**2 + h * v1_prime - f) // u0
-        u1 = u1.monic()
-        v1 = (-h - v1_prime) % u1
-        D1 = self.parent()(u1, v1)
-
-        # Compute the counter weights
-        d0 = self.degree()
-        d1 = D1.degree()
-        if plus:
-            omega_plus, omega_minus = (d0 - g - 1, g + 1 - d1)
-        else:
-            omega_plus, omega_minus = (g + 1 - d1, d0 - g - 1)
-
-        return D1, (omega_plus, omega_minus)
-
     def __add__(self, other):
         r"""
         Follows algorithm 3.7 of
@@ -403,6 +391,10 @@ class MumfordDivisorSplit():
         H = self.parent().curve()
         g = H.genus()
 
+        # Extract out mumford coordinates
+        u1, v1 = self.uv()
+        u2, v2 = other.uv()
+
         # Extract out integers for weights
         n1, m1 = self.nm()
         n2, m2 = other.nm()
@@ -412,14 +404,14 @@ class MumfordDivisorSplit():
         omega_minus = m1 + m2
 
         # Step one: cantor composition of the two divisors
-        D, (a, b) = self.cantor_composition(other)
+        (u3, v3), (a, b) = self._parent.cantor_composition(u1, v1, u2, v2)
         omega_plus += a
         omega_minus += b
 
         # Step two: cantor reduction of the above to ensure
         # the degree of u is smaller than g + 1
-        while D.degree() > (g + 1):
-            D, (a, b) = D.cantor_reduction()
+        while u3.degree() > (g + 1):
+            (u3, v3), (a, b) = self._parent.cantor_reduction(u3, v3)
             omega_plus += a
             omega_minus += b
 
@@ -432,9 +424,9 @@ class MumfordDivisorSplit():
             # the weights are (1, 1) and they reduce using + infty
             # which makes me thing this should be >= instead of >
             if omega_plus > omega_minus:
-                D, (a, b) = D.cantor_compose_at_infinity()
+                (u3, v3), (a, b) = self._parent.cantor_compose_at_infinity(u3, v3)
             else:
-                D, (a, b) = D.cantor_compose_at_infinity(plus=False)
+                (u3, v3), (a, b) = self._parent.cantor_compose_at_infinity(u3, v3, plus=False)
             omega_plus += a
             omega_minus += b
 
@@ -448,9 +440,8 @@ class MumfordDivisorSplit():
         # n3 = (omega^+ - (g/2).ceil())
         # m3 = (omega^- - (g/2).floor())
 
-        u3, v3 = D.uv()
         n3 = omega_plus - (g/2).ceil()
-        #m3 = omega_minus - (g/2).floor()
+        assert g - u3.degree() - n3 == omega_minus - (g/2).floor()
 
         return self._parent(u3, v3, n3)
 
@@ -485,11 +476,14 @@ class MumfordDivisorSplit():
         else:
             # Composition at infinity always with plus=True.
             # want to "substract" \infty_+ - \infty_-
-            D = self.parent()(u1, -h - v1)
-            D, (a, b) = D.cantor_compose_at_infinity(plus=True)
-            u, v = D.uv()
-            D = self.parent()(u, v, m1 + 1 + a)
-            return D
+            (u, v), (a, b) = self._parent.cantor_compose_at_infinity(u1, -h - v1, plus=True)
+            return self.parent()(u, v, m1 + 1 + a)
+        
+    def __sub__(self, other):
+        return self.__add__(-other)
+    
+    def __rsub__(self, other):
+        return (-self).__add__(other)
 
     def __mul__(self, n):
         """
@@ -513,7 +507,5 @@ class MumfordDivisorSplit():
             Q = Q + Q
             n = n // 2
         return R
-
-
 
     __rmul__ = __mul__
