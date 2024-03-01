@@ -48,10 +48,20 @@ for _ in range(1):
     o = J.order()
     assert all([(o * J.random_element()).is_zero() for _ in range(100)])
 
+# Test inversion works
+for _ in range(1):
+    f, h, H = random_curve(genus=3)
+    J = H.jacobian()
+    o = J.order()
+
+    D = J.random_element()
+    assert all([(D + (-D)).is_zero() for _ in range(100)])
+
 
 # Test all points have order dividing the Jacobian order
+g = 4
 for _ in range(1):
-    f, h, H = random_curve(use_h=True, genus=3)
+    f, h, H = random_curve(use_h=True, genus=g)
     J = H.jacobian()
     o = J.order()
 

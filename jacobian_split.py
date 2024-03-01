@@ -175,7 +175,7 @@ class JacobianSplit:
 
 
 class MumfordDivisorSplit():
-    def __init__(self, parent, u, v, n=0):
+    def __init__(self, parent, u, v, n=0, check=True):
         if not isinstance(parent, JacobianSplit):
             raise TypeError("parent must be of type ")
         if not isinstance(u, Polynomial) or not isinstance(v, Polynomial):
@@ -187,6 +187,11 @@ class MumfordDivisorSplit():
 
         self._parent = parent
         g = parent.curve().genus()
+
+        # Ensure the divisor is valid
+        if check:
+            f, h = self._parent.curve().hyperelliptic_polynomials()
+            assert (v**2 + v * h - f) % u == 0, f"{u = }, {v = } do not define a divisor on the Jacobian"
 
         self._u = u
         self._v = v
@@ -446,6 +451,7 @@ class MumfordDivisorSplit():
         u3, v3 = D.uv()
         n3 = omega_plus - (g/2).ceil()
         #m3 = omega_minus - (g/2).floor()
+
         return self._parent(u3, v3, n3)
 
     def __neg__(self):
