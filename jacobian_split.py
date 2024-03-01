@@ -211,7 +211,9 @@ class MumfordDivisorSplit():
 
     def is_zero(self):
         u, v = self.uv()
-        return u.is_one() and v.is_zero()
+        n, m = self.nm()
+        g = self.parent().curve().genus()
+        return u.is_one() and v.is_zero() and n == (g/2).ceil()
 
     def __eq__(self, other):
         if self.is_zero() and other.is_zero():
@@ -342,10 +344,13 @@ class MumfordDivisorSplit():
         a_plus, a_minus = self.parent().curve().roots_at_infinity()
 
         if v0.leading_coefficient() == a_plus:
-            omega_plus, omega_minus = (d0 - g - 1, g + 1 - d1)
-        elif v0.leading_coefficient() == a_minus:
+            #print("a")
             omega_plus, omega_minus = (g + 1 - d1, d0 - g - 1)
+        elif v0.leading_coefficient() == a_minus:
+            #print("b")
+            omega_plus, omega_minus = (d0 - g - 1, g + 1 - d1)
         else:
+            #print("c")
             omega = (d0 - d1) // 2
             omega_plus, omega_minus = (omega, omega)
         return D1, (omega_plus, omega_minus)
@@ -383,9 +388,11 @@ class MumfordDivisorSplit():
         d0 = self.degree()
         d1 = D1.degree()
         if plus:
-            omega_plus, omega_minus = (d0 - g - 1, g + 1 - d1)
-        else:
+            #print("plus")
             omega_plus, omega_minus = (g + 1 - d1, d0 - g - 1)
+        else:
+            #print("minus")
+            omega_plus, omega_minus = (d0 - g - 1, g + 1 - d1)
 
         return D1, (omega_plus, omega_minus)
 
@@ -417,10 +424,14 @@ class MumfordDivisorSplit():
         omega_plus = n1 + n2
         omega_minus = m1 + m2
 
+        assert omega_plus + omega_minus + u1.degree() + u2.degree() == 2*g, "Step 0"
+
         # Step one: cantor composition of the two divisors
         D, (a, b) = self.cantor_composition(other)
         omega_plus += a
         omega_minus += b
+
+        assert omega_plus + omega_minus + D.degree() == 2*g, "Step 1"
 
         # Step two: cantor reduction of the above to ensure
         # the degree of u is smaller than g + 1
@@ -428,6 +439,8 @@ class MumfordDivisorSplit():
             D, (a, b) = D.cantor_reduction()
             omega_plus += a
             omega_minus += b
+
+        assert omega_plus + omega_minus + D.degree() == 2*g, "Step 2"
 
         # Step three: compose and then reduce at infinity to ensure
         # unique representation of D
@@ -438,11 +451,14 @@ class MumfordDivisorSplit():
             # the weights are (1, 1) and they reduce using + infty
             # which makes me thing this should be >= instead of >
             if omega_plus > omega_minus:
-                D, (a, b) = D.cantor_compose_at_infinity()
-            else:
                 D, (a, b) = D.cantor_compose_at_infinity(plus=False)
+            else:
+                D, (a, b) = D.cantor_compose_at_infinity(plus=True)
             omega_plus += a
             omega_minus += b
+
+        assert omega_plus + omega_minus + D.degree() == 2*g, "Step 3"
+
 
         # Computing n3:
         # Algorithm states
@@ -456,7 +472,8 @@ class MumfordDivisorSplit():
 
         u3, v3 = D.uv()
         n3 = omega_plus - (g/2).ceil()
-        #m3 = omega_minus - (g/2).floor()
+        m3 = omega_minus - (g/2).floor()
+        assert n3 + m3 + u3.degree() == g
         return self._parent(u3, v3, n3)
 
     def __neg__(self):
