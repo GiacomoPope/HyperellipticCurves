@@ -104,31 +104,26 @@ class JacobianSplit:
                 D = self.zero()
                 for x, e in u.factor():
                     # Solve y^2 + hy - f = 0 mod x
-                    if isinstance(K, FiniteField_generic):
-                        from sage.rings.polynomial.polynomial_ring import polygen
-                        K_ext = K.extension(modulus=x, names="a")
-                        y_ext = polygen(K_ext, "y_ext")
-                        h_ = K_ext(h % x)
-                        f_ = K_ext(f % x)
-                        y = choice((y_ext**2 + h_ * y_ext - f_).roots(multiplicities=False))
-                        try:
-                            # Quotient ring elements
-                            y = y.lift()
-                        except AttributeError:
-                            pass
+                    from sage.rings.polynomial.polynomial_ring import polygen
+                    K_ext = K.extension(modulus=x, names="a")
+                    y_ext = polygen(K_ext, "y_ext")
+                    h_ = K_ext(h % x)
+                    f_ = K_ext(f % x)
+                    y = choice((y_ext**2 + h_ * y_ext - f_).roots(multiplicities=False))
+                    try:
+                        # Quotient ring elements
+                        y = y.lift()
+                    except AttributeError:
+                        pass
 
-                        try:
-                            g = self.curve().genus()
-                            for i in range(e):
-                                n = randint(0, g - x.degree())
-                                D += self(x, R(y), n)
-                        except (ValueError, TypeError):
-                            raise IndexError
+                    try:
+                        g = self.curve().genus()
+                        for _ in range(e):
+                            n = randint(0, g - x.degree())
+                            D += self(x, R(y), n)
+                    except (ValueError, TypeError):
+                        raise IndexError
 
-                    else:
-                        # This shouldn't be reachable - blocked by :meth:`random_element`.
-                        raise NotImplementedError("root finding over function fields are not"
-                                                  "implemented!")
                 return D
 
             except IndexError:
@@ -195,6 +190,9 @@ class JacobianSplit:
         ), f"The degree of ai must be smaller than f, {u1.degree()}, {u2.degree()}"
         assert (v1**2 + v1 * h - f) % u1 == 0, "D1 is not a valid divisor"
         assert (v2**2 + v2 * h - f) % u2 == 0, "D2 is not a valid divisor"
+
+        # TODO: when gcd(u0, u1) == 1 we can speed this up
+        # TODO: when h = 0 we can speed this up.
 
         # Step One
         s0, e1, e2 = u1.xgcd(u2)
@@ -339,20 +337,19 @@ class MumfordDivisorSplit():
         return (self._n, self._m)
 
     def is_zero(self):
-        u, v = self.uv()
-        return u.is_one() and v.is_zero()
+        g = self._parent.curve().genus()
+        if self._n != (g/2).ceil():
+            return False
+        return self._u.is_one() and self._v.is_zero()
 
     def __eq__(self, other):
-        if self.is_zero() and other.is_zero():
-            return True
-
         if not isinstance(other, MumfordDivisorSplit):
             return False
 
         n1, _ = self.nm()
         n2, _ = other.nm()
 
-        if not n1 == n2:
+        if n1 != n2:
             return False
 
         u1, v1 = self.uv()

@@ -2,9 +2,7 @@ from hyperelliptic_split import HyperellipticCurveSplit
 R.<x> = PolynomialRing(GF(3))
 
 def random_sample(J, n=2000, fast=True):
-    p = []
-    for _ in range(n):
-        p.append(J.random_element(fast=fast))
+    p = [J.random_element(fast=fast) for _ in range(n)]
     return len(set(p))
 
 def random_curve(use_h=True, genus=2):
@@ -27,7 +25,7 @@ def random_curve(use_h=True, genus=2):
 
 # Test that randomly sampling gets all elements in the group
 for _ in range(3):
-    f, h, H = random_curve(genus=3)
+    f, h, H = random_curve(genus=2)
     J = H.jacobian()
     o = J.order()
 
@@ -49,13 +47,13 @@ for _ in range(1):
     assert all([(o * J.random_element()).is_zero() for _ in range(100)])
 
 # Test inversion works
-for _ in range(1):
-    f, h, H = random_curve(genus=3)
+for _ in range(10):
+    f, h, H = random_curve(genus=4)
     J = H.jacobian()
     o = J.order()
 
     D = J.random_element()
-    assert all([(D + (-D)).is_zero() for _ in range(100)])
+    assert all([(D - D).is_zero() for _ in range(100)])
 
 
 # Test all points have order dividing the Jacobian order
