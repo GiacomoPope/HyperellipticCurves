@@ -237,7 +237,7 @@ class JacobianSplit:
         g = H.genus()
 
         # Ensure D is a semi-reduced divisor
-        # assert u0.degree() >= g + 2, "Divisor has incorrect degree"
+        assert u0.degree() >= g + 2, "Divisor has incorrect degree"
         assert (v0**2 + v0 * h - f) % u0 == 0, "D is not a valid divisor"
 
         # Compute u' and v'
@@ -248,7 +248,7 @@ class JacobianSplit:
         # Compute the counter weights
         d0 = u0.degree()
         d1 = u1.degree()
-        a_plus, a_minus = self.curve().roots_at_infinity()
+        a_plus, a_minus = H.roots_at_infinity()
 
         if v0.leading_coefficient() == a_plus:
             omega_plus, omega_minus = (d0 - g - 1, g + 1 - d1)
@@ -320,7 +320,7 @@ class MumfordDivisorSplit():
         self._u = u
         self._v = v
 
-        # assert 0 <= n <= (g - u.degree())
+        assert 0 <= n <= (g - u.degree())
         self._n = n
         self._m = g - u.degree() - n
 
@@ -488,11 +488,14 @@ class MumfordDivisorSplit():
         if not isinstance (n, (int, Integer)):
             raise ValueError
 
+        if not n:
+            return self._parent().zero()
+
         P = self
 
         # Handle negative scalars
         if n < 0:
-            n = -n
+            n = - n
             P = - P
 
         # Double and Add
