@@ -250,9 +250,10 @@ class JacobianSplit:
         d1 = u1.degree()
         a_plus, a_minus = H.roots_at_infinity()
 
-        if v0.leading_coefficient() == a_plus:
+        leading_coefficient = v0[g+1] # check coefficient of x^(g+1)
+        if leading_coefficient == a_plus:
             omega_plus, omega_minus = (d0 - g - 1, g + 1 - d1)
-        elif v0.leading_coefficient() == a_minus:
+        elif leading_coefficient == a_minus:
             omega_plus, omega_minus = (g + 1 - d1, d0 - g - 1)
         else:
             omega = (d0 - d1) // 2
