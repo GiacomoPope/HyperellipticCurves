@@ -40,39 +40,17 @@ for _ in range(3):
     print(f"")
 
 # Test all points have order dividing the Jacobian order
-# for _ in range(1):
-#     f, h, H = random_curve(genus=3)
-#     J = H.jacobian()
-#     o = J.order()
-#     assert all([(o * J.random_element()).is_zero() for _ in range(100)])
+for genus in [2, 3, 4, 5]:
+    for _ in range(10):
+        f, h, H = random_curve(genus=3)
+        J = H.jacobian()
+        o = J.order()
 
-# Test inversion works
-for _ in range(10):
-    f, h, H = random_curve(genus=4)
-    J = H.jacobian()
-    o = J.order()
+        # Test order
+        assert all([(o * J.random_element()).is_zero() for _ in range(100)])
 
-    D = J.random_element()
-    assert all([(D - D).is_zero() for _ in range(100)])
+        # Test inversion
+        for _ in range(100):
+            D = J.random_element()
+            assert (D - D).is_zero()
 
-
-# Test all points have order dividing the Jacobian order
-R.<x> = PolynomialRing(GF(3))
-g = 3
-for _ in range(3):
-    f, h, H = random_curve(use_h=False, genus=g)
-    print(f"{f.factor() = }")
-    J = H.jacobian()
-    o = J.order()
-
-    print(f"Testing with: {J}")
-    bad = []
-    for _ in range(1000):
-        D = J.random_element()
-        if not (o * D).is_zero():
-            bad.append(D)
-    print(f"Bad elements of 1000: {len(bad)}")
-    print(f"Number of unique bad elements: {len(set(bad))}")
-    print(f"Order of the Jacobian: {o.factor()}")
-
-    print()

@@ -250,11 +250,14 @@ class JacobianSplit:
         d1 = u1.degree()
         a_plus, a_minus = H.roots_at_infinity()
 
-        leading_coefficient = v0[g+1] # check coefficient of x^(g+1)
-        if leading_coefficient == a_plus:
-            omega_plus, omega_minus = (d0 - g - 1, g + 1 - d1)
-        elif leading_coefficient == a_minus:
-            omega_plus, omega_minus = (g + 1 - d1, d0 - g - 1)
+        if v0.degree() == g + 1:
+            leading_coefficient = v0[g+1] # check coefficient of x^(g+1)
+            if leading_coefficient == a_plus:
+                omega_plus, omega_minus = (d0 - g - 1, g + 1 - d1)
+            elif leading_coefficient == a_minus:
+                omega_plus, omega_minus = (g + 1 - d1, d0 - g - 1)
+            else:
+                raise AssertionError("should be unreachable?")
         else:
             omega = (d0 - d1) // 2
             omega_plus, omega_minus = (omega, omega)
