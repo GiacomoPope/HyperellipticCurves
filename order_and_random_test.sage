@@ -25,7 +25,7 @@ def random_curve(use_h=True, genus=2):
 
 # Test that randomly sampling gets all elements in the group
 for _ in range(3):
-    f, h, H = random_curve(genus=2)
+    f, h, H = random_curve(genus=3)
     J = H.jacobian()
     o = J.order()
 
@@ -40,9 +40,9 @@ for _ in range(3):
     print(f"")
 
 # Test all points have order dividing the Jacobian order
-for genus in [2, 3, 4, 5]:
+for g in [2, 3, 4, 5]:
     for _ in range(10):
-        f, h, H = random_curve(genus=3)
+        f, h, H = random_curve(genus=g)
         J = H.jacobian()
         o = J.order()
 
