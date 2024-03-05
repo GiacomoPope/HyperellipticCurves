@@ -10,6 +10,7 @@ from sage.misc.cachefunc import cached_method
 # Needed until https://github.com/sagemath/sage/pull/37118 is merged.
 from uniform_random_sampling import uniform_random_polynomial
 
+
 class JacobianSplit:
     def __init__(self, H):
         if not isinstance(H, HyperellipticCurveSplit):
@@ -32,7 +33,7 @@ class JacobianSplit:
         """
         g = self._curve.genus()
         R = self._curve.polynomial_ring()
-        n = (g/2).ceil()
+        n = (g / 2).ceil()
         return self._element(self, R.one(), R.zero(), n)
 
     def __call__(self, *args):
@@ -40,15 +41,15 @@ class JacobianSplit:
             R, x = self._curve.polynomial_ring().objgen()
             g = self._curve.genus()
             P = args[0]
-            [X,Y,Z] = P.coords()
+            [X, Y, Z] = P.coords()
             # TODO:
             # we use the embedding P \mapsto P - \infty_+
             # note: P - \inft_+ = P + n*\infty_+ + m*\infty_- - D_\infty,
-            # where n = ((g-1)/2).floor() 
+            # where n = ((g-1)/2).floor()
             # do we want a different embedding by default?
-            n = ((g-1)/2).floor()
+            n = ((g - 1) / 2).floor()
             if Z == 0:
-                alpha = Y/X
+                alpha = Y / X
                 if alpha == self._curve._alphas[0]:
                     n = n + 1
                 u = R(1)
@@ -98,13 +99,14 @@ class JacobianSplit:
             u = uniform_random_polynomial(R, degree=degree)
             if u.is_zero():
                 n = randint(0, g)
-                return self(R(1),R(0),n)
+                return self(R(1), R(0), n)
             u = u.monic()
             try:
                 D = self.zero()
                 for x, e in u.factor():
                     # Solve y^2 + hy - f = 0 mod x
                     from sage.rings.polynomial.polynomial_ring import polygen
+
                     K_ext = K.extension(modulus=x, names="a")
                     y_ext = polygen(K_ext, "y_ext")
                     h_ = K_ext(h % x)
@@ -138,7 +140,7 @@ class JacobianSplit:
         g = H.genus()
 
         # We randomly sample 2g + 1 points on the hyperelliptic curve
-        points = [H.random_point() for _ in range(2*g + 1)]
+        points = [H.random_point() for _ in range(2 * g + 1)]
 
         # We create 2g + 1 divisors of the form (P) - infty
         divisors = [self(P) for P in points if P[2] != 0]
@@ -162,24 +164,53 @@ class JacobianSplit:
           algorithm is used, but covers the entire Jacobian.
         """
         if not isinstance(self.base_ring(), FiniteField_generic):
-            raise NotImplementedError("random element of Jacobian is only implemented over Finite Fields")
+            raise NotImplementedError(
+                "random element of Jacobian is only implemented over Finite Fields"
+            )
 
         if fast:
             return self._random_element_rational(*args, **kwargs)
         return self._random_element_cover(*args, **kwargs)
 
+    def __cantor_double(self, u1, v1, n1, n2):
+        """
+        Efficient cantor composition for doubling an affine divisor
+        """
+        f, h = self._curve.hyperelliptic_polynomials()
 
-    def cantor_composition(self, u1, v1, u2, v2):
+        # New mumford coordinates
+        if h.is_zero():
+            s, _, e2 = u1.xgcd(v1 + v1)
+            u3 = (u1 // s) ** 2
+            v3 = v1 + e2 * (f - v1**2) // s
+        else:
+            s, _, e2 = u1.xgcd(v1 + v1 + h)
+            u3 = (u1 // s) ** 2
+            v3 = v1 + e2 * (f - v1 * h - v1**2) // s
+        v3 = v3 % u3
+
+        # New weight
+        g = self._curve.genus()
+        m = (g / 2).ceil()
+        n3 = n1 + n2 + s.degree() - m
+
+        return u3, v3, n3
+
+    def cantor_composition(self, u1, v1, n1, u2, v2, n2):
         """
         Follows algorithm 3.4 of
 
         Efficient Arithmetic on Hyperelliptic Curves With Real Representation
         David J. Mireles Morales (2008)
         https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
+
+        TODO: when h = 0 we can speed this up.
         """
         # Collect data from HyperellipticCurve
         H = self.curve()
         f, h = H.hyperelliptic_polynomials()
+        g = H.genus()
+        m = (g / 2).ceil()
 
         # Ensure D1 and D2 are semi-reduced divisors
         assert (
@@ -188,42 +219,44 @@ class JacobianSplit:
         assert (
             u1.degree() <= f.degree() and u2.degree() <= f.degree()
         ), f"The degree of ai must be smaller than f, {u1.degree()}, {u2.degree()}"
-        assert (v1**2 + v1 * h - f) % u1 == 0, "D1 is not a valid divisor"
-        assert (v2**2 + v2 * h - f) % u2 == 0, "D2 is not a valid divisor"
 
-        # TODO: when gcd(u0, u1) == 1 we can speed this up
-        # TODO: when h = 0 we can speed this up.
+        # Special case: duplication law
+        if u1 == u2 and v1 == v2:
+            return self.__cantor_double(u1, v1, n1, n2)
 
         # Step One
-        s0, e1, e2 = u1.xgcd(u2)
-        assert s0 == e1 * u1 + e2 * u2
+        s0, _, e2 = u1.xgcd(u2)
+
+        # Special case: when gcd(u0, u1) == 1 we can
+        # avoid many expensive steps as we have s = 1
+        if s0.is_one():
+            u3 = u1 * u2
+            v3 = v2 + e2 * u2 * (v1 - v2)
+            v3 = v3 % u3
+            n3 = n1 + n2 - m
+            return u3, v3, n3
 
         # Step Two
-        s, c1, c2 = s0.xgcd(v1 + v2 + h)
-        assert s == c1 * s0 + c2 * (v1 + v2 + h)
+        w0 = v1 + v2 + h
+
+        # Another special case, when w0 is zero we skip
+        # a xgcd and can return early
+        if w0.is_zero():
+            u3 = (u1 * u2) // (s0**2)
+            v3 = v2 + e2 * (v1 - v2) * (u2 // s0)
+            v3 = v3 % u3
+            n3 = n1 + n2 + s0.degree() - m
+            return u3, v3, n3
 
         # Step Three
-        f1 = c1 * e1
-        f2 = c1 * e2
-        f3 = c2
-        assert s == f1 * u1 + f2 * u2 + f3 * (v1 + v2 + h)
-
-        # Step Four
+        s, c1, c2 = s0.xgcd(w0)
         u3 = (u1 * u2) // (s**2)
-        v3 = (f1 * u1 * v2 + f2 * u2 * v1 + f3 * (v1 * v2 + f))
-
-        # computation of v/s (mod u)
-        if s.divides(v3):
-            v3 //= s
-        else:
-            s_inverse = s.inverse_mod(u3)
-            v3 *= s_inverse
-
+        v3 = v2 + (c1 * e2 * (v1 - v2) * u2 + c2 * (f - h * v2 - v2**2)) // s
         v3 = v3 % u3
+        n3 = n1 + n2 + s.degree() - m
+        return u3, v3, n3
 
-        return (u3, v3), (s.degree(), s.degree())
-
-    def cantor_reduction(self, u0, v0):
+    def cantor_reduction(self, u0, v0, n0):
         """
         Follows algorithm 3.5 of
 
@@ -244,27 +277,25 @@ class JacobianSplit:
         u1 = (v0**2 + h * v0 - f) // u0
         u1 = u1.monic()
         v1 = (-h - v0) % u1
-        
+
         # Compute the counter weights
         d0 = u0.degree()
         d1 = u1.degree()
         a_plus, a_minus = H.roots_at_infinity()
 
         if v0.degree() == g + 1:
-            leading_coefficient = v0[g+1] # check coefficient of x^(g+1)
+            leading_coefficient = v0[g + 1]  # check coefficient of x^(g+1)
             if leading_coefficient == a_plus:
-                omega_plus, omega_minus = (d0 - g - 1, g + 1 - d1)
+                n1 = n0 + d0 - g - 1
             elif leading_coefficient == a_minus:
-                omega_plus, omega_minus = (g + 1 - d1, d0 - g - 1)
+                n1 = n0 + g + 1 - d1
             else:
                 raise AssertionError("should be unreachable?")
         else:
-            omega = (d0 - d1) // 2
-            omega_plus, omega_minus = (omega, omega)
-        return (u1, v1), (omega_plus, omega_minus)
+            n1 = n0 + (d0 - d1) // 2
+        return u1, v1, n1
 
-
-    def cantor_compose_at_infinity(self, u0, v0, plus=True):
+    def cantor_compose_at_infinity(self, u0, v0, n0, plus=True):
         """
         Follows algorithm 3.6 of
 
@@ -290,28 +321,24 @@ class JacobianSplit:
         v1 = (-h - v1_prime) % u1
 
         # Compute the counter weights
-        d0 = u0.degree()
-        d1 = u1.degree()
         if plus:
-            omega_plus, omega_minus = (d0 - g - 1, g + 1 - d1)
+            n1 = n0 + u0.degree() - g - 1
         else:
-            omega_plus, omega_minus = (g + 1 - d1, d0 - g - 1)
+            n1 = n0 + g + 1 - u1.degree()
 
-        return (u1, v1), (omega_plus, omega_minus)
-
-
+        return u1, v1, n1
 
 
-class MumfordDivisorSplit():
+class MumfordDivisorSplit:
     def __init__(self, parent, u, v, n=0, check=True):
         if not isinstance(parent, JacobianSplit):
             raise TypeError("parent must be of type ")
         if not isinstance(u, Polynomial) or not isinstance(v, Polynomial):
             raise TypeError(f"arguments {u = } and {v = } must be polynomials")
-        #TODO:
+ 
+        # TODO:
         # 1. allow elements of the base field as input
         #   (in particular something like (u,v) = (x-alpha, 0))
-        # 2. define J(0) = (1,0:(g/2).ceil())
 
         self._parent = parent
         g = parent.curve().genus()
@@ -319,7 +346,9 @@ class MumfordDivisorSplit():
         # Ensure the divisor is valid
         if check:
             f, h = self._parent.curve().hyperelliptic_polynomials()
-            assert (v**2 + v * h - f) % u == 0, f"{u = }, {v = } do not define a divisor on the Jacobian"
+            assert (
+                v**2 + v * h - f
+            ) % u == 0, f"{u = }, {v = } do not define a divisor on the Jacobian"
 
         self._u = u
         self._v = v
@@ -337,12 +366,9 @@ class MumfordDivisorSplit():
     def uv(self):
         return (self._u, self._v)
 
-    def nm(self):
-        return (self._n, self._m)
-
     def is_zero(self):
         g = self._parent.curve().genus()
-        if self._n != (g/2).ceil():
+        if self._n != (g / 2).ceil():
             return False
         return self._u.is_one() and self._v.is_zero()
 
@@ -350,8 +376,7 @@ class MumfordDivisorSplit():
         if not isinstance(other, MumfordDivisorSplit):
             return False
 
-        n1, _ = self.nm()
-        n2, _ = other.nm()
+        n1, n2 = self._n, other._n
 
         if n1 != n2:
             return False
@@ -397,52 +422,27 @@ class MumfordDivisorSplit():
         u2, v2 = other.uv()
 
         # Extract out integers for weights
-        n1, m1 = self.nm()
-        n2, m2 = other.nm()
-
-        # Compute weights for the sum
-        omega_plus = n1 + n2
-        omega_minus = m1 + m2
+        n1, n2 = self._n, other._n
 
         # Step one: cantor composition of the two divisors
-        (u3, v3), (a, b) = self._parent.cantor_composition(u1, v1, u2, v2)
-        omega_plus += a
-        omega_minus += b
+        u3, v3, n3 = self._parent.cantor_composition(u1, v1, n1, u2, v2, n2)
 
         # Step two: cantor reduction of the above to ensure
         # the degree of u is smaller than g + 1
         while u3.degree() > (g + 1):
-            (u3, v3), (a, b) = self._parent.cantor_reduction(u3, v3)
-            omega_plus += a
-            omega_minus += b
+            u3, v3, n3 = self._parent.cantor_reduction(u3, v3, n3)
 
         # Step three: compose and then reduce at infinity to ensure
         # unique representation of D
-        while (omega_plus < g/2) or (omega_minus < (g-1)/2):
-            # TODO the paper has omega_plus > omega_minus
-            # is this a typo? what happens for equal weight?
-            # For example 3.2 after composition and reduction
-            # the weights are (1, 1) and they reduce using + infty
-            # which makes me thing this should be >= instead of >
-            if omega_plus > omega_minus:
-                (u3, v3), (a, b) = self._parent.cantor_compose_at_infinity(u3, v3)
+        while n3 < 0 or n3 > g - u3.degree():
+            if n3 < 0:
+                u3, v3, n3 = self._parent.cantor_compose_at_infinity(
+                    u3, v3, n3, plus=False
+                )
             else:
-                (u3, v3), (a, b) = self._parent.cantor_compose_at_infinity(u3, v3, plus=False)
-            omega_plus += a
-            omega_minus += b
-
-        # Computing n3:
-        # Algorithm states
-        # E := D + omega^+ \infty^+ + omega^- \infty^- - D_\infty
-        # Write E = D + n3 \infty^+ + m3 \infty^-
-        # D_\infty = (g/2)(\infty^+ + \infty^-) when g is even
-        #            (g+1)/2 \infty^+ + (g-1)/2 \infty_- when g is odd
-        # So:
-        # n3 = (omega^+ - (g/2).ceil())
-        # m3 = (omega^- - (g/2).floor())
-
-        n3 = omega_plus - (g/2).ceil()
-        assert g - u3.degree() - n3 == omega_minus - (g/2).floor()
+                u3, v3, n3 = self._parent.cantor_compose_at_infinity(
+                    u3, v3, n3, plus=True
+                )
 
         return self._parent(u3, v3, n3)
 
@@ -459,37 +459,37 @@ class MumfordDivisorSplit():
         _, h = H.hyperelliptic_polynomials()
         g = H.genus()
 
-        u1, v1 = self.uv()
-        n1, m1 = self.nm()
+        u0, v0 = self.uv()
+        n0, m0 = self._n, self._m
 
         # Case for even genus
         if not (g % 2):
-            v1 = (-h - v1) % u1
-            n1 = m1
-            return self.parent()(u1, v1, n1)
-        # Odd genus, positive n1
-        elif n1 > 0:
-            v1 = (-h - v1) % u1
-            #Note: I think this is a typo in the paper
-            #n1 = g - m1 - u1.degree() + 1
-            n1 = m1 + 1
-            return self.parent()(u1, v1, n1)
+            v1 = (-h - v0) % u0
+            return self.parent()(u0, v1, m0)
+        # Odd genus, positive n0
+        elif n0 > 0:
+            v1 = (-h - v0) % u0
+            # Note: I think this is a typo in the paper
+            # n1 = g - m0 - u1.degree() + 1
+            n1 = m0 + 1
+            return self.parent()(u0, v1, n1)
         else:
             # Composition at infinity always with plus=True.
             # want to "substract" \infty_+ - \infty_-
-            (u, v), (a, b) = self._parent.cantor_compose_at_infinity(u1, -h - v1, plus=True)
-            return self.parent()(u, v, m1 + 1 + a)
-        
+            (u1, v1, n1) = self._parent.cantor_compose_at_infinity(
+                u0, -h - v0, n0, plus=True
+            )
+            return self.parent()(u1, v1, n1 - n0 + m0 + 1)
+
     def __sub__(self, other):
         return self.__add__(-other)
-    
+
     def __rsub__(self, other):
         return (-self).__add__(other)
 
     def __mul__(self, n):
-        """
-        """
-        if not isinstance (n, (int, Integer)):
+        """ """
+        if not isinstance(n, (int, Integer)):
             raise ValueError
 
         if not n:
@@ -499,8 +499,8 @@ class MumfordDivisorSplit():
 
         # Handle negative scalars
         if n < 0:
-            n = - n
-            P = - P
+            n = -n
+            P = -P
 
         # Double and Add
         Q = P

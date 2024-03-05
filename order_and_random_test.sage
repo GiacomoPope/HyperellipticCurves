@@ -1,7 +1,7 @@
 from hyperelliptic_split import HyperellipticCurveSplit
 R.<x> = PolynomialRing(GF(3))
 
-def random_sample(J, n=2000, fast=True):
+def random_sample(J, n=1000, fast=True):
     p = [J.random_element(fast=fast) for _ in range(n)]
     return len(set(p))
 
@@ -41,16 +41,31 @@ for _ in range(3):
 
 # Test all points have order dividing the Jacobian order
 for g in [2, 3, 4, 5]:
-    for _ in range(10):
+    print(f"Testing arithmetic for genus: {g}")
+    for _ in range(5):
         f, h, H = random_curve(genus=g)
         J = H.jacobian()
         o = J.order()
 
         # Test order
         assert all([(o * J.random_element()).is_zero() for _ in range(100)])
+        assert all([(o * J.random_element(fast=False)).is_zero() for _ in range(100)])
+
+        # Test order on divisor
+        for _ in range(100):
+            D = J.random_element()
+            order = D.order()
+            assert order * D == J.zero()
 
         # Test inversion
         for _ in range(100):
             D = J.random_element()
             assert (D - D).is_zero()
+
+        # Test inversion on non-rational
+        for _ in range(100):
+            D = J.random_element(fast=False)
+            assert (D - D).is_zero()
+
+    print(f"Passed for genus: {g}")
 
