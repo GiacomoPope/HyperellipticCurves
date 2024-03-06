@@ -1,31 +1,18 @@
-from sage.rings.polynomial.polynomial_element import Polynomial
-from hyperelliptic_split import HyperellipticCurveSplit, HyperellipticPoint
-from sage.rings.integer import Integer
 from sage.misc.prandom import randint
 from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
 from sage.misc.prandom import choice
-from sage.groups.generic import order_from_multiple
-from sage.misc.cachefunc import cached_method
 
 # Needed until https://github.com/sagemath/sage/pull/37118 is merged.
 from uniform_random_sampling import uniform_random_polynomial
 
+# Base classes
+from hyperelliptic import HyperellipticPoint
+from jacobian import HyperellipticJacobian, MumfordDivisor
 
-class JacobianSplit:
+class HyperellipticJacobianSplit(HyperellipticJacobian):
     def __init__(self, H):
-        if not isinstance(H, HyperellipticCurveSplit):
-            raise ValueError("TODO")
-        self._curve = H
+        super(HyperellipticJacobianSplit, self).__init__(H)
         self._element = MumfordDivisorSplit
-
-    def __repr__(self) -> str:
-        return f"Jacobian of {self._curve}"
-
-    def curve(self):
-        return self._curve
-
-    def base_ring(self):
-        return self._curve.base_ring()
 
     def zero(self):
         """
@@ -67,15 +54,6 @@ class JacobianSplit:
         else:
             raise NotImplementedError
         return self._element(self, u, v, n=n)
-
-    @cached_method
-    def cardinality(self):
-        """
-        TODO: currently using lazy methods by calling sage
-        """
-        return sum(self.curve().frobenius_polynomial())
-
-    order = cardinality
 
     def _random_element_cover(self, degree=None):
         r"""
@@ -172,30 +150,6 @@ class JacobianSplit:
             return self._random_element_rational(*args, **kwargs)
         return self._random_element_cover(*args, **kwargs)
 
-    def __cantor_double(self, u1, v1, n1, n2):
-        """
-        Efficient cantor composition for doubling an affine divisor
-        """
-        f, h = self._curve.hyperelliptic_polynomials()
-
-        # New mumford coordinates
-        if h.is_zero():
-            s, _, e2 = u1.xgcd(v1 + v1)
-            u3 = (u1 // s) ** 2
-            v3 = v1 + e2 * (f - v1**2) // s
-        else:
-            s, _, e2 = u1.xgcd(v1 + v1 + h)
-            u3 = (u1 // s) ** 2
-            v3 = v1 + e2 * (f - v1 * h - v1**2) // s
-        v3 = v3 % u3
-
-        # New weight
-        g = self._curve.genus()
-        m = (g / 2).ceil()
-        n3 = n1 + n2 + s.degree() - m
-
-        return u3, v3, n3
-
     def cantor_composition(self, u1, v1, n1, u2, v2, n2):
         """
         Follows algorithm 3.4 of
@@ -208,52 +162,14 @@ class JacobianSplit:
         """
         # Collect data from HyperellipticCurve
         H = self.curve()
-        f, h = H.hyperelliptic_polynomials()
         g = H.genus()
-        m = (g / 2).ceil()
 
-        # Ensure D1 and D2 are semi-reduced divisors
-        assert (
-            v1.degree() < u1.degree() and v2.degree() < u2.degree()
-        ), "The degree of bi must be smaller than ai"
-        assert (
-            u1.degree() <= f.degree() and u2.degree() <= f.degree()
-        ), f"The degree of ai must be smaller than f, {u1.degree()}, {u2.degree()}"
+        # Cantor composition
+        u3, v3, s_deg = self._cantor_composition_generic(u1, v1, u2, v2)
+        
+        # Compute new weight
+        n3 = n1 + n2 + s_deg - (g / 2).ceil()
 
-        # Special case: duplication law
-        if u1 == u2 and v1 == v2:
-            return self.__cantor_double(u1, v1, n1, n2)
-
-        # Step One
-        s0, _, e2 = u1.xgcd(u2)
-
-        # Special case: when gcd(u0, u1) == 1 we can
-        # avoid many expensive steps as we have s = 1
-        if s0.is_one():
-            u3 = u1 * u2
-            v3 = v2 + e2 * u2 * (v1 - v2)
-            v3 = v3 % u3
-            n3 = n1 + n2 - m
-            return u3, v3, n3
-
-        # Step Two
-        w0 = v1 + v2 + h
-
-        # Another special case, when w0 is zero we skip
-        # a xgcd and can return early
-        if w0.is_zero():
-            u3 = (u1 * u2) // (s0**2)
-            v3 = v2 + e2 * (v1 - v2) * (u2 // s0)
-            v3 = v3 % u3
-            n3 = n1 + n2 + s0.degree() - m
-            return u3, v3, n3
-
-        # Step Three
-        s, c1, c2 = s0.xgcd(w0)
-        u3 = (u1 * u2) // (s**2)
-        v3 = v2 + (c1 * e2 * (v1 - v2) * u2 + c2 * (f - h * v2 - v2**2)) // s
-        v3 = v3 % u3
-        n3 = n1 + n2 + s.degree() - m
         return u3, v3, n3
 
     def cantor_reduction(self, u0, v0, n0):
@@ -266,17 +182,10 @@ class JacobianSplit:
         """
         # Collect data from HyperellipticCurve
         H = self.curve()
-        f, h = H.hyperelliptic_polynomials()
         g = H.genus()
 
-        # Ensure D is a semi-reduced divisor
-        assert u0.degree() >= g + 2, "Divisor has incorrect degree"
-        assert (v0**2 + v0 * h - f) % u0 == 0, "D is not a valid divisor"
-
-        # Compute u' and v'
-        u1 = (v0**2 + h * v0 - f) // u0
-        u1 = u1.monic()
-        v1 = (-h - v0) % u1
+        # Perform regular cantor reduction
+        u1, v1 = self._cantor_reduction_generic(u0, v0)
 
         # Compute the counter weights
         d0 = u0.degree()
@@ -329,42 +238,21 @@ class JacobianSplit:
         return u1, v1, n1
 
 
-class MumfordDivisorSplit:
+class MumfordDivisorSplit(MumfordDivisor):
     def __init__(self, parent, u, v, n=0, check=True):
-        if not isinstance(parent, JacobianSplit):
-            raise TypeError("parent must be of type ")
-        if not isinstance(u, Polynomial) or not isinstance(v, Polynomial):
-            raise TypeError(f"arguments {u = } and {v = } must be polynomials")
- 
-        # TODO:
-        # 1. allow elements of the base field as input
-        #   (in particular something like (u,v) = (x-alpha, 0))
+        if not isinstance(parent, HyperellipticJacobianSplit):
+            raise TypeError(f"parent must be of type {HyperellipticJacobianSplit}")
 
-        self._parent = parent
+        # Ensure the weight is set correctly
         g = parent.curve().genus()
-
-        # Ensure the divisor is valid
-        if check:
-            f, h = self._parent.curve().hyperelliptic_polynomials()
-            assert (
-                v**2 + v * h - f
-            ) % u == 0, f"{u = }, {v = } do not define a divisor on the Jacobian"
-
-        self._u = u
-        self._v = v
-
         assert 0 <= n <= (g - u.degree())
         self._n = n
         self._m = g - u.degree() - n
 
-    def parent(self):
-        return self._parent
+        super(MumfordDivisorSplit, self).__init__(parent, u, v, check=check)
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return f"({self._u}, {self._v} : {self._n})"
-
-    def uv(self):
-        return (self._u, self._v)
 
     def is_zero(self):
         g = self._parent.curve().genus()
@@ -389,17 +277,6 @@ class MumfordDivisorSplit:
     def __hash__(self):
         data = (self._u, self._v, self._n)
         return hash(data)
-
-    @cached_method
-    def order(self):
-        n = self.parent().order()
-        return order_from_multiple(self, n)
-
-    def degree(self):
-        """
-        Returns the degree of the affine part of the divisor.
-        """
-        return self._u.degree()
 
     def __add__(self, other):
         r"""
@@ -480,36 +357,3 @@ class MumfordDivisorSplit:
                 u0, -h - v0, n0, plus=True
             )
             return self.parent()(u1, v1, n1 - n0 + m0 + 1)
-
-    def __sub__(self, other):
-        return self.__add__(-other)
-
-    def __rsub__(self, other):
-        return (-self).__add__(other)
-
-    def __mul__(self, n):
-        """ """
-        if not isinstance(n, (int, Integer)):
-            raise ValueError
-
-        if not n:
-            return self._parent().zero()
-
-        P = self
-
-        # Handle negative scalars
-        if n < 0:
-            n = -n
-            P = -P
-
-        # Double and Add
-        Q = P
-        R = self.parent().zero()
-        while n > 0:
-            if n % 2 == 1:
-                R = R + Q
-            Q = Q + Q
-            n = n // 2
-        return R
-
-    __rmul__ = __mul__

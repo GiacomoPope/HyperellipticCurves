@@ -4,7 +4,8 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 
-class HyperellipticCurveSplit:
+# Named New to differentiate from the global HyperellipticCurve in Sage
+class HyperellipticCurveNew:
     def __init__(self, f, h=0):
         # Some values which we will cache as a user asks for them
         self._alphas = None
@@ -279,8 +280,10 @@ class HyperellipticCurveSplit:
         return self.point(coords)
 
     def jacobian(self):
-        from jacobian_split import JacobianSplit
-        return JacobianSplit(self)
+        if len(self.points_at_infinity()) == 2:
+            from jacobian_split import HyperellipticJacobianSplit
+            return HyperellipticJacobianSplit(self)
+        raise NotImplementedError
 
     def frobenius_polynomial(self):
         """

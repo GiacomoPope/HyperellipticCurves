@@ -1,4 +1,4 @@
-from hyperelliptic_split import HyperellipticCurveSplit
+from hyperelliptic import HyperellipticCurveNew
 R.<x> = PolynomialRing(GF(5))
 
 def random_sample(J, n=500, fast=True):
@@ -25,13 +25,13 @@ def random_curve(use_h=True, genus=2):
         
         # Ensure that there are two points at infinity and the curve is non-singular 
         try:
-            # TODO: write proper singularity checking in HyperellipticCurveSplit
+            # TODO: write proper singularity checking in HyperellipticCurveNew
             # TODO: write proper error handling if there's not two points at infinity
             HyperellipticCurve(f, h)
-            H = HyperellipticCurveSplit(f, h)
+            H = HyperellipticCurveNew(f, h)
             if len(H.roots_at_infinity()) != 2:
                 continue
-            return f, h, HyperellipticCurveSplit(f, h)
+            return f, h, HyperellipticCurveNew(f, h)
         except:
             continue
     
@@ -52,8 +52,7 @@ for _ in range(1):
     print(f"")
 
 # Test all points have order dividing the Jacobian order
-# for g in [2, 3, 4, 5]:
-for g in [2, 3]: 
+for g in [2, 3, 4, 5]:
     print(f"Testing arithmetic for genus: {g}")
     for _ in range(5):
         f, h, H = random_curve(genus=g)
