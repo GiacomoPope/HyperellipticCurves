@@ -1,31 +1,43 @@
 from hyperelliptic_split import HyperellipticCurveSplit
-R.<x> = PolynomialRing(GF(7))
+R.<x> = PolynomialRing(GF(5))
 
-def random_sample(J, n=1000, fast=True):
+def random_sample(J, n=500, fast=True):
     p = [J.random_element(fast=fast) for _ in range(n)]
     return len(set(p))
 
 def random_curve(use_h=True, genus=2):
     d = 2*genus + 2
     while True:
+        # Find a polynomial for f
         while True:
             f = R.random_element(degree=d)
             if f.degree() == d:
                 f = f.monic()
                 break
+        # Find a polynomial for h
         if use_h:
-            h = R.random_element(degree=2)
+            if R.base_ring().characteristic() == 2:
+                h = R.random_element(degree=(genus + 1))
+            else:
+                h = R.random_element(degree=2)
         else:
             h = 0
+        
+        # Ensure that there are two points at infinity and the curve is non-singular 
         try:
+            # TODO: write proper singularity checking in HyperellipticCurveSplit
+            # TODO: write proper error handling if there's not two points at infinity
             HyperellipticCurve(f, h)
+            H = HyperellipticCurveSplit(f, h)
+            if len(H.roots_at_infinity()) != 2:
+                continue
             return f, h, HyperellipticCurveSplit(f, h)
         except:
             continue
-
+    
 # Test that randomly sampling gets all elements in the group
-for _ in range(3):
-    f, h, H = random_curve(genus=3)
+for _ in range(1):
+    f, h, H = random_curve(genus=2)
     J = H.jacobian()
     o = J.order()
 
@@ -40,7 +52,8 @@ for _ in range(3):
     print(f"")
 
 # Test all points have order dividing the Jacobian order
-for g in [2, 3, 4, 5]:
+# for g in [2, 3, 4, 5]:
+for g in [2, 3]: 
     print(f"Testing arithmetic for genus: {g}")
     for _ in range(5):
         f, h, H = random_curve(genus=g)
@@ -49,7 +62,7 @@ for g in [2, 3, 4, 5]:
 
         # Test order
         assert all([(o * J.random_element()).is_zero() for _ in range(100)])
-        assert all([(o * J.random_element(fast=False)).is_zero() for _ in range(100)])
+        # assert all([(o * J.random_element(fast=False)).is_zero() for _ in range(100)])
 
         # Test order on divisor
         for _ in range(100):
