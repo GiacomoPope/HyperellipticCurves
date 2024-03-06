@@ -1,5 +1,5 @@
 from hyperelliptic_split import HyperellipticCurveSplit
-R.<x> = PolynomialRing(GF(3))
+R.<x> = PolynomialRing(GF(7))
 
 def random_sample(J, n=1000, fast=True):
     p = [J.random_element(fast=fast) for _ in range(n)]

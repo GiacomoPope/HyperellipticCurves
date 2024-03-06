@@ -115,7 +115,7 @@ class JacobianSplit:
                     try:
                         # Quotient ring elements
                         y = y.lift()
-                    except AttributeError:
+                    except (ValueError, AttributeError):
                         pass
 
                     try:
@@ -290,7 +290,7 @@ class JacobianSplit:
             elif leading_coefficient == a_minus:
                 n1 = n0 + g + 1 - d1
             else:
-                raise AssertionError("should be unreachable?")
+                n1 = n0 + (d0 - d1) // 2
         else:
             n1 = n0 + (d0 - d1) // 2
         return u1, v1, n1
