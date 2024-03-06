@@ -110,6 +110,9 @@ class HyperellipticJacobian:
     def _cantor_reduction_generic(self, u0, v0):
         """
         TODO
+
+        NOTE: we do not make u1 monic, but leave this for *after* reduction
+        to save on calls to this method.
         """
         # Collect data from HyperellipticCurve
         H = self.curve()
@@ -122,7 +125,6 @@ class HyperellipticJacobian:
 
         # Compute u' and v'
         u1 = (v0**2 + h * v0 - f) // u0
-        u1 = u1.monic()
         v1 = (-h - v0) % u1
 
         return u1, v1

@@ -23,7 +23,7 @@ class HyperellipticJacobianSplit(HyperellipticJacobian):
         n = (g / 2).ceil()
         return self._element(self, R.one(), R.zero(), n)
 
-    def __call__(self, *args):
+    def __call__(self, *args, check=True):
         if isinstance(args[0], HyperellipticPoint):
             R, x = self._curve.polynomial_ring().objgen()
             g = self._curve.genus()
@@ -53,7 +53,7 @@ class HyperellipticJacobianSplit(HyperellipticJacobian):
             u, v, n = args
         else:
             raise NotImplementedError
-        return self._element(self, u, v, n=n)
+        return self._element(self, u, v, n=n, check=check)
 
     def _random_element_cover(self, degree=None):
         r"""
@@ -308,6 +308,7 @@ class MumfordDivisorSplit(MumfordDivisor):
         # the degree of u is smaller than g + 1
         while u3.degree() > (g + 1):
             u3, v3, n3 = self._parent.cantor_reduction(u3, v3, n3)
+        u3 = u3.monic()
 
         # Step three: compose and then reduce at infinity to ensure
         # unique representation of D
@@ -321,7 +322,7 @@ class MumfordDivisorSplit(MumfordDivisor):
                     u3, v3, n3, plus=True
                 )
 
-        return self._parent(u3, v3, n3)
+        return self._parent(u3, v3, n3, check=False)
 
     def __neg__(self):
         r"""
@@ -342,18 +343,21 @@ class MumfordDivisorSplit(MumfordDivisor):
         # Case for even genus
         if not (g % 2):
             v1 = (-h - v0) % u0
-            return self.parent()(u0, v1, m0)
+            u1 = u0
+            n1 = m0
         # Odd genus, positive n0
         elif n0 > 0:
             v1 = (-h - v0) % u0
             # Note: I think this is a typo in the paper
             # n1 = g - m0 - u1.degree() + 1
+            u1 = u0
             n1 = m0 + 1
-            return self.parent()(u0, v1, n1)
         else:
             # Composition at infinity always with plus=True.
             # want to "substract" \infty_+ - \infty_-
             (u1, v1, n1) = self._parent.cantor_compose_at_infinity(
                 u0, -h - v0, n0, plus=True
             )
-            return self.parent()(u1, v1, n1 - n0 + m0 + 1)
+            n1 = n1 - n0 + m0 + 1
+        
+        return self.parent()(u1, v1, n1, check=False)
