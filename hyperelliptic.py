@@ -126,6 +126,24 @@ class HyperellipticCurveNew:
         d = self._d
         self._alphas = (x**2 + x * h[d] - f[2*d]).roots(multiplicities=False)
         return self._alphas
+    
+    def is_split(self):
+        """
+         Return True if the curve is split, i.e. there are two rational points at infinity.
+         """
+        return len(self.roots_at_infinity()) == 2
+    
+    def is_ramified(self):
+        """
+        Return True if the curve is ramified, i.e. there is one rational point at infinity.
+        """
+        return len(self.roots_at_infinity()) == 1
+
+    def is_inert(self):
+        """
+        Return True if the curve is inert, i.e. there are no rational points at infinity.
+        """
+        return len(self.roots_at_infinity()) == 0
 
     def infinite_polynomials(self):
         """
@@ -140,7 +158,7 @@ class HyperellipticCurveNew:
 
         # This function only makes sense for the split model
         if not len(alphas) == 2:
-          raise ValueError("hyperelliptic curve does not have the split model")
+            raise ValueError("hyperelliptic curve does not have the split model")
 
         f, h = self._hyperelliptic_polynomials
         alpha_plus, alpha_minus = alphas
@@ -280,9 +298,14 @@ class HyperellipticCurveNew:
         return self.point(coords)
 
     def jacobian(self):
-        if len(self.points_at_infinity()) == 2:
+        if self.is_ramified():
+            from jacobian_ramified import HyperellipticJacobianRamified
+            return HyperellipticJacobianRamified(self)
+        if self.is_split():
             from jacobian_split import HyperellipticJacobianSplit
             return HyperellipticJacobianSplit(self)
+
+        assert self.is_inert()
         raise NotImplementedError
 
     def frobenius_polynomial(self):

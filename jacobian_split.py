@@ -1,16 +1,11 @@
-from sage.misc.prandom import randint
-from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
-from sage.misc.prandom import choice
-
-# Needed until https://github.com/sagemath/sage/pull/37118 is merged.
-from uniform_random_sampling import uniform_random_polynomial
-
 # Base classes
 from hyperelliptic import HyperellipticPoint
 from jacobian import HyperellipticJacobian, MumfordDivisor
 
 class HyperellipticJacobianSplit(HyperellipticJacobian):
     def __init__(self, H):
+        if not H.is_split():
+            raise ValueError(f"the hyperelliptic curve {H} must have two roots at infinity")
         super(HyperellipticJacobianSplit, self).__init__(H)
         self._element = MumfordDivisorSplit
 
@@ -44,6 +39,7 @@ class HyperellipticJacobianSplit(HyperellipticJacobian):
             else:
                 u = x - X
                 v = R(Y)
+        # TODO handle this better!!
         elif len(args) == 1:
             return self.zero()
         elif len(args) == 2:
@@ -54,101 +50,6 @@ class HyperellipticJacobianSplit(HyperellipticJacobian):
         else:
             raise NotImplementedError
         return self._element(self, u, v, n=n, check=check)
-
-    def _random_element_cover(self, degree=None):
-        r"""
-        Returns a random element from the Jacobian. Distribution is not
-        uniformly random, but returns the entire group.
-        """
-        H = self.curve()
-        K = H.base_ring()
-        R = H.polynomial_ring()
-        g = H.genus()
-
-        f, h = H.hyperelliptic_polynomials()
-
-        if degree is None:
-            # until the random sampling is uniform (open PR for sage)
-            # this is bad.
-            degree = (-1, g)
-            # degree = g # TODO: for odd genus this may need to be g + 1
-
-        while True:
-            u = uniform_random_polynomial(R, degree=degree)
-            if u.is_zero():
-                n = randint(0, g)
-                return self(R(1), R(0), n)
-            u = u.monic()
-            try:
-                D = self.zero()
-                for x, e in u.factor():
-                    # Solve y^2 + hy - f = 0 mod x
-                    from sage.rings.polynomial.polynomial_ring import polygen
-
-                    K_ext = K.extension(modulus=x, names="a")
-                    y_ext = polygen(K_ext, "y_ext")
-                    h_ = K_ext(h % x)
-                    f_ = K_ext(f % x)
-                    y = choice((y_ext**2 + h_ * y_ext - f_).roots(multiplicities=False))
-                    try:
-                        # Quotient ring elements
-                        y = y.lift()
-                    except (ValueError, AttributeError):
-                        pass
-
-                    try:
-                        g = self.curve().genus()
-                        for _ in range(e):
-                            n = randint(0, g - x.degree())
-                            D += self(x, R(y), n)
-                    except (ValueError, TypeError):
-                        raise IndexError
-
-                return D
-
-            except IndexError:
-                pass
-
-    def _random_element_rational(self):
-        r"""
-        Returns a random element from the Jacobian. It does not necessarily
-        return the entire group.
-        """
-        H = self.curve()
-        g = H.genus()
-
-        # We randomly sample 2g + 1 points on the hyperelliptic curve
-        points = [H.random_point() for _ in range(2 * g + 1)]
-
-        # We create 2g + 1 divisors of the form (P) - infty
-        divisors = [self(P) for P in points if P[2] != 0]
-
-        # If we happened to only sample the point at infinity, we return this
-        # Otherwise we compute the sum of all divisors.
-        if not divisors:
-            return self.zero()
-        return sum(divisors, start=self.zero())
-
-    def random_element(self, fast=True, *args, **kwargs):
-        r"""
-        Returns a random element from the Jacobian. Distribution is not
-        uniformly random.
-
-        INPUT:
-
-        - ``fast`` -- (boolean, default ``True``) If set to ``True``, a fast
-          algorithm is used, but the output is **NOT** guaranteed to cover the
-          entire Jacobian. See examples below. If set to ``False``, a slower
-          algorithm is used, but covers the entire Jacobian.
-        """
-        if not isinstance(self.base_ring(), FiniteField_generic):
-            raise NotImplementedError(
-                "random element of Jacobian is only implemented over Finite Fields"
-            )
-
-        if fast:
-            return self._random_element_rational(*args, **kwargs)
-        return self._random_element_cover(*args, **kwargs)
 
     def cantor_composition(self, u1, v1, n1, u2, v2, n2):
         """
@@ -322,7 +223,7 @@ class MumfordDivisorSplit(MumfordDivisor):
                     u3, v3, n3, plus=True
                 )
 
-        return self._parent(u3, v3, n3, check=False)
+        return MumfordDivisorSplit(self._parent, u3, v3, n3, check=False)
 
     def __neg__(self):
         r"""
@@ -360,4 +261,4 @@ class MumfordDivisorSplit(MumfordDivisor):
             )
             n1 = n1 - n0 + m0 + 1
         
-        return self.parent()(u1, v1, n1, check=False)
+        return MumfordDivisorSplit(self._parent, u1, v1, n1, check=False)

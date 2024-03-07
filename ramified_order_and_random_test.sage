@@ -6,7 +6,7 @@ def random_sample(J, n=500, fast=True):
     return len(set(p))
 
 def random_curve(use_h=True, genus=2):
-    d = 2*genus + 2
+    d = 2*genus + 1
     while True:
         # Find a polynomial for f
         while True:
@@ -28,15 +28,15 @@ def random_curve(use_h=True, genus=2):
             # TODO: write proper singularity checking in HyperellipticCurveNew
             # TODO: write proper error handling if there's not two points at infinity
             HyperellipticCurve(f, h)
+            
             H = HyperellipticCurveNew(f, h)
-            if len(H.roots_at_infinity()) != 2:
-                continue
+            assert H.is_ramified()
             return f, h, HyperellipticCurveNew(f, h)
         except:
             continue
     
 # Test that randomly sampling gets all elements in the group
-for _ in range(1):
+for _ in range(3):
     f, h, H = random_curve(genus=2)
     J = H.jacobian()
     o = J.order()
@@ -61,7 +61,7 @@ for g in [2, 3, 4, 5]:
 
         # Test order
         assert all([(o * J.random_element()).is_zero() for _ in range(100)])
-        # assert all([(o * J.random_element(fast=False)).is_zero() for _ in range(100)])
+        assert all([(o * J.random_element(fast=False)).is_zero() for _ in range(100)])
 
         # Test order on divisor
         for _ in range(100):
