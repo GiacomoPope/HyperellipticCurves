@@ -212,7 +212,7 @@ class HyperellipticJacobian:
                     try:
                         # Attempt to coerce quotient ring element to the
                         # polynomial ring
-                        v = R(y.lift())
+                        v = R(y)
 
                         # Sum for the multiplicity of the root x of u
                         for _ in range(e):
