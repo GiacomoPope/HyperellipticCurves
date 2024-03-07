@@ -18,27 +18,38 @@ class HyperellipticJacobianSplit(HyperellipticJacobian):
         n = (g / 2).ceil()
         return self._element(self, R.one(), R.zero(), n)
 
+    def point_to_mumford_coordinates(self, P):
+        """
+        TODO
+        """
+        R, x = self._curve.polynomial_ring().objgen()
+        g = self._curve.genus()
+
+        [X, Y, Z] = P.coords()
+        # we use the embedding P \mapsto P - P0
+        # where P0 is the distinguished point of the curve
+        # TODO: at the moment, we assume P0 = infty_+
+        # note: P - \inft_+ = P + n*\infty_+ + m*\infty_- - D_\infty,
+        # where n = ((g-1)/2).floor()
+        n = ((g - 1) / 2).floor()
+        if Z == 0:
+            alpha = Y / X
+            if alpha == self._curve._alphas[0]:
+                n = n + 1
+            u = R.one()
+            v = R.zero()
+        else:
+            u = x - X
+            v = R(Y)
+
+        return u, v, n
+
     def __call__(self, *args, check=True):
-        if isinstance(args[0], HyperellipticPoint):
-            R, x = self._curve.polynomial_ring().objgen()
-            g = self._curve.genus()
-            P = args[0]
-            [X, Y, Z] = P.coords()
-            # we use the embedding P \mapsto P - P0
-            # where P0 is the distinguished point of the curve
-            # TODO: at the moment, we assume P0 = infty_+
-            # note: P - \inft_+ = P + n*\infty_+ + m*\infty_- - D_\infty,
-            # where n = ((g-1)/2).floor()
-            n = ((g - 1) / 2).floor()
-            if Z == 0:
-                alpha = Y / X
-                if alpha == self._curve._alphas[0]:
-                    n = n + 1
-                u = R(1)
-                v = R(0)
-            else:
-                u = x - X
-                v = R(Y)
+        """
+        TODO: fix code reuse?
+        """
+        if isinstance(args[0], HyperellipticPoint) and len(args) == 1:
+            u, v, n = self.point_to_mumford_coordinates(args[0])
         # TODO handle this better!!
         elif len(args) == 1:
             return self.zero()

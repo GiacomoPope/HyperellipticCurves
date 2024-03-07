@@ -135,19 +135,22 @@ class HyperellipticCurveNew:
     
     def is_split(self):
         """
-         Return True if the curve is split, i.e. there are two rational points at infinity.
+         Return True if the curve is split, i.e. there are two rational
+         points at infinity.
          """
         return len(self.roots_at_infinity()) == 2
     
     def is_ramified(self):
         """
-        Return True if the curve is ramified, i.e. there is one rational point at infinity.
+        Return True if the curve is ramified, i.e. there is one rational
+        point at infinity.
         """
         return len(self.roots_at_infinity()) == 1
 
     def is_inert(self):
         """
-        Return True if the curve is inert, i.e. there are no rational points at infinity.
+        Return True if the curve is inert, i.e. there are no rational
+        points at infinity.
         """
         return len(self.roots_at_infinity()) == 0
 
@@ -287,7 +290,7 @@ class HyperellipticCurveNew:
         """
         if self._distinguished_point is None:
             if not self.is_inert():
-                #in the split and ramified case, a point at infinity is chosen,
+                # For the the split and ramified case, a point at infinity is chosen,
                 self._distinguished_point = self.points_at_infinity()[0]
             else:
                 assert self.base_ring().characteristic() > 0, "in characteristic 0, a distinguished_point needs to be specified"
@@ -296,7 +299,7 @@ class HyperellipticCurveNew:
                     try:
                         self._distinguished_point = self.lift_x(x0)
                         break
-                    except:
+                    except ValueError:
                         pass
 
         return self._distinguished_point
@@ -330,8 +333,8 @@ class HyperellipticCurveNew:
             except IndexError:
                 pass
 
-    def __call__(self, coords):
-        return self.point(coords)
+    def __call__(self, *args):
+        return self.point(*args)
 
     def jacobian(self):
         if self.is_ramified():

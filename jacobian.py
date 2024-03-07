@@ -42,16 +42,21 @@ class HyperellipticJacobian:
 
     order = cardinality
 
+    def point_to_mumford_coordinates(self, P):
+        """
+        TODO
+        """
+        R, x = self._curve.polynomial_ring().objgen()
+        [X, Y, Z] = P.coords()        
+        if Z == 0:
+            return R.one(), R.zero()
+        u = x - X
+        v = R(Y)
+        return u, v
+
     def __call__(self, *args, check=True):
-        if isinstance(args[0], HyperellipticPoint):
-            R, x = self._curve.polynomial_ring().objgen()
-            P = args[0]
-            [X, Y, Z] = P.coords()
-            if Z == 0:
-                return self.zero()
-            else:
-                u = x - X
-                v = R(Y)
+        if isinstance(args[0], HyperellipticPoint) and len(args) == 1:
+            u, v = self.point_to_mumford_coordinates(args[0])
         # TODO handle this better!!
         elif len(args) == 1:
             return self.zero()
