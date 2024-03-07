@@ -5,7 +5,8 @@ from sage.groups.generic import order_from_multiple
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import choice, randint
 
-from hyperelliptic import HyperellipticCurveNew
+from hyperelliptic import HyperellipticCurveNew, HyperellipticPoint
+
 # Needed until https://github.com/sagemath/sage/pull/37118 is merged.
 from uniform_random_sampling import uniform_random_polynomial
 
@@ -40,6 +41,25 @@ class HyperellipticJacobian:
         return sum(self.curve().frobenius_polynomial())
 
     order = cardinality
+
+    def __call__(self, *args, check=True):
+        if isinstance(args[0], HyperellipticPoint):
+            R, x = self._curve.polynomial_ring().objgen()
+            P = args[0]
+            [X, Y, Z] = P.coords()
+            if Z == 0:
+                return self.zero()
+            else:
+                u = x - X
+                v = R(Y)
+        # TODO handle this better!!
+        elif len(args) == 1:
+            return self.zero()
+        elif len(args) == 2:
+            u, v = args
+        else:
+            raise NotImplementedError
+        return self._element(self, u, v, check=check)
 
     def __cantor_double_generic(self, u1, v1):
         """
@@ -134,6 +154,13 @@ class HyperellipticJacobian:
         v1 = (-h - v0) % u1
 
         return u1, v1
+    
+    def cantor_composition(self, u1, v1, u2, v2):
+        u3, v3, _ = self._cantor_composition_generic(u1, v1, u2, v2)
+        return u3, v3
+
+    def cantor_reduction(self, u0, v0):
+        return self._cantor_reduction_generic(u0, v0)
 
     def _random_element_cover(self, degree=None):
         r"""
@@ -157,13 +184,10 @@ class HyperellipticJacobian:
         while True:
             u = uniform_random_polynomial(R, degree=degree)
             if u.is_zero():
-                if H.is_ramified():
-                    return self.zero()
-                elif H.is_inert():
-                    n =  g // 2
-                else:
+                if H.is_split():
                     n = randint(0, g)
-                return self(R(1), R(0), n)
+                    return self._element(self, R.one(), R.zero(), n)
+                return self.zero()
             
             u = u.monic()
 
@@ -198,16 +222,14 @@ class HyperellipticJacobian:
                     except (ValueError, AttributeError):
                         pass
 
-                g = self.curve().genus()
-                if H.is_ramified():
-                    return self(u1, v1)
-                elif H.is_inert():
-                    assert (u1.degree() % 2) == 0, "something went wrong"
-                    n = (g-u1.degree())/2
-                else:
+                if H.is_split():
+                    g = self._curve.genus()
                     n = randint(0, g - u1.degree())
-                return self(u1, v1, n)
-
+                    return self._element(self, u1, v1, n, check=False)
+                if H.is_inert():
+                    assert not (u1.degree() % 2), f"{u1} must have even degree"
+                return self._element(self, u1, v1, check=False)
+            
             # TODO: better handling rather than looping with try / except?
             except IndexError:
                 pass
@@ -312,21 +334,40 @@ class MumfordDivisor:
         """
         return self._u.degree()
 
-    def __add__(self, *args):
-        raise NotImplementedError
+    def __add__(self, other):
+        # Ensure we are adding two divisors
+        if not isinstance(other, type(self)):
+            raise ValueError("TODO")
+
+        # Collect data from HyperellipticCurve
+        H = self.parent().curve()
+        g = H.genus()
+
+        # Extract out mumford coordinates
+        u1, v1 = self.uv()
+        u2, v2 = other.uv()
+
+        # Step one: cantor composition of the two divisors
+        u3, v3 = self._parent.cantor_composition(u1, v1, u2, v2)
+
+        # Step two: cantor reduction of the above to ensure
+        # the degree of u is smaller than g + 1
+        while u3.degree() > g:
+            u3, v3 = self._parent.cantor_reduction(u3, v3)
+        u3 = u3.monic()
+        v3 = v3 % u3
+
+        return self._parent._element(self._parent, u3, v3, check=False)
 
     def __neg__(self):
-        """
-        TODO
-        """
-        H = self.parent().curve()
-        _, h = H.hyperelliptic_polynomials()
+        _, h = self.parent().curve().hyperelliptic_polynomials()
         u0, v0 = self.uv()
 
         if h.is_zero():
-            return MumfordDivisor(self._parent, u0, -v0, check=False)
+            return self._parent._element(self._parent, u0, -v0, check=False)
+
         v1 = (-h - v0) % u0
-        MumfordDivisor(self._parent, u0, v1, check=False)
+        return self._parent._element(self._parent, u0, v1, check=False)
 
     def __sub__(self, other):
         return self.__add__(-other)

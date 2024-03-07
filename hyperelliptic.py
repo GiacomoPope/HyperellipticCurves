@@ -126,7 +126,7 @@ class HyperellipticCurveNew:
             coeff = f[2*d]
             # Handle the ramified case
             if coeff.is_zero():
-                return coeff
+                return [coeff]
             return f[2*d].sqrt(all=True)
 
         self._alphas = (x**2 + x * h[d] - f[2*d]).roots(multiplicities=False)
@@ -311,7 +311,8 @@ class HyperellipticCurveNew:
             return HyperellipticJacobianSplit(self)
 
         assert self.is_inert()
-        raise NotImplementedError
+        from jacobian_inert import HyperellipticJacobianInert
+        return HyperellipticJacobianInert(self)
 
     def frobenius_polynomial(self):
         """
