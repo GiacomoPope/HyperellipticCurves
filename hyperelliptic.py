@@ -120,10 +120,15 @@ class HyperellipticCurveNew:
 
         f, h = self._hyperelliptic_polynomials
         x = f.parent().gen()
-        if not h:
-            return f.leading_coefficient().sqrt(all=True)
-
         d = self._d
+        
+        if not h:
+            coeff = f[2*d]
+            # Handle the ramified case
+            if coeff.is_zero():
+                return coeff
+            return f[2*d].sqrt(all=True)
+
         self._alphas = (x**2 + x * h[d] - f[2*d]).roots(multiplicities=False)
         return self._alphas
     
