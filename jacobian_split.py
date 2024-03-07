@@ -24,11 +24,11 @@ class HyperellipticJacobianSplit(HyperellipticJacobian):
             g = self._curve.genus()
             P = args[0]
             [X, Y, Z] = P.coords()
-            # TODO:
-            # we use the embedding P \mapsto P - \infty_+
+            # we use the embedding P \mapsto P - P0
+            # where P0 is the distinguished point of the curve
+            # TODO: at the moment, we assume P0 = infty_+
             # note: P - \inft_+ = P + n*\infty_+ + m*\infty_- - D_\infty,
             # where n = ((g-1)/2).floor()
-            # do we want a different embedding by default?
             n = ((g - 1) / 2).floor()
             if Z == 0:
                 alpha = Y / X

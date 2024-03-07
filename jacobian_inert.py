@@ -1,3 +1,4 @@
+from hyperelliptic import HyperellipticPoint
 from jacobian import HyperellipticJacobian, MumfordDivisor
 
 class HyperellipticJacobianInert(HyperellipticJacobian):
@@ -16,6 +17,32 @@ class HyperellipticJacobianInert(HyperellipticJacobian):
             raise ValueError("unable to perform arithmetic for inert models of odd genus")
         R = self._curve.polynomial_ring()
         return self._element(self, R.one(), R.zero(), g // 2)
+
+    def __call__(self, *args, check=True):
+        if isinstance(args[0], HyperellipticPoint):
+            R, x = self._curve.polynomial_ring().objgen()
+            g = self._curve.genus()
+            P = args[0]
+            # we use the embedding P \mapsto P - P0
+            # where P0 is the distinguished point of the curve
+            # note: P - \inft_+ = P + n*\infty_+ + m*\infty_- - D_\infty,
+            # where n = ((g-1)/2).floor()
+            P0 = self._curve.distinguished_point()
+            if P == P0:
+                return self.zero() 
+            [X, Y, Z] = P.coords()
+            [X0, Y0, Z0] = P0.coords()
+            assert Z != 0 and Z0 != 0, "there should be no points at infinity"
+            f, h = self._curve.hyperelliptic_polynomials()
+            u, v, _ = self._cantor_composition_generic(x-X, R(Y), x-X0, R(-Y0-h(X0)))
+        # TODO handle this better!!
+        elif len(args) == 1:
+            return self.zero()
+        elif len(args) == 2:
+            u, v = args
+        else:
+            raise NotImplementedError
+        return self._element(self, u, v, check=check)
 
 class MumfordDivisorInert(MumfordDivisor):
     def __init__(self, parent, u, v, check=True):

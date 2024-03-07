@@ -12,6 +12,7 @@ class HyperellipticCurveNew:
         self._genus = None
         self._projective_model = None
         self._infinte_polynomials = None
+        self._distinguished_point = None
 
         # Check the curve is well formed
         disc = h**2 + 4*f
@@ -279,6 +280,36 @@ class HyperellipticCurveNew:
         else:
             raise ValueError(f"No point with x-coordinate {x} on {self}")
 
+    def distinguished_point(self):
+        """
+        Return the distinguished point of the hyperelliptic curve.
+        By default, this is one of the points at infinity if possible.
+        """
+        if self._distinguished_point is None:
+            if not self.is_inert():
+                #in the split and ramified case, a point at infinity is chosen,
+                self._distinguished_point = self.points_at_infinity()[0]
+            else:
+                assert self.base_ring().characteristic() > 0, "in characteristic 0, a distinguished_point needs to be specified"
+                #in the inert case we choose a point with minimal x-coordinate
+                for x0 in self.base_ring():
+                    try:
+                        self._distinguished_point = self.lift_x(x0)
+                        break
+                    except:
+                        pass
+
+        return self._distinguished_point
+
+    def set_distinguished_point(self, P0):
+        """
+        Change the distinguished point of the hyperelliptic curve to P0.
+        """
+        assert isinstance(P0, HyperellipticPoint), "the input has to be a point on the curve"
+        self._distinguished_point = P0
+        return None
+
+
     def random_point(self):
         """
         Return a random point on this hyperelliptic curve, uniformly chosen
@@ -290,7 +321,7 @@ class HyperellipticCurveNew:
         while True:
             # Choose the point at infinity with probability 1/(2q + 1)
             i = ZZ.random_element(n)
-            if not i:
+            if not i and not self.is_inert():
                 # TODO: deal with that there is more than one point at infinity
                 return choice(self.points_at_infinity())
             v = self.lift_x(k.random_element(), all=True)

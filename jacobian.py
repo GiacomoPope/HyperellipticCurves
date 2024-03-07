@@ -271,8 +271,7 @@ class HyperellipticJacobian:
                 "random element of Jacobian is only implemented over Finite Fields"
             )
 
-        # TODO: can we write something fast for the inert case?
-        if fast and not self._curve.is_inert():
+        if fast:
             return self._random_element_rational(*args, **kwargs)
         return self._random_element_cover(*args, **kwargs)
 
