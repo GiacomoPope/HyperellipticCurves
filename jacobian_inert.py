@@ -23,14 +23,13 @@ class HyperellipticJacobianInert(HyperellipticJacobian):
         TODO
         """
         R, x = self._curve.polynomial_ring().objgen()
-        P = args[0]
         # we use the embedding P \mapsto P - P0
         # where P0 is the distinguished point of the curve
         # note: P - \inft_+ = P + n*\infty_+ + m*\infty_- - D_\infty,
         # where n = ((g-1)/2).floor()
         P0 = self._curve.distinguished_point()
         if P == P0:
-            return self.zero() 
+            return R.one(), R.zero()
         [X, Y, Z] = P.coords()
         [X0, Y0, Z0] = P0.coords()
         assert Z != 0 and Z0 != 0, "there should be no points at infinity"

@@ -1,7 +1,7 @@
 from hyperelliptic import HyperellipticCurveNew
 R.<x> = PolynomialRing(GF(13))
 
-def random_sample(J, n=500, fast=True):
+def random_sample(J, n=1000, fast=True):
     p = [J.random_element(fast=fast) for _ in range(n)]
     return len(set(p))
 
@@ -41,11 +41,13 @@ for _ in range(1):
     J = H.jacobian()
     o = J.order()
 
+    fast = random_sample(J, fast=True)
     slow = random_sample(J, fast=False)
 
     print(f"{f = }")
     print(f"{h = }")
     print(f"Order: {o}")
+    print(f"Fast method: {fast}")
     print(f"Slow method: {slow}")
     print(f"")
 
@@ -58,17 +60,17 @@ for g in [2, 4, 6]:
         o = J.order()
 
         # Test order
-        assert all([(o * J.random_element(fast=False)).is_zero() for _ in range(100)])
+        assert all([(o * J.random_element()).is_zero() for _ in range(100)])
 
         # Test order on divisor
         for _ in range(100):
-            D = J.random_element(fast=False)
+            D = J.random_element()
             order = D.order()
             assert order * D == J.zero()
 
         # Test inversion on non-rational
         for _ in range(100):
-            D = J.random_element(fast=False)
+            D = J.random_element()
             assert (D - D).is_zero()
 
     print(f"Passed for genus: {g}")

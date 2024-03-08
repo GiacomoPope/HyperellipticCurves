@@ -196,9 +196,12 @@ class HyperellipticJacobian:
             
             u = u.monic()
 
-            if H.is_inert() and (u.degree() % 2) == 1:
-                #TODO: better method to sample even degree polynomials
-                continue
+            # TODO: i think we can skip this and simply ensure u
+            #       is even degree with composition with the distinguished
+            #       point?
+            # if H.is_inert() and (u.degree() % 2) == 1:
+            #     #TODO: better method to sample even degree polynomials
+            #     continue
             
             try:
                 u1, v1 = R.one(), R.zero()
@@ -231,7 +234,19 @@ class HyperellipticJacobian:
                     g = self._curve.genus()
                     n = randint(0, g - u1.degree())
                     return self._element(self, u1, v1, n, check=False)
+                
+                # We need to ensure the degree of u is even
                 if H.is_inert():
+                    if (u1.degree() % 2):
+                        # TODO: make composition with distinguished_point
+                        #       its own function?
+                        P0 = self._curve.distinguished_point()
+                        X0, Y0 = P0.xy()
+                        X = R.gen() # TODO use better variable names in this function
+                        _, h = self._curve.hyperelliptic_polynomials()
+                        u0 = X - X0
+                        v0 = R(-Y0 - h(X0))
+                        u1, v1, _ = self._cantor_composition_generic(u1, v1, u0, v0)
                     assert not (u1.degree() % 2), f"{u1} must have even degree"
                 return self._element(self, u1, v1, check=False)
             
