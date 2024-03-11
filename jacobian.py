@@ -100,14 +100,15 @@ class HyperellipticJacobian:
         # Collect data from HyperellipticCurve
         H = self.curve()
         f, h = H.hyperelliptic_polynomials()
+        g = H.genus()
 
         # Ensure D1 and D2 are semi-reduced divisors
         assert (
             v1.degree() < u1.degree() and v2.degree() < u2.degree()
         ), "The degree of bi must be smaller than ai"
         assert (
-            u1.degree() <= f.degree() and u2.degree() <= f.degree()
-        ), f"The degree of ai must be smaller than f, {u1.degree()}, {u2.degree()}"
+            u1.degree() <= 2*g+2 and u2.degree() <= 2*g+2
+        ), f"The degree of ai must be smaller than 2g+2, {u1.degree()}, {u2.degree()}"
 
         # Special case: duplication law
         if u1 == u2 and v1 == v2:
