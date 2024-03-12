@@ -329,7 +329,7 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
         """
         Change the distinguished point of the hyperelliptic curve to P0.
         """
-        assert isinstance(P0, HyperellipticPoint), "the input has to be a point on the curve"
+        assert isinstance(P0, AlgebraicScheme_subscheme_toric), "the input has to be a point on the curve"
         self._distinguished_point = P0
         return None
 
