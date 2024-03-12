@@ -19,10 +19,10 @@ def random_curve(genus=2):
         if coin == 0:
             h = 0
         elif coin == 1:
-            h = R.random_element(degree=2)
+            h = R.random_element(degree=(1, genus))
         # pick genus of H from degree of h 1/3 of the time
         else:
-            f = R.random_element(degree = 2)
+            f = R.random_element((1, 2*genus))
             h = R.random_element(degree = genus + 1)
 
         # Ensure that there are two points at infinity and the curve is non-singular 
