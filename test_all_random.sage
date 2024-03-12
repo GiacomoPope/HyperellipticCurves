@@ -1,4 +1,5 @@
-from hyperelliptic import HyperellipticCurveSmoothModel
+from hyperelliptic_constructor import HyperellipticCurveSmoothModel
+
 R.<x> = PolynomialRing(GF(5))
 
 def random_sample(J, n=1000, fast=True):

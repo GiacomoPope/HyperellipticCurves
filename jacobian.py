@@ -5,7 +5,7 @@ from sage.groups.generic import order_from_multiple
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import choice, randint
 
-from hyperelliptic import HyperellipticCurveSmoothModel
+from hyperelliptic_generic import HyperellipticCurveSmoothModel_generic
 
 # TODO should we make a hyperelliptic point class?
 # at the moment, this is the type we get from calling a point from the projective model
@@ -17,7 +17,7 @@ from uniform_random_sampling import uniform_random_polynomial
 
 class HyperellipticJacobian:
     def __init__(self, H):
-        if not isinstance(H, HyperellipticCurveSmoothModel):
+        if not isinstance(H, HyperellipticCurveSmoothModel_generic):
             raise ValueError("TODO")
         self._curve = H
         self._element = MumfordDivisor

@@ -1,4 +1,4 @@
-from hyperelliptic import HyperellipticCurveSmoothModel
+from hyperelliptic_constructor import HyperellipticCurveSmoothModel
 
 R1.<x> = PolynomialRing(GF(163))
 R2.<x> = PolynomialRing(GF(2^6))

@@ -1,87 +1,22 @@
-from sage.misc.prandom import choice
-from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.integer_ring import ZZ
-from sage.misc.cachefunc import cached_method
-
-from sage.schemes.toric.library import toric_varieties
 from sage.schemes.toric.toric_subscheme import AlgebraicScheme_subscheme_toric
 
 
-# Named HyperellipticCurveSmoothModel to differentiate from the global
-# HyperellipticCurve in Sage
-class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
-    def __init__(self, f, h=0):
+class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
+    def __init__(self, projective_model, f, h, genus):
+        self._projective_model = projective_model
+        self._genus = genus
+        self._hyperelliptic_polynomials = (f, h)
+
+        self._polynomial_ring = f.parent()
+        self._base_ring = f.base_ring()
+
         # Some values which we will cache as a user asks for them
         self._alphas = None
-        self._genus = None
         self._infinte_polynomials = None
         self._distinguished_point = None
 
-        # Check the polynomials are of the right type
-        disc = h**2 + 4 * f
-        if not isinstance(disc, Polynomial):
-            raise TypeError(f"arguments {f = } and {h = } must be polynomials")
-        self._polynomial_ring = disc.parent()
-        self._base_ring = disc.base_ring()
-
-        # Store the hyperelliptic polynomials as the correct type
-        f = self._polynomial_ring(f)
-        h = self._polynomial_ring(h)
-        self._hyperelliptic_polynomials = (f, h)
-
-        # Ensure that there are no affine singular points
-        if not self.check_no_affine_singularities():
-            raise ValueError("singularity in the provided affine patch")
-
         # TODO: is this simply genus + 1
         self._d = max(h.degree(), (f.degree() / 2).ceil())
-
-        # Compute the smooth model for the hyperelliptic curve
-        # using a weighted projective space (via Toric Variety)
-        self._projective_model = self.projective_model()
-
-    def check_no_affine_singularities(self):
-        f, h = self._hyperelliptic_polynomials
-        if self._base_ring.characteristic() == 2:
-            if h.is_zero():
-                return False
-            elif h.is_constant():
-                return True
-            return h.gcd(f.derivative() ** 2 - f * h.derivative() ** 2).is_one()
-
-        if h.is_zero():
-            return f.gcd(f.derivative()).is_one()
-
-        g1 = h**2 + 4 * f
-        g2 = 2 * f.derivative() + h * h.derivative()
-        return g1.gcd(g2).is_one()
-
-    def projective_model(self):
-        """
-        Compute the weighted projective model (1 : g + 1 : 1)
-        """
-        if hasattr(self, "_projective_model"):
-            return self._projective_model
-
-        f, h = self._hyperelliptic_polynomials
-        g = self.genus()
-
-        T = toric_varieties.WP(
-            [1, g + 1, 1], base_ring=self._base_ring, names="X, Y, Z"
-        )
-        (X, Y, Z) = T.gens()
-
-        d = max(h.degree(), (f.degree() / 2).ceil())
-        F = sum(f[i] * X**i * Z ** (2 * d - i) for i in range(2 * d + 1))
-
-        if h.is_zero():
-            G = Y**2 - F
-        else:
-            H = sum(h[i] * X**i * Z ** (d - i) for i in range(d + 1))
-            G = Y**2 + H * Y - F
-
-        self._projective_model = T.subscheme([G])
-        return self._projective_model
 
     def __repr__(self):
         f, h = self._hyperelliptic_polynomials
@@ -98,17 +33,6 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
         """
         Compute the genus of the hyperelliptic curve
         """
-        if self._genus:
-            return self._genus
-
-        f, h = self._hyperelliptic_polynomials
-        df = f.degree()
-        dh_2 = 2 * h.degree()
-        if dh_2 < df:
-            self._genus = (df - 1) // 2
-        else:
-            self._genus = (dh_2 - 1) // 2
-
         return self._genus
 
     def base_ring(self):
@@ -343,26 +267,6 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
         self._distinguished_point = P0
         return None
 
-    def random_point(self):
-        """
-        Return a random point on this hyperelliptic curve, uniformly chosen
-        among all rational points.
-        """
-        k = self.base_ring()
-        n = 2 * k.order() + 1
-
-        while True:
-            # Choose the point at infinity with probability 1/(2q + 1)
-            i = ZZ.random_element(n)
-            if not i and not self.is_inert():
-                # TODO: deal with that there is more than one point at infinity
-                return choice(self.points_at_infinity())
-            v = self.lift_x(k.random_element(), all=True)
-            try:
-                return v[i % 2]
-            except IndexError:
-                pass
-
     def __call__(self, *args):
         return self.point(*args)
 
@@ -380,33 +284,3 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
         from jacobian_inert import HyperellipticJacobianInert
 
         return HyperellipticJacobianInert(self)
-
-    def frobenius_polynomial(self):
-        """
-        TODO: very lazy but just for now
-        """
-        f, h = self._hyperelliptic_polynomials
-        from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
-
-        H_tmp = HyperellipticCurve(f, h)
-        return H_tmp.frobenius_polynomial()
-
-    @cached_method
-    def points(self):
-        """
-        TODO: couldn't be more stupid
-        """
-        # TODO: this is very silly but works
-        points = self.points_at_infinity()
-        for x in self.base_ring():
-            points.extend(self.lift_x(x, all=True))
-        return points
-
-    @cached_method
-    def cardinality(self):
-        """
-        TODO: couldn't be more stupid
-        """
-        return len(self.points())
-
-    order = cardinality
