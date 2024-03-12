@@ -6,8 +6,9 @@ from sage.misc.cachefunc import cached_method
 from sage.schemes.toric.library import toric_varieties
 from sage.schemes.toric.toric_subscheme import AlgebraicScheme_subscheme_toric
 
-# Named New to differentiate from the global HyperellipticCurve in Sage
-class HyperellipticCurveNew(AlgebraicScheme_subscheme_toric):
+# Named HyperellipticCurveSmoothModel to differentiate from the global 
+# HyperellipticCurve in Sage
+class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
     def __init__(self, f, h=0):
         # Some values which we will cache as a user asks for them
         self._alphas = None

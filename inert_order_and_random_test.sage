@@ -1,4 +1,4 @@
-from hyperelliptic import HyperellipticCurveNew
+from hyperelliptic import HyperellipticCurveSmoothModel
 R.<x> = PolynomialRing(GF(13))
 
 def random_sample(J, n=1000, fast=True):
@@ -22,11 +22,11 @@ def random_curve(use_h=True, genus=2):
         
         # Ensure that there are two points at infinity and the curve is non-singular 
         try:
-            # TODO: write proper singularity checking in HyperellipticCurveNew
+            # TODO: write proper singularity checking in HyperellipticCurveSmoothModel
             # TODO: write proper error handling if there's not two points at infinity
             HyperellipticCurve(f, h)
             
-            H = HyperellipticCurveNew(f, h)
+            H = HyperellipticCurveSmoothModel(f, h)
             if H.genus() != genus:
                 continue
             if not H.is_inert():
