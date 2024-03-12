@@ -33,6 +33,7 @@ from sage.structure.dynamic_class import dynamic_class
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.schemes.toric.library import toric_varieties
 
+
 def HyperellipticCurveSmoothModel(f, h=0):
     r"""
     TODO
@@ -65,7 +66,7 @@ def HyperellipticCurveSmoothModel(f, h=0):
         g1 = h**2 + 4 * f
         g2 = 2 * f.derivative() + h * h.derivative()
         return g1.gcd(g2).is_one()
-    
+
     def __projective_model(f, h, genus):
         """
         Compute the weighted projective model (1 : g + 1 : 1)
@@ -83,7 +84,7 @@ def HyperellipticCurveSmoothModel(f, h=0):
         else:
             H = sum(h[i] * X**i * Z ** (d - i) for i in range(d + 1))
             G = Y**2 + H * Y - F
-    
+
         return T.subscheme([G])
 
     # Check the polynomials are of the right type
@@ -94,7 +95,7 @@ def HyperellipticCurveSmoothModel(f, h=0):
     # Ensure that there are no affine singular points
     if not __check_no_affine_singularities(f, h):
         raise ValueError("singularity in the provided affine patch")
-    
+
     # Store the hyperelliptic polynomials as the correct type
     polynomial_ring = F.parent()
     f = polynomial_ring(f)
@@ -127,8 +128,13 @@ def HyperellipticCurveSmoothModel(f, h=0):
 
     fields = [
         ("FiniteField", is_FiniteField, HyperellipticCurveSmoothModel_finite_field),
-        ("RationalField", is_RationalField, HyperellipticCurveSmoothModel_rational_field),
-        ("pAdicField", is_pAdicField, HyperellipticCurveSmoothModel_padic_field)]
+        (
+            "RationalField",
+            is_RationalField,
+            HyperellipticCurveSmoothModel_rational_field,
+        ),
+        ("pAdicField", is_pAdicField, HyperellipticCurveSmoothModel_padic_field),
+    ]
 
     # TODO
     # if g in genus_classes:
@@ -136,7 +142,7 @@ def HyperellipticCurveSmoothModel(f, h=0):
     #     cls_name.append("g%s" % g)
 
     # Computing F from f, h does the coercion for us
-    F = h**2 + 4*f
+    F = h**2 + 4 * f
     k = F.base_ring()
 
     # TODO:
@@ -148,7 +154,10 @@ def HyperellipticCurveSmoothModel(f, h=0):
             break
 
     class_name = "_".join(cls_name)
-    cls = dynamic_class(class_name, tuple(superclass),
-                        HyperellipticCurveSmoothModel_generic, doccls=HyperellipticCurveSmoothModel)
+    cls = dynamic_class(
+        class_name,
+        tuple(superclass),
+        HyperellipticCurveSmoothModel_generic,
+        doccls=HyperellipticCurveSmoothModel,
+    )
     return cls(projective_model, f, h, genus)
-
