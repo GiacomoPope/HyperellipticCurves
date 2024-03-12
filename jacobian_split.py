@@ -105,7 +105,7 @@ class HyperellipticJacobianSplit(HyperellipticJacobian):
         d1 = u1.degree()
         a_plus, a_minus = H.roots_at_infinity()
 
-        if v0.degree() == g + 1:
+        if v0.degree() <= g + 1:
             leading_coefficient = v0[g + 1]  # check coefficient of x^(g+1)
             if leading_coefficient == a_plus:
                 n1 = n0 + d0 - g - 1
