@@ -24,10 +24,11 @@ from hyperelliptic_padic_field import HyperellipticCurveSmoothModel_padic_field
 # TODO: rewrite this class for genus two specifically
 # from .hyperelliptic_g2 import HyperellipticCurve_g2
 
-# TODO: use categories to determine which field the base ring is
-import sage.rings.abc
-from sage.rings.finite_rings.finite_field_base import FiniteField
+# TODO: use categories to determine which field the base ring is?
+from sage.categories.finite_fields import FiniteFields
+from sage.rings.abc import pAdicField
 from sage.rings.rational_field import is_RationalField
+
 from sage.structure.dynamic_class import dynamic_class
 
 from sage.rings.polynomial.polynomial_element import Polynomial
@@ -121,10 +122,11 @@ def HyperellipticCurveSmoothModel(f, h=0):
     # TODO genus_classes = {2: HyperellipticCurve_g2}
 
     def is_FiniteField(x):
-        return isinstance(x, FiniteField)
+        return x in FiniteFields()
 
     def is_pAdicField(x):
-        return isinstance(x, sage.rings.abc.pAdicField)
+        # TODO: is there a category way to do this?
+        return isinstance(x, pAdicField)
 
     fields = [
         ("FiniteField", is_FiniteField, HyperellipticCurveSmoothModel_finite_field),
