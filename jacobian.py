@@ -5,7 +5,10 @@ from sage.groups.generic import order_from_multiple
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import choice, randint
 
-from hyperelliptic import HyperellipticCurveNew, HyperellipticPoint
+from hyperelliptic import HyperellipticCurveNew
+# TODO should we make a hyperelliptic point class?
+# at the moment, this is the type we get from calling a point from the projective model
+from sage.schemes.toric.morphism import SchemeMorphism_point_toric_field
 
 # Needed until https://github.com/sagemath/sage/pull/37118 is merged.
 from uniform_random_sampling import uniform_random_polynomial
@@ -47,7 +50,7 @@ class HyperellipticJacobian:
         TODO
         """
         R, x = self._curve.polynomial_ring().objgen()
-        [X, Y, Z] = P.coords()        
+        [X, Y, Z] = P._coords
         if Z == 0:
             return R.one(), R.zero()
         u = x - X
@@ -55,7 +58,7 @@ class HyperellipticJacobian:
         return u, v
 
     def __call__(self, *args, check=True):
-        if isinstance(args[0], HyperellipticPoint) and len(args) == 1:
+        if isinstance(args[0], SchemeMorphism_point_toric_field) and len(args) == 1:
             u, v = self.point_to_mumford_coordinates(args[0])
         # TODO handle this better!!
         elif len(args) == 1:
@@ -242,7 +245,7 @@ class HyperellipticJacobian:
                         # TODO: make composition with distinguished_point
                         #       its own function?
                         P0 = self._curve.distinguished_point()
-                        X0, Y0 = P0.xy()
+                        X0, Y0, _ = P0._coords
                         X = R.gen() # TODO use better variable names in this function
                         _, h = self._curve.hyperelliptic_polynomials()
                         u0 = X - X0

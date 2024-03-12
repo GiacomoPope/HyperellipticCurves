@@ -1,4 +1,3 @@
-from hyperelliptic import HyperellipticPoint
 from jacobian import HyperellipticJacobian, MumfordDivisor
 
 class HyperellipticJacobianInert(HyperellipticJacobian):
@@ -30,8 +29,8 @@ class HyperellipticJacobianInert(HyperellipticJacobian):
         P0 = self._curve.distinguished_point()
         if P == P0:
             return R.one(), R.zero()
-        [X, Y, Z] = P.coords()
-        [X0, Y0, Z0] = P0.coords()
+        [X, Y, Z] = P._coords
+        [X0, Y0, Z0] = P0._coords
         assert Z != 0 and Z0 != 0, "there should be no points at infinity"
         f, h = self._curve.hyperelliptic_polynomials()
         u, v, _ = self._cantor_composition_generic(x-X, R(Y), x-X0, R(-Y0-h(X0)))

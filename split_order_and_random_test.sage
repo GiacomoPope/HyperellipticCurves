@@ -33,7 +33,8 @@ def random_curve(use_h=True, genus=2):
             if not H.is_split():
                 continue
             return f, h, HyperellipticCurveNew(f, h)
-        except:
+        except Exception as e:
+            # print(f"{e = }")
             continue
     
 # Test that randomly sampling gets all elements in the group

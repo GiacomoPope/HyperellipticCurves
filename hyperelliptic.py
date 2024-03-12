@@ -1,16 +1,17 @@
 from sage.misc.prandom import choice
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 
+from sage.schemes.toric.library import toric_varieties
+from sage.schemes.toric.toric_subscheme import AlgebraicScheme_subscheme_toric
+
 # Named New to differentiate from the global HyperellipticCurve in Sage
-class HyperellipticCurveNew:
+class HyperellipticCurveNew(AlgebraicScheme_subscheme_toric):
     def __init__(self, f, h=0):
         # Some values which we will cache as a user asks for them
         self._alphas = None
         self._genus = None
-        self._projective_model = None
         self._infinte_polynomials = None
         self._distinguished_point = None
 
@@ -29,8 +30,34 @@ class HyperellipticCurveNew:
         self._hyperelliptic_polynomials = (f, h)
         self._d = max(h.degree(), (f.degree() / 2).ceil())
 
-        # Class which represents points
-        self._point = HyperellipticPoint
+        # Compute the smooth model for the hyperelliptic curve
+        # using a weighted projective space (via Toric Variety)
+        self._projective_model = self.projective_model()
+
+    def projective_model(self):
+        """
+        Compute the weighted projective model (1 : g + 1 : 1)
+        """
+        if hasattr(self, "_projective_model"):
+            return self._projective_model
+
+        f, h = self._hyperelliptic_polynomials
+        g = self.genus()
+
+        T = toric_varieties.WP([1, g + 1, 1], base_ring=self._base_ring, names="X, Y, Z")
+        (X, Y, Z) = T.gens()
+
+        d = max(h.degree(), (f.degree() / 2).ceil())
+        F = sum(f[i] * X**i * Z**(2*d - i) for i in range(2*d + 1))
+
+        if h.is_zero():
+            G = Y**2 - F
+        else:
+            H = sum(h[i] * X**i * Z**(d - i) for i in range(d + 1))
+            G = Y**2 + H*Y - F
+        
+        self._projective_model = T.subscheme([G])
+        return self._projective_model
 
     def __repr__(self):
         f, h = self._hyperelliptic_polynomials
@@ -66,27 +93,6 @@ class HyperellipticCurveNew:
     def polynomial_ring(self):
         return self._polynomial_ring
 
-    def projective_model(self):
-        """
-        Compute the weighted projective model (1 : 3 : 1)
-        """
-        if self._projective_model:
-            return self._projective_model
-
-        f, h = self._hyperelliptic_polynomials
-        (X, Y, Z) = PolynomialRing(self.base_ring(), names="X, Y, Z").gens()
-
-        if h is None:
-            d = f.degree()
-            F = sum(f[i] * X**i * Z**(d - i) for i in range(d + 1))
-            return Y**2 - F
-
-        d = max(h.degree(), (f.degree() / 2).ceil())
-        H = sum(h[i] * X**i * Z**(d - i) for i in range(d + 1))
-        F = sum(f[i] * X**i * Z**(2*d - i) for i in range(2*d + 1))
-        self._projective_model = Y**2 + H*Y - F
-        return self._projective_model
-
     def point(self, coords, check=True):
         if len(coords) == 2:
             X, Y = coords
@@ -96,12 +102,7 @@ class HyperellipticCurveNew:
         else:
             raise ValueError("TODO")
 
-        if check:
-            F = self.projective_model()
-            if not F(X, Y, Z).is_zero():
-                raise ValueError("TODO")
-
-        return self._point(X, Y, Z)
+        return self._projective_model.point([X, Y, Z], check=check)
 
     def hyperelliptic_polynomials(self):
         """
@@ -375,38 +376,3 @@ class HyperellipticCurveNew:
         return len(self.points())
 
     order = cardinality
-
-class HyperellipticPoint:
-    def __init__(self, X, Y, Z=1):
-        self._X = X
-        self._Y = Y
-        self._Z = Z
-
-    def coords(self):
-        return (self._X, self._Y, self._Z)
-
-    def xy(self):
-        if not self._Z:
-            raise ValueError("TODO")
-
-        x = self._X / self._Z
-        y = self._Y / self._Z
-        return x, y
-
-    def __repr__(self):
-        return f"({self._X} : {self._Y} : {self._Z})"
-
-    def __eq__(self, other):
-        if not isinstance(other, HyperellipticPoint):
-            return False
-        # TODO: this is dumb but works fine as Z is always either 0 or 1 currently
-        return self.coords() == other.coords()
-
-    def __hash__(self):
-        return hash(self.coords())
-
-    def __getitem__(self, n):
-        try:
-            return self.coords()[n]
-        except IndexError:
-            raise IndexError("todo")

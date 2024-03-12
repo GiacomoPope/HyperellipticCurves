@@ -1,6 +1,7 @@
-# Base classes
-from hyperelliptic import HyperellipticPoint
 from jacobian import HyperellipticJacobian, MumfordDivisor
+# TODO should we make a hyperelliptic point class?
+# at the moment, this is the type we get from calling a point from the projective model
+from sage.schemes.toric.morphism import SchemeMorphism_point_toric_field
 
 class HyperellipticJacobianSplit(HyperellipticJacobian):
     def __init__(self, H):
@@ -25,7 +26,7 @@ class HyperellipticJacobianSplit(HyperellipticJacobian):
         R, x = self._curve.polynomial_ring().objgen()
         g = self._curve.genus()
 
-        [X, Y, Z] = P.coords()
+        [X, Y, Z] = P._coords
         # we use the embedding P \mapsto P - P0
         # where P0 is the distinguished point of the curve
         # TODO: at the moment, we assume P0 = infty_+
@@ -48,7 +49,7 @@ class HyperellipticJacobianSplit(HyperellipticJacobian):
         """
         TODO: fix code reuse?
         """
-        if isinstance(args[0], HyperellipticPoint) and len(args) == 1:
+        if isinstance(args[0], SchemeMorphism_point_toric_field) and len(args) == 1:
             u, v, n = self.point_to_mumford_coordinates(args[0])
         # TODO handle this better!!
         elif len(args) == 1:
