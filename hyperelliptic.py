@@ -6,7 +6,8 @@ from sage.misc.cachefunc import cached_method
 from sage.schemes.toric.library import toric_varieties
 from sage.schemes.toric.toric_subscheme import AlgebraicScheme_subscheme_toric
 
-# Named HyperellipticCurveSmoothModel to differentiate from the global 
+
+# Named HyperellipticCurveSmoothModel to differentiate from the global
 # HyperellipticCurve in Sage
 class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
     def __init__(self, f, h=0):
@@ -17,7 +18,7 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
         self._distinguished_point = None
 
         # Check the polynomials are of the right type
-        disc = h**2 + 4*f
+        disc = h**2 + 4 * f
         if not isinstance(disc, Polynomial):
             raise TypeError(f"arguments {f = } and {h = } must be polynomials")
         self._polynomial_ring = disc.parent()
@@ -46,15 +47,15 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
                 return False
             elif h.is_constant():
                 return True
-            return h.gcd(f.derivative()**2  - f * h.derivative()**2).is_one()
-        
+            return h.gcd(f.derivative() ** 2 - f * h.derivative() ** 2).is_one()
+
         if h.is_zero():
             return f.gcd(f.derivative()).is_one()
-        
-        g1 = h**2 + 4*f
-        g2 = 2*f.derivative() + h * h.derivative()
+
+        g1 = h**2 + 4 * f
+        g2 = 2 * f.derivative() + h * h.derivative()
         return g1.gcd(g2).is_one()
-        
+
     def projective_model(self):
         """
         Compute the weighted projective model (1 : g + 1 : 1)
@@ -65,18 +66,20 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
         f, h = self._hyperelliptic_polynomials
         g = self.genus()
 
-        T = toric_varieties.WP([1, g + 1, 1], base_ring=self._base_ring, names="X, Y, Z")
+        T = toric_varieties.WP(
+            [1, g + 1, 1], base_ring=self._base_ring, names="X, Y, Z"
+        )
         (X, Y, Z) = T.gens()
 
         d = max(h.degree(), (f.degree() / 2).ceil())
-        F = sum(f[i] * X**i * Z**(2*d - i) for i in range(2*d + 1))
+        F = sum(f[i] * X**i * Z ** (2 * d - i) for i in range(2 * d + 1))
 
         if h.is_zero():
             G = Y**2 - F
         else:
-            H = sum(h[i] * X**i * Z**(d - i) for i in range(d + 1))
-            G = Y**2 + H*Y - F
-        
+            H = sum(h[i] * X**i * Z ** (d - i) for i in range(d + 1))
+            G = Y**2 + H * Y - F
+
         self._projective_model = T.subscheme([G])
         return self._projective_model
 
@@ -100,11 +103,11 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
 
         f, h = self._hyperelliptic_polynomials
         df = f.degree()
-        dh_2 = 2*h.degree()
+        dh_2 = 2 * h.degree()
         if dh_2 < df:
-            self._genus = (df-1)//2
+            self._genus = (df - 1) // 2
         else:
-            self._genus = (dh_2-1)//2
+            self._genus = (dh_2 - 1) // 2
 
         return self._genus
 
@@ -144,24 +147,24 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
         f, h = self._hyperelliptic_polynomials
         x = f.parent().gen()
         d = self._d
-        
-        if not h:
-            coeff = f[2*d]
+
+        if h.is_zero():
+            coeff = f[2 * d]
             # Handle the ramified case
             if coeff.is_zero():
                 return [coeff]
-            return f[2*d].sqrt(all=True)
+            return f[2 * d].sqrt(all=True)
 
-        self._alphas = (x**2 + x * h[d] - f[2*d]).roots(multiplicities=False)
+        self._alphas = (x**2 + x * h[d] - f[2 * d]).roots(multiplicities=False)
         return self._alphas
-    
+
     def is_split(self):
         """
-         Return True if the curve is split, i.e. there are two rational
-         points at infinity.
-         """
+        Return True if the curve is split, i.e. there are two rational
+        points at infinity.
+        """
         return len(self.roots_at_infinity()) == 2
-    
+
     def is_ramified(self):
         """
         Return True if the curve is ramified, i.e. there is one rational
@@ -199,12 +202,14 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
         g = [None] * (d + 1)
         g[d] = alpha_plus
         for i in range(d - 1, -1, -1):
-            # You just want (g * (g + h))[x^(i + d)] to match f_{i + d}
-            the_rest = g[d] * h[i] + sum(g[k] * (g[i + d - k] + h[i + d - k]) for k in range(i + 1, d))
+            # We need (g * (g + h))[x^(i + d)] to match f_{i + d}
+            the_rest = g[d] * h[i] + sum(
+                g[k] * (g[i + d - k] + h[i + d - k]) for k in range(i + 1, d)
+            )
             g[i] = (f[i + d] - the_rest) / (2 * g[d] + h[d])
 
         G_plus = self._polynomial_ring(g)
-        G_minus = - G_plus - h
+        G_minus = -G_plus - h
         # Checks for the assumptions on G^±
         genus = self.genus()
         assert G_plus.degree() <= (genus + 1)
@@ -231,7 +236,7 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
         try:
             x = K(x)
         except (ValueError, TypeError):
-            raise TypeError('x must be coercible into the base ring of the curve')
+            raise TypeError("x must be coercible into the base ring of the curve")
 
         # When h is zero then x is a valid coordinate if y2 is square
         if not h:
@@ -246,7 +251,7 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
             F = R([-a, b, 1])
             return bool(F.roots())
         # Otherwise x is a point on the curve if the discriminant is a square
-        D = b*b + 4*a
+        D = b * b + 4 * a
         return D.is_square()
 
     def lift_x(self, x, all=False):
@@ -262,12 +267,13 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
         # Compute the common parent between the base ring of the curve and
         # the parent of the input x-coordinate.
         from sage.structure.element import get_coercion_model
+
         cm = get_coercion_model()
         try:
             L = cm.common_parent(x.parent(), K)
             x = L(x)
         except (TypeError, ValueError):
-            raise ValueError('x must have a common parent with the base ring')
+            raise ValueError("x must have a common parent with the base ring")
 
         # First we compute the y-coordinates the given x-coordinate
         ys = []
@@ -288,9 +294,9 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
                 F = R([-a, b, 1])
                 ys = F.roots(L, multiplicities=False)
             else:
-                D = b*b + 4*a
+                D = b * b + 4 * a
                 # When D is not a square, ys will be an empty list
-                ys = [(-b+d)/2 for d in D.sqrt(all=True, extend=False)]
+                ys = [(-b + d) / 2 for d in D.sqrt(all=True, extend=False)]
 
         if ys:
             ys.sort()  # Make lifting deterministic
@@ -314,8 +320,10 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
                 # For the the split and ramified case, a point at infinity is chosen,
                 self._distinguished_point = self.points_at_infinity()[0]
             else:
-                assert self.base_ring().characteristic() > 0, "in characteristic 0, a distinguished_point needs to be specified"
-                #in the inert case we choose a point with minimal x-coordinate
+                assert (
+                    self.base_ring().characteristic() > 0
+                ), "in characteristic 0, a distinguished_point needs to be specified"
+                # in the inert case we choose a point with minimal x-coordinate
                 for x0 in self.base_ring():
                     try:
                         self._distinguished_point = self.lift_x(x0)
@@ -329,10 +337,11 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
         """
         Change the distinguished point of the hyperelliptic curve to P0.
         """
-        assert isinstance(P0, AlgebraicScheme_subscheme_toric), "the input has to be a point on the curve"
+        assert isinstance(
+            P0, AlgebraicScheme_subscheme_toric
+        ), "the input has to be a point on the curve"
         self._distinguished_point = P0
         return None
-
 
     def random_point(self):
         """
@@ -360,13 +369,16 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
     def jacobian(self):
         if self.is_ramified():
             from jacobian_ramified import HyperellipticJacobianRamified
+
             return HyperellipticJacobianRamified(self)
         if self.is_split():
             from jacobian_split import HyperellipticJacobianSplit
+
             return HyperellipticJacobianSplit(self)
 
         assert self.is_inert()
         from jacobian_inert import HyperellipticJacobianInert
+
         return HyperellipticJacobianInert(self)
 
     def frobenius_polynomial(self):
@@ -375,6 +387,7 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
         """
         f, h = self._hyperelliptic_polynomials
         from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
+
         H_tmp = HyperellipticCurve(f, h)
         return H_tmp.frobenius_polynomial()
 

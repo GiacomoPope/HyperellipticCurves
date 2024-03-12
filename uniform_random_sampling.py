@@ -1,5 +1,6 @@
 # code from https://github.com/sagemath/sage/pull/37118
 
+
 def uniform_random_polynomial(R, degree=(-1, 2), monic=False, *args, **kwds):
     r"""
     Return a random polynomial of given degree (bounds).
@@ -19,7 +20,9 @@ def uniform_random_polynomial(R, degree=(-1, 2), monic=False, *args, **kwds):
 
     if isinstance(degree, (list, tuple)):
         if len(degree) != 2:
-            raise ValueError("degree argument must be an integer or a tuple of 2 integers (min_degree, max_degree)")
+            raise ValueError(
+                "degree argument must be an integer or a tuple of 2 integers (min_degree, max_degree)"
+            )
         if degree[0] > degree[1]:
             raise ValueError("minimum degree must be less or equal than maximum degree")
         if degree[1] < -1:
@@ -47,7 +50,9 @@ def uniform_random_polynomial(R, degree=(-1, 2), monic=False, *args, **kwds):
     # If `monic` is set, zero should be ignored
     if degree[0] == -1 and monic:
         if degree[1] == -1:
-            raise ValueError("the maximum degree of monic polynomials needs to be at least 0")
+            raise ValueError(
+                "the maximum degree of monic polynomials needs to be at least 0"
+            )
         if degree[1] == 0:
             return R.one()
         degree = (0, degree[1])

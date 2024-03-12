@@ -6,12 +6,14 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import choice, randint
 
 from hyperelliptic import HyperellipticCurveSmoothModel
+
 # TODO should we make a hyperelliptic point class?
 # at the moment, this is the type we get from calling a point from the projective model
 from sage.schemes.toric.morphism import SchemeMorphism_point_toric_field
 
 # Needed until https://github.com/sagemath/sage/pull/37118 is merged.
 from uniform_random_sampling import uniform_random_polynomial
+
 
 class HyperellipticJacobian:
     def __init__(self, H):
@@ -28,7 +30,7 @@ class HyperellipticJacobian:
 
     def base_ring(self):
         return self._curve.base_ring()
-    
+
     def zero(self):
         """
         Return the zero element of the Jacobian
@@ -75,7 +77,7 @@ class HyperellipticJacobian:
 
         Returns the Cantor composition of (u1, v1) with (u1, v1)
         together with the degree of the polynomial ``s`` which is
-        needed for computing weights for the split and inert models 
+        needed for computing weights for the split and inert models
         """
         f, h = self._curve.hyperelliptic_polynomials()
 
@@ -98,7 +100,7 @@ class HyperellipticJacobian:
 
         Returns the Cantor composition of (u1, v1) with (u2, v2)
         together with the degree of the polynomial ``s`` which is
-        needed for computing weights for the split and inert models 
+        needed for computing weights for the split and inert models
         """
         # Collect data from HyperellipticCurve
         H = self.curve()
@@ -110,7 +112,7 @@ class HyperellipticJacobian:
             v1.degree() < u1.degree() and v2.degree() < u2.degree()
         ), "The degree of bi must be smaller than ai"
         assert (
-            u1.degree() <= 2*g+2 and u2.degree() <= 2*g+2
+            u1.degree() <= 2 * g + 2 and u2.degree() <= 2 * g + 2
         ), f"The degree of ai must be smaller than 2g+2, {u1.degree()}, {u2.degree()}"
 
         # Special case: duplication law
@@ -119,7 +121,7 @@ class HyperellipticJacobian:
 
         # Step One
         s0, _, e2 = u1.xgcd(u2)
-        v1_m_v2 = (v1 - v2)
+        v1_m_v2 = v1 - v2
 
         # Special case: when gcd(u0, u1) == 1 we can
         # avoid many expensive steps as we have s = 1
@@ -163,7 +165,7 @@ class HyperellipticJacobian:
         v1 = (-h - v0) % u1
 
         return u1, v1
-    
+
     def cantor_composition(self, u1, v1, u2, v2):
         u3, v3, _ = self._cantor_composition_generic(u1, v1, u2, v2)
         return u3, v3
@@ -182,7 +184,7 @@ class HyperellipticJacobian:
         g = H.genus()
 
         f, h = H.hyperelliptic_polynomials()
-        
+
         # For the inert case, the genus must be even
         if H.is_inert():
             assert not (g % 2)
@@ -197,7 +199,7 @@ class HyperellipticJacobian:
                     n = randint(0, g)
                     return self._element(self, R.one(), R.zero(), n)
                 return self.zero()
-            
+
             u = u.monic()
 
             # TODO: i think we can skip this and simply ensure u
@@ -206,7 +208,7 @@ class HyperellipticJacobian:
             # if H.is_inert() and (u.degree() % 2) == 1:
             #     #TODO: better method to sample even degree polynomials
             #     continue
-            
+
             try:
                 u1, v1 = R.one(), R.zero()
                 for x, e in u.factor():
@@ -215,7 +217,7 @@ class HyperellipticJacobian:
 
                     # TODO: is this the most efficient method? Maybe we should write
                     # a helper function which computes y^2 + hy - f = 0 mod x which
-                    # properly handles trivial cases like when x is linear? 
+                    # properly handles trivial cases like when x is linear?
                     K_ext = K.extension(modulus=x, names="a")
                     y_ext = polygen(K_ext, "y_ext")
                     h_ = K_ext(h % x)
@@ -238,22 +240,22 @@ class HyperellipticJacobian:
                     g = self._curve.genus()
                     n = randint(0, g - u1.degree())
                     return self._element(self, u1, v1, n, check=False)
-                
+
                 # We need to ensure the degree of u is even
                 if H.is_inert():
-                    if (u1.degree() % 2):
+                    if u1.degree() % 2:
                         # TODO: make composition with distinguished_point
                         #       its own function?
                         P0 = self._curve.distinguished_point()
                         X0, Y0, _ = P0._coords
-                        X = R.gen() # TODO use better variable names in this function
+                        X = R.gen()  # TODO use better variable names in this function
                         _, h = self._curve.hyperelliptic_polynomials()
                         u0 = X - X0
                         v0 = R(-Y0 - h(X0))
                         u1, v1, _ = self._cantor_composition_generic(u1, v1, u0, v0)
                     assert not (u1.degree() % 2), f"{u1} must have even degree"
                 return self._element(self, u1, v1, check=False)
-            
+
             # TODO: better handling rather than looping with try / except?
             except IndexError:
                 pass
@@ -299,13 +301,14 @@ class HyperellipticJacobian:
             return self._random_element_rational(*args, **kwargs)
         return self._random_element_cover(*args, **kwargs)
 
+
 class MumfordDivisor:
     def __init__(self, parent, u, v, check=True):
         if not isinstance(parent, HyperellipticJacobian):
             raise TypeError(f"parent must be of type {HyperellipticJacobian}")
         if not isinstance(u, Polynomial) or not isinstance(v, Polynomial):
             raise TypeError(f"arguments {u = } and {v = } must be polynomials")
- 
+
         # TODO:
         # 1. allow elements of the base field as input
         #   (in particular something like (u,v) = (x-alpha, 0))
@@ -326,7 +329,7 @@ class MumfordDivisor:
 
     def __repr__(self) -> str:
         return f"({self._u}, {self._v})"
-    
+
     def is_zero(self):
         return self._u.is_one() and self._v.is_zero()
 

@@ -1,12 +1,16 @@
 from jacobian import HyperellipticJacobian, MumfordDivisor
+
 # TODO should we make a hyperelliptic point class?
 # at the moment, this is the type we get from calling a point from the projective model
 from sage.schemes.toric.morphism import SchemeMorphism_point_toric_field
 
+
 class HyperellipticJacobianSplit(HyperellipticJacobian):
     def __init__(self, H):
         if not H.is_split():
-            raise ValueError(f"the hyperelliptic curve {H} must have two roots at infinity")
+            raise ValueError(
+                f"the hyperelliptic curve {H} must have two roots at infinity"
+            )
         super(HyperellipticJacobianSplit, self).__init__(H)
         self._element = MumfordDivisorSplit
 
@@ -79,7 +83,7 @@ class HyperellipticJacobianSplit(HyperellipticJacobian):
 
         # Cantor composition
         u3, v3, s_deg = self._cantor_composition_generic(u1, v1, u2, v2)
-        
+
         # Compute new weight
         n3 = n1 + n2 + s_deg - (g / 2).ceil()
 
@@ -272,5 +276,5 @@ class MumfordDivisorSplit(MumfordDivisor):
                 u0, -h - v0, n0, plus=True
             )
             n1 = n1 - n0 + m0 + 1
-        
+
         return MumfordDivisorSplit(self._parent, u1, v1, n1, check=False)
