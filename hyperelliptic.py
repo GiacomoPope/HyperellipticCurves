@@ -16,25 +16,45 @@ class HyperellipticCurveSmoothModel(AlgebraicScheme_subscheme_toric):
         self._infinte_polynomials = None
         self._distinguished_point = None
 
-        # Check the curve is well formed
+        # Check the polynomials are of the right type
         disc = h**2 + 4*f
         if not isinstance(disc, Polynomial):
             raise TypeError(f"arguments {f = } and {h = } must be polynomials")
         self._polynomial_ring = disc.parent()
         self._base_ring = disc.base_ring()
 
-        # TODO: check singularity from disc
-
         # Store the hyperelliptic polynomials as the correct type
         f = self._polynomial_ring(f)
         h = self._polynomial_ring(h)
         self._hyperelliptic_polynomials = (f, h)
+
+        # Ensure that there are no affine singular points
+        if not self.check_no_affine_singularities():
+            raise ValueError("singularity in the provided affine patch")
+
+        # TODO: is this simply genus + 1
         self._d = max(h.degree(), (f.degree() / 2).ceil())
 
         # Compute the smooth model for the hyperelliptic curve
         # using a weighted projective space (via Toric Variety)
         self._projective_model = self.projective_model()
 
+    def check_no_affine_singularities(self):
+        f, h = self._hyperelliptic_polynomials
+        if self._base_ring.characteristic() == 2:
+            if h.is_zero():
+                return False
+            elif h.is_constant():
+                return True
+            return h.gcd(f.derivative()**2  - f * h.derivative()**2).is_one()
+        
+        if h.is_zero():
+            return f.gcd(f.derivative()).is_one()
+        
+        g1 = h**2 + 4*f
+        g2 = 2*f.derivative() + h * h.derivative()
+        return g1.gcd(g2).is_one()
+        
     def projective_model(self):
         """
         Compute the weighted projective model (1 : g + 1 : 1)

@@ -27,9 +27,6 @@ def random_curve(genus=2):
 
         # Ensure that there are two points at infinity and the curve is non-singular 
         try:
-            # TODO: write proper singularity checking in HyperellipticCurveSmoothModel
-            HyperellipticCurve(f, h)
-            
             H = HyperellipticCurveSmoothModel(f, h)
             assert H.genus() == genus
             return f, h, H

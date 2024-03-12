@@ -24,11 +24,7 @@ def random_curve(use_h=True, genus=2):
             h = 0
         
         # Ensure that there are two points at infinity and the curve is non-singular 
-        try:
-            # TODO: write proper singularity checking in HyperellipticCurveSmoothModel
-            # TODO: write proper error handling if there's not two points at infinity
-            HyperellipticCurve(f, h)
-            
+        try:            
             H = HyperellipticCurveSmoothModel(f, h)
             assert H.is_ramified()
             return f, h, HyperellipticCurveSmoothModel(f, h)
