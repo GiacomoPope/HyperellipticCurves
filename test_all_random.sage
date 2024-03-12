@@ -28,10 +28,12 @@ def random_curve(genus=2):
         # Ensure that there are two points at infinity and the curve is non-singular 
         try:
             H = HyperellipticCurveSmoothModel(f, h)
+            # Cannot do arithmetic with odd genus curves which are inert
+            if (genus % 2) and H.is_inert():
+                continue
             assert H.genus() == genus
             return f, h, H
         except Exception as e:
-            print(f"{e = }")
             continue
     
 # Test that randomly sampling gets all elements in the group
@@ -51,16 +53,10 @@ for _ in range(1):
     print(f"")
 
 # Test all points have order dividing the Jacobian order
-for g in [2, 4, 6]:
+for g in [2, 3, 4]:
     print(f"Testing arithmetic for genus: {g}")
     for _ in range(5):
         f, h, H = random_curve(genus=g)
-        print(f"{H = }")
-        print(f"{H.is_inert() = }")
-        print(f"{H.is_ramified() = }")
-        print(f"{H.is_split() = }")
-        print()
-
         J = H.jacobian()
         o = J.order()
 
