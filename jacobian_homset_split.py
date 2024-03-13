@@ -7,25 +7,25 @@ from sage.schemes.toric.morphism import SchemeMorphism_point_toric_field
 
 
 class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
-    def __init__(self, Y, X):
-        super(HyperellipticJacobianHomsetSplit, self).__init__(Y, X)
-        self._element = MumfordDivisorClassFieldSplit
+    def __init__(self, Y, X, **kwds):
+        super(HyperellipticJacobianHomsetSplit, self).__init__(Y, X, **kwds)
+        self._morphism_element = MumfordDivisorClassFieldSplit
 
     def zero(self):
         """
         Return the zero element of the Jacobian
         """
-        g = self._curve.genus()
-        R = self._curve.polynomial_ring()
+        g = self.curve().genus()
+        R = self.curve().polynomial_ring()
         n = (g / 2).ceil()
-        return self._element(self, R.one(), R.zero(), n)
+        return self._morphism_element(self, R.one(), R.zero(), n)
 
     def point_to_mumford_coordinates(self, P):
         """
         TODO
         """
-        R, x = self._curve.polynomial_ring().objgen()
-        g = self._curve.genus()
+        R, x = self.curve().polynomial_ring().objgen()
+        g = self.curve().genus()
 
         [X, Y, Z] = P._coords
         # we use the embedding P \mapsto P - P0
@@ -36,7 +36,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         n = ((g - 1) / 2).floor()
         if Z == 0:
             alpha = Y / X
-            if alpha == self._curve._alphas[0]:
+            if alpha == self.curve()._alphas[0]:
                 n = n + 1
             u = R.one()
             v = R.zero()
@@ -62,7 +62,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             u, v, n = args
         else:
             raise NotImplementedError
-        return self._element(self, u, v, n=n, check=check)
+        return self._morphism_element(self, u, v, n=n, check=check)
 
     def cantor_composition(self, u1, v1, n1, u2, v2, n2):
         """

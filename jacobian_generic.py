@@ -7,10 +7,11 @@ Jacobian of a general hyperelliptic curve
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
 from sage.schemes.jacobians.abstract_jacobian import Jacobian_generic
 
+import jacobian_morphism
 import jacobian_homset_ramified
 import jacobian_homset_split
 import jacobian_homset_inert
@@ -36,10 +37,26 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         # TODO: make a constructor for this??
         H = self.curve()
         if H.is_ramified():
-            return jacobian_homset_ramified.JacobianHomset_divisor_classes(*args, **kwds)
+            return jacobian_homset_ramified.HyperellipticJacobianHomsetRamified(*args, **kwds)
         elif  H.is_split():
-            return jacobian_homset_split.JacobianHomset_divisor_classes(*args, **kwds)
-        return jacobian_homset_inert.JacobianHomset_divisor_classes(*args, **kwds)
+            return jacobian_homset_split.HyperellipticJacobianHomsetSplit(*args, **kwds)
+        return jacobian_homset_inert.HyperellipticJacobianHomsetInert(*args, **kwds)
 
     def _point(self, *args, **kwds):
-        return jacobian_morphism.JacobianMorphism_divisor_class_field(*args, **kwds)
+        H = self.curve()
+        if H.is_ramified():
+            return jacobian_morphism.MumfordDivisorClassFieldRamified(*args, **kwds)
+        elif  H.is_split():
+            return jacobian_morphism.MumfordDivisorClassFieldSplit(*args, **kwds)
+        return jacobian_morphism.MumfordDivisorClassFieldInert(*args, **kwds)
+
+    # Stupid functions
+    def zero(self):
+        return self(self.base_ring()).zero()
+
+    @cached_method
+    def order(self):
+        return self(self.base_ring()).order()
+    
+    def random_element(self, fast=True):
+        return self(self.base_ring()).random_element(fast=fast)

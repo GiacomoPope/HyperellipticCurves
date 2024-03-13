@@ -87,7 +87,7 @@ def HyperellipticCurveSmoothModel(f, h=0):
             H = sum(h[i] * X**i * Z ** (d - i) for i in range(d + 1))
             G = Y**2 + H * Y - F
 
-        return T.subscheme([G])
+        return T.subscheme(G)
 
     # Check the polynomials are of the right type
     F = h**2 + 4 * f

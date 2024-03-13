@@ -283,14 +283,8 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
     def jacobian(self):
         from jacobian_generic import HyperellipticJacobian_generic
         return HyperellipticJacobian_generic(self)
-        # if self.is_ramified():
-        #     from jacobian_homset_ramified import HyperellipticJacobianHomsetRamified
-        #     return HyperellipticJacobianHomsetRamified(self.base_ring())
-        
-        # elif self.is_split():
-        #     from jacobian_homset_split import HyperellipticJacobianHomsetSplit
-        #     return HyperellipticJacobianHomsetSplit(self.base_ring())
 
-        # assert self.is_inert()
-        # from jacobian_homset_inert import HyperellipticJacobianHomsetInert
-        # return HyperellipticJacobianHomsetInert(self.base_ring())
+    # TODO: ugly hack
+    def dimension(self):
+        from sage.rings.integer import Integer
+        return Integer(1)

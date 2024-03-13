@@ -18,7 +18,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         self._morphism_element = None
 
     def __repr__(self) -> str:
-        return f"Jacobian of {self._curve}"
+        return f"Jacobian of {self.curve()}"
 
     def _morphism(self, *args, **kwds):
         return self._morphism_element(*args, **kwds)
@@ -30,7 +30,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         """
         Return the zero element of the Jacobian
         """
-        R = self._curve.polynomial_ring()
+        R = self.curve().polynomial_ring()
         return self._morphism_element(self, R.one(), R.zero())
 
     @cached_method
@@ -46,7 +46,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         """
         TODO
         """
-        R, x = self._curve.polynomial_ring().objgen()
+        R, x = self.curve().polynomial_ring().objgen()
         [X, Y, Z] = P._coords
         if Z == 0:
             return R.one(), R.zero()
@@ -74,7 +74,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         together with the degree of the polynomial ``s`` which is
         needed for computing weights for the split and inert models
         """
-        f, h = self._curve.hyperelliptic_polynomials()
+        f, h = self.curve().hyperelliptic_polynomials()
 
         # New mumford coordinates
         if h.is_zero():
@@ -192,7 +192,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             if u.is_zero():
                 if H.is_split():
                     n = randint(0, g)
-                    return self._element(self, R.one(), R.zero(), n)
+                    return self._morphism_element(self, R.one(), R.zero(), n)
                 return self.zero()
 
             u = u.monic()
@@ -232,7 +232,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
                         pass
 
                 if H.is_split():
-                    g = self._curve.genus()
+                    g = self.curve().genus()
                     n = randint(0, g - u1.degree())
                     return self._morphism_element(self, u1, v1, n, check=False)
 
@@ -241,10 +241,10 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
                     if u1.degree() % 2:
                         # TODO: make composition with distinguished_point
                         #       its own function?
-                        P0 = self._curve.distinguished_point()
+                        P0 = self.curve().distinguished_point()
                         X0, Y0, _ = P0._coords
                         X = R.gen()  # TODO use better variable names in this function
-                        _, h = self._curve.hyperelliptic_polynomials()
+                        _, h = self.curve().hyperelliptic_polynomials()
                         u0 = X - X0
                         v0 = R(-Y0 - h(X0))
                         u1, v1, _ = self._cantor_composition_generic(u1, v1, u0, v0)

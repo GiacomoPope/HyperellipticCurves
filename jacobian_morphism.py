@@ -95,7 +95,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         return tuple(self._u, self._v)
     
     def __getitem__(self, n):
-        return list(self)[n]
+        return (self._u, self._v)[n]
 
     def __hash__(self):
         data = (self._u, self._v)
