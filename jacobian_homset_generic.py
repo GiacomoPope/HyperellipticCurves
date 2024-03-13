@@ -1,11 +1,8 @@
-from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
-from sage.rings.integer import Integer
-from sage.groups.generic import order_from_multiple
+
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import choice, randint
-
-from hyperelliptic_generic import HyperellipticCurveSmoothModel_generic
+from sage.schemes.generic.homset import SchemeHomset_points
 
 # TODO should we make a hyperelliptic point class?
 # at the moment, this is the type we get from calling a point from the projective model
@@ -15,28 +12,26 @@ from sage.schemes.toric.morphism import SchemeMorphism_point_toric_field
 from uniform_random_sampling import uniform_random_polynomial
 
 
-class HyperellipticJacobian:
-    def __init__(self, H):
-        if not isinstance(H, HyperellipticCurveSmoothModel_generic):
-            raise ValueError("TODO")
-        self._curve = H
-        self._element = MumfordDivisor
+class HyperellipticJacobianHomset(SchemeHomset_points):
+    def __init__(self, Y, X, **kwds):
+        SchemeHomset_points.__init__(self, Y, X, **kwds)
+        self._morphism_element = None
 
     def __repr__(self) -> str:
         return f"Jacobian of {self._curve}"
 
-    def curve(self):
-        return self._curve
+    def _morphism(self, *args, **kwds):
+        return self._morphism_element(*args, **kwds)
 
-    def base_ring(self):
-        return self._curve.base_ring()
+    def curve(self):
+        return self.codomain().curve()
 
     def zero(self):
         """
         Return the zero element of the Jacobian
         """
         R = self._curve.polynomial_ring()
-        return self._element(self, R.one(), R.zero())
+        return self._morphism_element(self, R.one(), R.zero())
 
     @cached_method
     def cardinality(self):
@@ -69,7 +64,7 @@ class HyperellipticJacobian:
             u, v = args
         else:
             raise NotImplementedError
-        return self._element(self, u, v, check=check)
+        return self._morphism_element(self, u, v, check=check)
 
     def __cantor_double_generic(self, u1, v1):
         """
@@ -239,7 +234,7 @@ class HyperellipticJacobian:
                 if H.is_split():
                     g = self._curve.genus()
                     n = randint(0, g - u1.degree())
-                    return self._element(self, u1, v1, n, check=False)
+                    return self._morphism_element(self, u1, v1, n, check=False)
 
                 # We need to ensure the degree of u is even
                 if H.is_inert():
@@ -254,7 +249,7 @@ class HyperellipticJacobian:
                         v0 = R(-Y0 - h(X0))
                         u1, v1, _ = self._cantor_composition_generic(u1, v1, u0, v0)
                     assert not (u1.degree() % 2), f"{u1} must have even degree"
-                return self._element(self, u1, v1, check=False)
+                return self._morphism_element(self, u1, v1, check=False)
 
             # TODO: better handling rather than looping with try / except?
             except IndexError:
@@ -300,131 +295,3 @@ class HyperellipticJacobian:
         if fast:
             return self._random_element_rational(*args, **kwargs)
         return self._random_element_cover(*args, **kwargs)
-
-
-class MumfordDivisor:
-    def __init__(self, parent, u, v, check=True):
-        if not isinstance(parent, HyperellipticJacobian):
-            raise TypeError(f"parent must be of type {HyperellipticJacobian}")
-        if not isinstance(u, Polynomial) or not isinstance(v, Polynomial):
-            raise TypeError(f"arguments {u = } and {v = } must be polynomials")
-
-        # TODO:
-        # 1. allow elements of the base field as input
-        #   (in particular something like (u,v) = (x-alpha, 0))
-
-        # Ensure the divisor is valid
-        if check:
-            f, h = parent.curve().hyperelliptic_polynomials()
-            assert (
-                v**2 + v * h - f
-            ) % u == 0, f"{u = }, {v = } do not define a divisor on the Jacobian"
-
-        self._parent = parent
-        self._u = u
-        self._v = v
-
-    def parent(self):
-        return self._parent
-
-    def __repr__(self) -> str:
-        return f"({self._u}, {self._v})"
-
-    def is_zero(self):
-        return self._u.is_one() and self._v.is_zero()
-
-    def uv(self):
-        return (self._u, self._v)
-
-    def __eq__(self, other):
-        if not isinstance(other, MumfordDivisor):
-            return False
-
-        u1, v1 = self.uv()
-        u2, v2 = other.uv()
-
-        return u1 == u2 and v1 == v2
-
-    def __hash__(self):
-        data = (self._u, self._v)
-        return hash(data)
-
-    @cached_method
-    def order(self):
-        n = self.parent().order()
-        return order_from_multiple(self, n)
-
-    def degree(self):
-        """
-        Returns the degree of the affine part of the divisor.
-        """
-        return self._u.degree()
-
-    def __add__(self, other):
-        # Ensure we are adding two divisors
-        if not isinstance(other, type(self)):
-            raise ValueError("TODO")
-
-        # Collect data from HyperellipticCurve
-        H = self.parent().curve()
-        g = H.genus()
-
-        # Extract out mumford coordinates
-        u1, v1 = self.uv()
-        u2, v2 = other.uv()
-
-        # Step one: cantor composition of the two divisors
-        u3, v3 = self._parent.cantor_composition(u1, v1, u2, v2)
-
-        # Step two: cantor reduction of the above to ensure
-        # the degree of u is smaller than g + 1
-        while u3.degree() > g:
-            u3, v3 = self._parent.cantor_reduction(u3, v3)
-        u3 = u3.monic()
-        v3 = v3 % u3
-
-        return self._parent._element(self._parent, u3, v3, check=False)
-
-    def __neg__(self):
-        _, h = self.parent().curve().hyperelliptic_polynomials()
-        u0, v0 = self.uv()
-
-        if h.is_zero():
-            return self._parent._element(self._parent, u0, -v0, check=False)
-
-        v1 = (-h - v0) % u0
-        return self._parent._element(self._parent, u0, v1, check=False)
-
-    def __sub__(self, other):
-        return self.__add__(-other)
-
-    def __rsub__(self, other):
-        return (-self).__add__(other)
-
-    def __mul__(self, n):
-        """ """
-        # TODO: is there a better handlings for this?
-        if not isinstance(n, (int, Integer)):
-            raise ValueError
-
-        if not n:
-            return self._parent().zero()
-
-        P = self
-
-        # Handle negative scalars
-        if n < 0:
-            n = -n
-            P = -P
-
-        # Double and Add
-        Q = P
-        R = self.parent().zero()
-        while n > 0:
-            if n % 2 == 1:
-                R = R + Q
-            Q = Q + Q
-            n = n // 2
-        return R
-
-    __rmul__ = __mul__

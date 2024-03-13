@@ -1,18 +1,15 @@
-from jacobian import HyperellipticJacobian, MumfordDivisor
+from jacobian_homset_generic import HyperellipticJacobianHomset
+from jacobian_morphism import MumfordDivisorClassFieldSplit
 
 # TODO should we make a hyperelliptic point class?
 # at the moment, this is the type we get from calling a point from the projective model
 from sage.schemes.toric.morphism import SchemeMorphism_point_toric_field
 
 
-class HyperellipticJacobianSplit(HyperellipticJacobian):
-    def __init__(self, H):
-        if not H.is_split():
-            raise ValueError(
-                f"the hyperelliptic curve {H} must have two roots at infinity"
-            )
-        super(HyperellipticJacobianSplit, self).__init__(H)
-        self._element = MumfordDivisorSplit
+class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
+    def __init__(self, Y, X):
+        super(HyperellipticJacobianHomsetSplit, self).__init__(Y, X)
+        self._element = MumfordDivisorClassFieldSplit
 
     def zero(self):
         """
@@ -153,128 +150,3 @@ class HyperellipticJacobianSplit(HyperellipticJacobian):
             n1 = n0 + g + 1 - u1.degree()
 
         return u1, v1, n1
-
-
-class MumfordDivisorSplit(MumfordDivisor):
-    def __init__(self, parent, u, v, n=0, check=True):
-        if not isinstance(parent, HyperellipticJacobianSplit):
-            raise TypeError(f"parent must be of type {HyperellipticJacobianSplit}")
-
-        # Ensure the weight is set correctly
-        g = parent.curve().genus()
-        assert 0 <= n <= (g - u.degree())
-        self._n = n
-        self._m = g - u.degree() - n
-
-        super(MumfordDivisorSplit, self).__init__(parent, u, v, check=check)
-
-    def __repr__(self):
-        return f"({self._u}, {self._v} : {self._n})"
-
-    def is_zero(self):
-        g = self._parent.curve().genus()
-        if self._n != (g / 2).ceil():
-            return False
-        return self._u.is_one() and self._v.is_zero()
-
-    def __eq__(self, other):
-        if not isinstance(other, MumfordDivisorSplit):
-            return False
-
-        n1, n2 = self._n, other._n
-
-        if n1 != n2:
-            return False
-
-        u1, v1 = self.uv()
-        u2, v2 = other.uv()
-
-        return u1 == u2 and v1 == v2
-
-    def __hash__(self):
-        data = (self._u, self._v, self._n)
-        return hash(data)
-
-    def __add__(self, other):
-        r"""
-        Follows algorithm 3.7 of
-
-        Efficient Arithmetic on Hyperelliptic Curves With Real Representation
-        David J. Mireles Morales (2008)
-        https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
-        """
-        # Ensure we are adding two divisors
-        if not isinstance(other, MumfordDivisorSplit):
-            raise ValueError("TODO")
-
-        # Collect data from HyperellipticCurve
-        H = self.parent().curve()
-        g = H.genus()
-
-        # Extract out mumford coordinates
-        u1, v1 = self.uv()
-        u2, v2 = other.uv()
-
-        # Extract out integers for weights
-        n1, n2 = self._n, other._n
-
-        # Step one: cantor composition of the two divisors
-        u3, v3, n3 = self._parent.cantor_composition(u1, v1, n1, u2, v2, n2)
-
-        # Step two: cantor reduction of the above to ensure
-        # the degree of u is smaller than g + 1
-        while u3.degree() > (g + 1):
-            u3, v3, n3 = self._parent.cantor_reduction(u3, v3, n3)
-        u3 = u3.monic()
-
-        # Step three: compose and then reduce at infinity to ensure
-        # unique representation of D
-        while n3 < 0 or n3 > g - u3.degree():
-            if n3 < 0:
-                u3, v3, n3 = self._parent.cantor_compose_at_infinity(
-                    u3, v3, n3, plus=False
-                )
-            else:
-                u3, v3, n3 = self._parent.cantor_compose_at_infinity(
-                    u3, v3, n3, plus=True
-                )
-
-        return MumfordDivisorSplit(self._parent, u3, v3, n3, check=False)
-
-    def __neg__(self):
-        r"""
-        Follows algorithm 3.8 of
-
-        Efficient Arithmetic on Hyperelliptic Curves With Real Representation
-        David J. Mireles Morales (2008)
-        https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
-        """
-        # Collect data from HyperellipticCurve
-        H = self.parent().curve()
-        _, h = H.hyperelliptic_polynomials()
-        g = H.genus()
-
-        u0, v0 = self.uv()
-        n0, m0 = self._n, self._m
-
-        # Case for even genus
-        if not (g % 2):
-            v1 = (-h - v0) % u0
-            u1 = u0
-            n1 = m0
-        # Odd genus, positive n0
-        elif n0 > 0:
-            v1 = (-h - v0) % u0
-            # Note: I think this is a typo in the paper
-            # n1 = g - m0 - u1.degree() + 1
-            u1 = u0
-            n1 = m0 + 1
-        else:
-            # Composition at infinity always with plus=True.
-            # want to "substract" \infty_+ - \infty_-
-            (u1, v1, n1) = self._parent.cantor_compose_at_infinity(
-                u0, -h - v0, n0, plus=True
-            )
-            n1 = n1 - n0 + m0 + 1
-
-        return MumfordDivisorSplit(self._parent, u1, v1, n1, check=False)

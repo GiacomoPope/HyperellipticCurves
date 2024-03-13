@@ -37,6 +37,16 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
 
     def base_ring(self):
         return self._base_ring
+    
+    def change_ring(self, R):
+        """
+        TODO
+        """
+        from hyperelliptic_constructor import HyperellipticCurveSmoothModel
+        f, h = self._hyperelliptic_polynomials
+        fR = f.change_ring(R)
+        hR = h.change_ring(R)
+        return HyperellipticCurveSmoothModel(fR, hR)
 
     def polynomial_ring(self):
         return self._polynomial_ring
@@ -271,16 +281,16 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
         return self.point(*args)
 
     def jacobian(self):
-        if self.is_ramified():
-            from jacobian_ramified import HyperellipticJacobianRamified
+        from jacobian_generic import HyperellipticJacobian_generic
+        return HyperellipticJacobian_generic(self)
+        # if self.is_ramified():
+        #     from jacobian_homset_ramified import HyperellipticJacobianHomsetRamified
+        #     return HyperellipticJacobianHomsetRamified(self.base_ring())
+        
+        # elif self.is_split():
+        #     from jacobian_homset_split import HyperellipticJacobianHomsetSplit
+        #     return HyperellipticJacobianHomsetSplit(self.base_ring())
 
-            return HyperellipticJacobianRamified(self)
-        if self.is_split():
-            from jacobian_split import HyperellipticJacobianSplit
-
-            return HyperellipticJacobianSplit(self)
-
-        assert self.is_inert()
-        from jacobian_inert import HyperellipticJacobianInert
-
-        return HyperellipticJacobianInert(self)
+        # assert self.is_inert()
+        # from jacobian_homset_inert import HyperellipticJacobianHomsetInert
+        # return HyperellipticJacobianHomsetInert(self.base_ring())
