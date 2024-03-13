@@ -17,6 +17,7 @@ AUTHORS:
 # ****************************************************************************
 
 from hyperelliptic_generic import HyperellipticCurveSmoothModel_generic
+from hyperelliptic_g2 import HyperellipticCurveSmoothModel_g2
 from hyperelliptic_finite_field import HyperellipticCurveSmoothModel_finite_field
 from hyperelliptic_rational_field import HyperellipticCurveSmoothModel_rational_field
 from hyperelliptic_padic_field import HyperellipticCurveSmoothModel_padic_field
@@ -93,14 +94,15 @@ def HyperellipticCurveSmoothModel(f, h=0):
     if not isinstance(F, Polynomial):
         raise TypeError(f"arguments {f = } and {h = } must be polynomials")
 
+    # Store the hyperelliptic polynomials as the correct type
+    polynomial_ring = F.parent()
+    base_ring = F.base_ring()
+    f = polynomial_ring(f)
+    h = polynomial_ring(h)
+
     # Ensure that there are no affine singular points
     if not __check_no_affine_singularities(f, h):
         raise ValueError("singularity in the provided affine patch")
-
-    # Store the hyperelliptic polynomials as the correct type
-    polynomial_ring = F.parent()
-    f = polynomial_ring(f)
-    h = polynomial_ring(h)
 
     # Compute the genus of the curve from f, h
     genus = __genus(f, h)
@@ -115,11 +117,7 @@ def HyperellipticCurveSmoothModel(f, h=0):
 
     superclass = []
     cls_name = ["HyperellipticCurveSmoothModel"]
-
-    # TODO:
-    # This means we must compute the genus on construction
-    # We could then take this and pass it as a parameter to the specific classes
-    # TODO genus_classes = {2: HyperellipticCurve_g2}
+    genus_classes = {2: HyperellipticCurveSmoothModel_g2}
 
     def is_FiniteField(x):
         return x in FiniteFields()
@@ -138,19 +136,18 @@ def HyperellipticCurveSmoothModel(f, h=0):
         ("pAdicField", is_pAdicField, HyperellipticCurveSmoothModel_padic_field),
     ]
 
-    # TODO
-    # if g in genus_classes:
-    #     superclass.append(genus_classes[g])
-    #     cls_name.append("g%s" % g)
-
-    # Computing F from f, h does the coercion for us
-    F = h**2 + 4 * f
-    k = F.base_ring()
+    # Look to see if the curve genus puts us in a special case
+    # currently only genus two has additional methods
+    if genus in genus_classes:
+        superclass.append(genus_classes[genus])
+        cls_name.append(f"g{genus}")
 
     # TODO:
     # Is this really the best way to do this construction???
+    # Test the base field to check if it is in the singled out
+    # fields with additional methods
     for name, test, cls in fields:
-        if test(k):
+        if test(base_ring):
             superclass.append(cls)
             cls_name.append(name)
             break
