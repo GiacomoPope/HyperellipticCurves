@@ -29,7 +29,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
     # TODO why is check passed here and not used
     def point(self, mumford, check=True):
         try:
-            return self(self.base_ring())(mumford)
+            return self.point_homset(mumford, check=check)
         except AttributeError:
             raise ValueError("Arguments must determine a valid Mumford divisor.")
 
@@ -52,11 +52,11 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
     # Stupid functions
     def zero(self):
-        return self(self.base_ring()).zero()
+        return self.point_homset().zero()
 
     @cached_method
     def order(self):
-        return self(self.base_ring()).order()
+        return self.point_homset().order()
     
     def random_element(self, fast=True):
-        return self(self.base_ring()).random_element(fast=fast)
+        return self.point_homset().random_element(fast=fast)

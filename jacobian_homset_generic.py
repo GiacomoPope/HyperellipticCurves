@@ -55,6 +55,12 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return u, v
 
     def __call__(self, *args, check=True):
+        """
+        TODO:
+
+        Allow sending two points P, Q to compute the divisor (P) - (Q)
+        Allow sending a field element correesponding to the x-coordinate of a point?
+        """
         if isinstance(args[0], SchemeMorphism_point_toric_field) and len(args) == 1:
             u, v = self.point_to_mumford_coordinates(args[0])
         # TODO handle this better!!
