@@ -152,9 +152,12 @@ def HyperellipticCurveSmoothModel(f, h=0):
             cls_name.append(name)
             break
 
-    base_cls = HyperellipticCurveSmoothModel_generic
-    if len(superclass) != 0:
-        base_cls = None
+    # If there are no superclasses detected then make simply use 
+    # HyperellipticCurveSmoothModel_generic
+    # TODO: is this a good fix???
+    base_cls = None
+    if len(superclass) == 0:
+        base_cls = HyperellipticCurveSmoothModel_generic
 
     class_name = "_".join(cls_name)
     cls = dynamic_class(
