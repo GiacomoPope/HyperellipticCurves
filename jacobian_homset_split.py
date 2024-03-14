@@ -8,7 +8,7 @@ from sage.schemes.toric.morphism import SchemeMorphism_point_toric_field
 
 class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
     def __init__(self, Y, X, **kwds):
-        super(HyperellipticJacobianHomsetSplit, self).__init__(Y, X, **kwds)
+        super().__init__(Y, X, **kwds)
         self._morphism_element = MumfordDivisorClassFieldSplit
 
     def zero(self):

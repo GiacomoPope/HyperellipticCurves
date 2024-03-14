@@ -196,7 +196,7 @@ class MumfordDivisorClassFieldRamified(MumfordDivisorClassField):
         if not parent.curve().is_ramified():
             raise TypeError("hyperelliptic curve must be ramified")
 
-        super(MumfordDivisorClassFieldRamified, self).__init__(parent, u, v, check=check)
+        super().__init__(parent, u, v, check=check)
 
 
 class MumfordDivisorClassFieldInert(MumfordDivisorClassField):
@@ -209,7 +209,7 @@ class MumfordDivisorClassFieldInert(MumfordDivisorClassField):
 
         g = parent.curve().genus()
         self._n = (g - u.degree()) // 2
-        super(MumfordDivisorClassFieldInert, self).__init__(parent, u, v, check=check)
+        super().__init__(parent, u, v, check=check)
 
     def __repr__(self):
         return f"({self._u}, {self._v} : {self._n})"
@@ -235,7 +235,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         self._n = n
         self._m = g - u.degree() - n
 
-        super(MumfordDivisorClassFieldSplit, self).__init__(parent, u, v, check=check)
+        super().__init__(parent, u, v, check=check)
 
     def __repr__(self):
         return f"({self._u}, {self._v} : {self._n})"

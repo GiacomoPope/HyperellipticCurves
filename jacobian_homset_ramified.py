@@ -3,5 +3,5 @@ from jacobian_morphism import MumfordDivisorClassFieldRamified
 
 class HyperellipticJacobianHomsetRamified(HyperellipticJacobianHomset):
     def __init__(self, Y, X, **kwds):
-        super(HyperellipticJacobianHomsetRamified, self).__init__(Y, X, **kwds)
+        super().__init__(Y, X, **kwds)
         self._morphism_element = MumfordDivisorClassFieldRamified

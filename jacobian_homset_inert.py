@@ -3,7 +3,7 @@ from jacobian_morphism import MumfordDivisorClassFieldInert
 
 class HyperellipticJacobianHomsetInert(HyperellipticJacobianHomset):
     def __init__(self, Y, X, **kwds):
-        super(HyperellipticJacobianHomsetInert, self).__init__(Y, X, **kwds)
+        super().__init__(Y, X, **kwds)
         self._morphism_element = MumfordDivisorClassFieldInert
 
     def zero(self):
