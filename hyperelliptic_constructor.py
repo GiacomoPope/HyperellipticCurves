@@ -119,6 +119,12 @@ def HyperellipticCurveSmoothModel(f, h=0):
     cls_name = ["HyperellipticCurveSmoothModel"]
     genus_classes = {2: HyperellipticCurveSmoothModel_g2}
 
+    # Look to see if the curve genus puts us in a special case
+    # currently only genus two has additional methods
+    if genus in genus_classes:
+        superclass.append(genus_classes[genus])
+        cls_name.append(f"g{genus}")
+
     def is_FiniteField(x):
         return x in FiniteFields()
 
@@ -136,12 +142,6 @@ def HyperellipticCurveSmoothModel(f, h=0):
         ("pAdicField", is_pAdicField, HyperellipticCurveSmoothModel_padic_field),
     ]
 
-    # Look to see if the curve genus puts us in a special case
-    # currently only genus two has additional methods
-    if genus in genus_classes:
-        superclass.append(genus_classes[genus])
-        cls_name.append(f"g{genus}")
-
     # TODO:
     # Is this really the best way to do this construction???
     # Test the base field to check if it is in the singled out
@@ -152,11 +152,15 @@ def HyperellipticCurveSmoothModel(f, h=0):
             cls_name.append(name)
             break
 
+    base_cls = HyperellipticCurveSmoothModel_generic
+    if len(superclass) != 0:
+        base_cls = None
+
     class_name = "_".join(cls_name)
     cls = dynamic_class(
         class_name,
         tuple(superclass),
-        HyperellipticCurveSmoothModel_generic,
+        cls=base_cls,
         doccls=HyperellipticCurveSmoothModel,
     )
     return cls(projective_model, f, h, genus)
