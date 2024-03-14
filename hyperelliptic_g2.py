@@ -14,6 +14,11 @@ invariants. I think we should fix this by putting the methods themseleves into t
 class HyperellipticCurveSmoothModel_g2(
     hyperelliptic_generic.HyperellipticCurveSmoothModel_generic
 ):
+    
+    def jacobian(self):
+        from jacobian_g2_generic import HyperellipticJacobian_g2_generic
+        return HyperellipticJacobian_g2_generic(self)
+
     # -----------------------------------
     # Genus Two invariant computations
     # -----------------------------------
