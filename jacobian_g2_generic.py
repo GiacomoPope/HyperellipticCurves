@@ -11,7 +11,6 @@ class HyperellipticJacobian_g2_generic(HyperellipticJacobian_generic):
     in genus two
     """
 
-
     def _point_homset(self, *args, **kwds):
         # TODO: make a constructor for this??
         H = self.curve()
