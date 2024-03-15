@@ -312,7 +312,7 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
         return None
 
     def __call__(self, *args):
-        return self.point(*args)
+        return self.point(args)
 
     def jacobian(self):
         from jacobian_generic import HyperellipticJacobian_generic
