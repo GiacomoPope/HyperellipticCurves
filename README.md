@@ -20,23 +20,23 @@ stills works:
 
 ### Hyperelliptic Curves
 
-- [ ] `Hyperelliptic_generic`
-- [ ] `Hyperelliptic_g2`
+- [ ] `Hyperelliptic_generic` (some failing doctests)
+- [ ] `Hyperelliptic_g2` (to copy paste)
 - [x] `Hyperelliptic_rational_field`
 - [x] `Hyperelliptic_finite_field`
-- [ ] `Hyperelliptic_padic_field`
+- [ ] `Hyperelliptic_padic_field` (many failing doctests)
 
 ### Jacobians
 
 - [ ] `jacobian_generic`
-- [ ] `jacobian_generic`
-- [ ] `jacobian_generic`
-- [ ] `jacobian_generic`
+- [ ] `jacobian_g2`
+- [ ] `jacobian_homset`
+- [ ] `jacobian_morphism`
 
 ### Other
 
 - [x] `mestre.py`
-- [x] `monsky_washnitzer.py`
+- [ ] `monsky_washnitzer.py`
 - [ ] `kummer_surface.py`
 - [x] `hyperellfrob` library (no changes needed)
 
