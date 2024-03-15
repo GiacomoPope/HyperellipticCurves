@@ -13,6 +13,33 @@ The aim is ultimately to introduce the new class `HyperellipticCurveSmoothModel`
 into SageMath as an alternative class to `HyperellipticCurve` with the potential
 to deprecate and replace this model in the future.
 
+## Progress
+
+First we should copy everything from sage and make sure it
+stills works:
+
+### Hyperelliptic Curves
+
+- [ ] `Hyperelliptic_generic`
+- [ ] `Hyperelliptic_g2`
+- [x] `Hyperelliptic_rational_field`
+- [x] `Hyperelliptic_finite_field`
+- [ ] `Hyperelliptic_padic_field`
+
+### Jacobians
+
+- [ ] `jacobian_generic`
+- [ ] `jacobian_generic`
+- [ ] `jacobian_generic`
+- [ ] `jacobian_generic`
+
+### Other
+
+- [x] `mestre.py`
+- [x] `monsky_washnitzer.py`
+- [ ] `kummer_surface.py`
+- [x] `hyperellfrob` library (no changes needed)
+
 ## Plan
 
 To maintain functionality there are several files which need to be rewritten to

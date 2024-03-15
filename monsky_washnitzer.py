@@ -1867,8 +1867,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
     EXAMPLES::
 
+        sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
         sage: R.<x> = QQ['x']
-        sage: E = HyperellipticCurve(x^5 - 36*x + 1)
+        sage: E = HyperellipticCurveSmoothModel(x^5 - 36*x + 1)
         sage: x,y = E.monsky_washnitzer_gens()
         sage: MW = x.parent()
         sage: MW(x + x**2 + y - 77)
@@ -1880,8 +1881,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 36*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 36*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: MW = x.parent()
             sage: elt = MW(x + x**2 + y - 77)
@@ -1909,8 +1911,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 36*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 36*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x == x
             True
@@ -1925,8 +1928,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 36*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 36*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: MW = x.parent()
             sage: z = MW(x + x**2 + y - 77)
@@ -1942,8 +1946,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 36*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 36*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: MW = x.parent()
             sage: z = MW(x + x**2 + y - 77); z
@@ -1964,8 +1969,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 36*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 36*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: MW = x.parent()
             sage: z = y**(-1)  # indirect doctest
@@ -1990,8 +1996,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: bool(x)
             True
@@ -2004,8 +2011,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x == y  # indirect doctest
             False
@@ -2020,8 +2028,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 36*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 36*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x + y
             y*1 + x
@@ -2035,8 +2044,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 36*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 36*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: y - x
             y*1 - x
@@ -2050,8 +2060,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 36*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 36*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: y*x
             y*x
@@ -2081,8 +2092,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x._rmul_(y)                                                           # needs sage.rings.real_interval_field
             y*1*x
@@ -2101,8 +2113,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-3*x+1)
+            sage: E = HyperellipticCurveSmoothModel(x^5-3*x+1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x._lmul_(y)                                                           # needs sage.rings.real_interval_field
             y*1*x
@@ -2121,8 +2134,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.__lshift__(3)
             y^3*x
@@ -2137,8 +2151,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: y.__rshift__(3)
             (y^-2)*1
@@ -2153,8 +2168,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: (x + 3*y + 7*x*2*y**4).truncate_neg(1)
             3*y*1 + 14*y^4*x
@@ -2169,8 +2185,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: (x + 3*y)._repr_()
             '3*y*1 + x'
@@ -2185,8 +2202,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: (x + 3*y)._latex_()
             '3y 1 + x'
@@ -2201,8 +2219,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: (x + 3*y).diff()
             (-(9-2*y)*1 + 15*x^4) dx/2y
@@ -2231,8 +2250,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: (x + 3*y + 9*x*y).extract_pow_y(1)
             [3, 9, 0, 0, 0]
@@ -2247,8 +2267,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: (x + 3*y).min_pow_y()
             0
@@ -2263,8 +2284,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: (x + 3*y).max_pow_y()
             1
@@ -2291,8 +2313,9 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.coeffs()
             ([(0, 1, 0, 0, 0)], 0)
@@ -2378,8 +2401,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         TESTS::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import SpecialHyperellipticQuotientRing
             sage: HQR = SpecialHyperellipticQuotientRing(E)
             sage: TestSuite(HQR).run()                                                  # needs sage.rings.real_interval_field
@@ -2448,8 +2472,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent()  # indirect doctest
             SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 3*x + 1) over Rational Field
@@ -2463,8 +2488,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent().base_extend(UniversalCyclotomicField())                    # needs sage.libs.gap
             SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 3*x + 1)
@@ -2484,8 +2510,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent().change_ring(ZZ)
             SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 3*x + 1)
@@ -2500,8 +2527,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent()(x^6)
             -(1-y^2)*x + 3*x^2
@@ -2522,8 +2550,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent().one()
             1
@@ -2537,8 +2566,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent().zero()
             0
@@ -2551,8 +2581,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent().gens()
             (x, y*1)
@@ -2565,8 +2596,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent().x()
             x
@@ -2579,8 +2611,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent().y()
             y*1
@@ -2593,8 +2626,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent().monomial(4,5)
             y^5*x^4
@@ -2632,8 +2666,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent().monomial_diff_coeffs(2,3)
             ((0, -15, 36, 0, 0), (0, 19, 0, 0, 0))
@@ -2665,8 +2700,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent().monomial_diff_coeffs_matrices()
             (
@@ -2693,8 +2729,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent()._precompute_monomial_diffs()
             [((-3, 0, 0, 0, 5), (0, 0, 0, 0, 0), (0, 0, 0, 0, 0)),
@@ -2720,8 +2757,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5-2*x+1)
+            sage: E = HyperellipticCurveSmoothModel(x^5-2*x+1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent().Q()
             x^5 - 2*x + 1
@@ -2734,8 +2772,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent().curve()
             Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 3*x + 1
@@ -2748,8 +2787,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent().degree()
             5
@@ -2762,8 +2802,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent().prime() is None
             True
@@ -2776,8 +2817,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: type(x.parent().monsky_washnitzer())
             <class 'sage.schemes.hyperelliptic_curves.monsky_washnitzer.MonskyWashnitzerDifferentialRing_with_category'>
@@ -2790,8 +2832,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent().is_field()
             False
@@ -2811,8 +2854,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
     EXAMPLES::
 
+        sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
         sage: R.<x> = QQ['x']
-        sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+        sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
         sage: x,y = C.monsky_washnitzer_gens()
         sage: MW = C.invariant_differential().parent()
         sage: MW(x)
@@ -2837,8 +2881,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: MW = C.invariant_differential().parent()
             sage: elt = MW(x)
@@ -2855,8 +2900,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: w = C.invariant_differential()
             sage: w + w
@@ -2876,8 +2922,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: w = C.invariant_differential()
             sage: w-w
@@ -2896,8 +2943,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: w = C.invariant_differential()
             sage: -w
@@ -2914,8 +2962,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: w = C.invariant_differential()
             sage: w*x
@@ -2936,8 +2985,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: w = C.invariant_differential()
             sage: x*w
@@ -2958,8 +3008,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: w = C.invariant_differential()
             sage: w
@@ -2975,8 +3026,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
         r"""
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: w = C.invariant_differential()
             sage: not w
@@ -2992,8 +3044,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
         r"""
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: w = C.invariant_differential()
             sage: w
@@ -3012,8 +3065,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: w = C.invariant_differential()
             sage: latex(w)
@@ -3039,8 +3093,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: (y^-1).diff() == (y^-1).diff()
             True
@@ -3062,8 +3117,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: A = y^5 - x*y^3
             sage: A.extract_pow_y(5)
@@ -3079,8 +3135,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: w = y^5 * C.invariant_differential()
             sage: w.min_pow_y()
@@ -3097,8 +3154,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: w = y^5 * C.invariant_differential()
             sage: w.max_pow_y()
@@ -3115,8 +3173,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: (y^-1).diff().reduce_neg_y()
             ((y^-1)*1, 0 dx/2y)
@@ -3151,8 +3210,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x, y = E.monsky_washnitzer_gens()
             sage: (y^-1).diff().reduce_neg_y_fast()
             ((y^-1)*1, 0 dx/2y)
@@ -3215,8 +3275,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: (y^-1).diff().reduce_neg_y()
             ((y^-1)*1, 0 dx/2y)
@@ -3272,8 +3333,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^3-4*x+4)
+            sage: C = HyperellipticCurveSmoothModel(x^3-4*x+4)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: (y^2).diff().reduce_pos_y()
             (y^2*1, 0 dx/2y)
@@ -3310,8 +3372,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^3 - 4*x + 4)
+            sage: E = HyperellipticCurveSmoothModel(x^3 - 4*x + 4)
             sage: x, y = E.monsky_washnitzer_gens()
             sage: y.diff().reduce_pos_y_fast()
             (y*1, 0 dx/2y)
@@ -3379,8 +3442,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: w = (y*x).diff()
             sage: w.reduce()
@@ -3419,8 +3483,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^3 - 4*x + 4)
+            sage: E = HyperellipticCurveSmoothModel(x^3 - 4*x + 4)
             sage: x, y = E.monsky_washnitzer_gens()
             sage: x.diff().reduce_fast()
             (x, (0, 0))
@@ -3457,8 +3522,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: x,y = C.monsky_washnitzer_gens()
             sage: w = C.invariant_differential()
             sage: w.coeffs()
@@ -3516,8 +3582,9 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
 
         TESTS::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: E = HyperellipticCurve(x^5 - 3*x + 1)
+            sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import SpecialHyperellipticQuotientRing, MonskyWashnitzerDifferentialRing
             sage: S = SpecialHyperellipticQuotientRing(E)
             sage: DR = MonskyWashnitzerDifferentialRing(S)
@@ -3536,8 +3603,9 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: MW = C.invariant_differential().parent()
             sage: MW.invariant_differential()
             1 dx/2y
@@ -3558,8 +3626,9 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: MW = C.invariant_differential().parent()
             sage: MW.base_ring()
             SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 4*x + 4)
@@ -3586,8 +3655,9 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: MW = C.invariant_differential().parent()
             sage: MW.base_ring()
             SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 4*x + 4)
@@ -3606,8 +3676,9 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: MW = C.invariant_differential().parent()
             sage: MW.Q()
             x^5 - 4*x + 4
@@ -3624,7 +3695,7 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
 
             sage: # needs sage.rings.padics
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: K = Qp(7,5)
             sage: CK = C.change_ring(K)
             sage: MW = CK.invariant_differential().parent()
@@ -3640,8 +3711,9 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: MW = C.invariant_differential().parent()
             sage: MW.Q()
             x^5 - 4*x + 4
@@ -3656,8 +3728,9 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: MW = C.invariant_differential().parent()
             sage: MW.x_to_p(3)
             x^3
@@ -3676,8 +3749,9 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: MW = C.invariant_differential().parent()
             sage: MW.frob_Q(3)
             -(60-48*y^2+12*y^4-y^6)*1 + (192-96*y^2+12*y^4)*x - (192-48*y^2)*x^2 + 60*x^3
@@ -3711,8 +3785,9 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: prec = 2
             sage: p = 7
             sage: MW = C.invariant_differential().parent()
@@ -3781,8 +3856,9 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: prec = 1
             sage: p = 5
             sage: MW = C.invariant_differential().parent()
@@ -3823,8 +3899,9 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: MW = C.invariant_differential().parent()
             sage: MW.helper_matrix()
             [ 256/2101  320/2101  400/2101  500/2101  625/2101]
@@ -3863,8 +3940,9 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
-            sage: C = HyperellipticCurve(x^5 - 4*x + 4)
+            sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: MW = C.invariant_differential().parent()
             sage: MW(3)
             3*1 dx/2y
