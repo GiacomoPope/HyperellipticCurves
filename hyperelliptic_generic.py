@@ -1,5 +1,5 @@
+import sage.all
 from sage.schemes.toric.toric_subscheme import AlgebraicScheme_subscheme_toric
-
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.big_oh import O
 from sage.rings.power_series_ring import PowerSeriesRing
@@ -826,9 +826,12 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
     def local_coordinates_at_infinity(self, prec=20, name='t'):
         """
         For the genus `g` hyperelliptic curve `y^2 = f(x)`, return
-        `(x(t), y(t))` such that `(y(t))^2 = f(x(t))`, where `t = x^g/y` is
-        the local parameter at infinity
-
+        `(x(t), y(t))` such that `(y(t))^2 = f(x(t))`, where `t = y/x^{g+1}` is
+        the local parameter at infinity.
+        
+        TODO/NOTE: In the previous implementation `t = x^g/y` was used.
+        This is not a valid parameter on the smooth model, and the output is necessarily different.
+        
         INPUT:
 
         - ``prec`` -- desired precision of the local coordinates
@@ -836,7 +839,7 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
 
         OUTPUT:
 
-        `(x(t),y(t))` such that `y(t)^2 = f(x(t))` and `t = x^g/y`
+        `(x(t),y(t))` such that `y(t)^2 = f(x(t))` and `t = y/x^{g+1}`
         is the local parameter at infinity
 
         EXAMPLES::
@@ -846,9 +849,9 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
             sage: H = HyperellipticCurveSmoothModel(x^5 - 5*x^2 + 1)
             sage: x, y = H.local_coordinates_at_infinity(10)
             sage: x
-            t^-2 + 5*t^4 - t^8 - 50*t^10 + O(t^12)
+            t^-2 - 5*t^4 + t^8 - 75*t^10 + O(t^12)
             sage: y
-            t^-5 + 10*t - 2*t^5 - 75*t^7 + 50*t^11 + O(t^12)
+            t^-5 - 15*t + 3*t^5 - 150*t^7 + 90*t^11 + O(t^12)
 
         ::
 
@@ -856,28 +859,35 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
             sage: H = HyperellipticCurveSmoothModel(x^3 - x + 1)
             sage: x, y = H.local_coordinates_at_infinity(10)
             sage: x
-            t^-2 + t^2 - t^4 - t^6 + 3*t^8 + O(t^12)
+            t^-2 - t^2 + t^4 - 2*t^6 + 5*t^8 - 10*t^10 + O(t^12)
             sage: y
-            t^-3 + t - t^3 - t^5 + 3*t^7 - 10*t^11 + O(t^12)
+            t^-3 - 2*t + 2*t^3 - 3*t^5 + 8*t^7 - 15*t^9 + 42*t^11 + O(t^12)
 
         AUTHOR:
 
         - Jennifer Balakrishnan (2007-12)
         """
+
+        if not self.is_ramified():
+            raise NotImplementedError("only implemented for hyperelliptic curves with exactly one point at infinity") 
+        
         g = self.genus()
-        pol = self.hyperelliptic_polynomials()[0]
+        pol, h = self.hyperelliptic_polynomials()
+        if h:
+            raise NotImplementedError("h = %s is nonzero" % h)
         K = LaurentSeriesRing(self.base_ring(), name, default_prec=prec+2)
         t = K.gen()
         L = PolynomialRing(K,'x')
         x = L.gen()
         i = 0
-        w = (x**g/t)**2-pol
+        w = (x**(g+1)*t)**2-pol
         wprime = w.derivative(x)
         x = t**-2
         for i in range((RR(log(prec+2)/log(2))).ceil()):
             x = x - w(x)/wprime(x)
-        y = x**g/t
+        y = x**(g+1)*t
         return x+O(t**(prec+2)) , y+O(t**(prec+2))
+        
 
     def local_coord(self, P, prec=20, name='t'):
         """
@@ -903,18 +913,19 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
             (1 + t + O(t^5), 6 + t - 7/2*t^2 - 1/2*t^3 - 25/48*t^4 + O(t^5))
             sage: H.local_coord(H(4, 0), prec=7)
             (4 + 1/360*t^2 - 191/23328000*t^4 + 7579/188956800000*t^6 + O(t^7), t + O(t^7))
-            sage: H.local_coord(H(0, 1, 0), prec=5)
-            (t^-2 + 23*t^2 - 18*t^4 - 569*t^6 + O(t^7),
-             t^-5 + 46*t^-1 - 36*t - 609*t^3 + 1656*t^5 + O(t^6))
+            sage: H.local_coord(H(1, 0, 0), prec=5)
+            (t^-2 - 23*t^2 + 18*t^4 - 1018*t^6 + O(t^7),
+            t^-5 - 69*t^-1 + 54*t - 1467*t^3 + 3726*t^5 + O(t^6))
 
         AUTHOR:
 
         - Jennifer Balakrishnan (2007-12)
         """
-        if P[1] == 0:
-            return self.local_coordinates_at_weierstrass(P, prec, name)
-        elif P[2] == 0:
+
+        if P[2] == 0:
             return self.local_coordinates_at_infinity(prec, name)
+        elif P[1] == 0:
+            return self.local_coordinates_at_weierstrass(P, prec, name)
         else:
             return self.local_coordinates_at_nonweierstrass(P, prec, name)
 
