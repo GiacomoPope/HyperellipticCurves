@@ -27,9 +27,10 @@ AUTHORS:
 from sage.matrix.constructor import Matrix
 from sage.schemes.plane_conics.constructor import Conic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
+from hyperelliptic_constructor import HyperellipticCurveSmoothModel
 
-
+# TODO:
+# precision is unused
 def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
                                        algorithm='default'):
     r"""
@@ -111,7 +112,7 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
     :issue:`12199`::
 
         sage: P.<x> = QQ[]
-        sage: C = HyperellipticCurve(x^6 + 1)
+        sage: C = HyperellipticCurveSmoothModel(x^6 + 1)
         sage: i = C.igusa_clebsch_invariants()
         sage: HyperellipticCurve_from_invariants(i)
         Traceback (most recent call last):
@@ -124,7 +125,7 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
     of those characteristics. See also :issue:`12200`::
 
         sage: P.<x> = GF(3)[]
-        sage: HyperellipticCurve(x^6 + x + 1).igusa_clebsch_invariants()
+        sage: HyperellipticCurveSmoothModel(x^6 + x + 1).igusa_clebsch_invariants()
         Traceback (most recent call last):
         ...
         NotImplementedError: Invariants of binary sextics/genus 2 hyperelliptic curves
@@ -214,7 +215,7 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
                                   "yet implemented. "
                                   "See issues #14755 and #14756.")
 
-    return HyperellipticCurve(f)
+    return HyperellipticCurveSmoothModel(f)
 
 
 def Mestre_conic(i, xyz=False, names='u,v,w'):
