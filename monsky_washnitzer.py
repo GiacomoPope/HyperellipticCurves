@@ -75,13 +75,15 @@ from sage.rings.padics.factory import Qp as pAdicField
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
-from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
-from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import is_HyperellipticCurve
+# from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
+# from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import is_HyperellipticCurve
 from sage.structure.element import ModuleElement
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
+from hyperelliptic_constructor import HyperellipticCurveSmoothModel
+from hyperelliptic_generic import is_HyperellipticCurveSmoothModel
 
 class SpecialCubicQuotientRingElement(ModuleElement):
     """
@@ -2398,7 +2400,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             Q = -E.change_ring(R).defining_polynomial()(x, 0, 1)
             self._curve = E
 
-        elif is_HyperellipticCurve(Q):
+        elif is_HyperellipticCurveSmoothModel(Q):
             C = Q
             if C.hyperelliptic_polynomials()[1] != 0:
                 raise NotImplementedError("curve must be of form y^2 = Q(x)")
@@ -2415,7 +2417,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
                     ainvs = [0, self._Q[2], 0, self._Q[1], self._Q[0]]
                     self._curve = EllipticCurve(ainvs, check_squarefree=R.is_field())
                 else:
-                    self._curve = HyperellipticCurve(self._Q, check_squarefree=R.is_field())
+                    self._curve = HyperellipticCurveSmoothModel(self._Q, check_squarefree=R.is_field())
 
         else:
             raise NotImplementedError("must be an elliptic curve or polynomial "

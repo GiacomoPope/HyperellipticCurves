@@ -30,7 +30,7 @@ from sage.rings.rational_field import is_RationalField
 from sage.schemes.toric.library import toric_varieties
 from sage.structure.dynamic_class import dynamic_class
 
-def HyperellipticCurveSmoothModel(f, h=0):
+def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
     r"""
     TODO
     """
@@ -103,7 +103,7 @@ def HyperellipticCurveSmoothModel(f, h=0):
     h = polynomial_ring(h)
 
     # Ensure that there are no affine singular points
-    if not __check_no_affine_singularities(f, h):
+    if check_squarefree and not __check_no_affine_singularities(f, h):
         raise ValueError("singularity in the provided affine patch")
 
     # Compute the genus of the curve from f, h

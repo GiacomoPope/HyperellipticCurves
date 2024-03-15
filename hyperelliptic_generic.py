@@ -1,5 +1,10 @@
 from sage.schemes.toric.toric_subscheme import AlgebraicScheme_subscheme_toric
 
+def is_HyperellipticCurveSmoothModel(C):
+    """
+    TODO
+    """
+    return isinstance(C, HyperellipticCurveSmoothModel_generic)
 
 class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
     def __init__(self, projective_model, f, h, genus):
@@ -18,8 +23,9 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
         # TODO: is this simply genus + 1
         self._d = max(h.degree(), (f.degree() / 2).ceil())
 
-    def __repr__(self):
+    def _repr_(self):
         f, h = self._hyperelliptic_polynomials
+
         if h:
             if h.is_one():
                 curve = f"y^2 + y = {f}"
@@ -27,7 +33,16 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
                 curve = f"y^2 + ({h})*y = {f}"
         else:
             curve = f"y^2 = {f}"
-        return f"Hyperelliptic Curve over {self.base_ring()} defined by {curve}"
+
+        repr_str = f"Hyperelliptic Curve over {self.base_ring()} defined by {curve}"
+
+        # TODO:
+        # The old class has these weird internal gens and then
+        # printing polynomial rings to change output. This seems
+        # dumb??
+        # Will do something hacky here and we can talk about it.
+        old_gen = str(self._polynomial_ring.gen())
+        return repr_str.replace(old_gen, "x")
 
     def genus(self):
         """
@@ -36,6 +51,9 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
         return self._genus
 
     def base_ring(self):
+        """
+        TODO
+        """
         return self._base_ring
     
     def change_ring(self, R):
@@ -49,9 +67,15 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
         return HyperellipticCurveSmoothModel(fR, hR)
 
     def polynomial_ring(self):
+        """
+        TODO
+        """
         return self._polynomial_ring
 
     def point(self, coords, check=True):
+        """
+        TODO
+        """
         if len(coords) == 2:
             X, Y = coords
             Z = self.base_ring().one()
