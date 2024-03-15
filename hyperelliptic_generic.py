@@ -34,15 +34,14 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
         else:
             curve = f"y^2 = {f}"
 
-        repr_str = f"Hyperelliptic Curve over {self.base_ring()} defined by {curve}"
-
         # TODO:
         # The old class has these weird internal gens and then
         # printing polynomial rings to change output. This seems
         # dumb??
         # Will do something hacky here and we can talk about it.
         old_gen = str(self._polynomial_ring.gen())
-        return repr_str.replace(old_gen, "x")
+        curve = curve.replace(old_gen, "x")
+        return f"Hyperelliptic Curve over {self.base_ring()} defined by {curve}"
 
     def genus(self):
         """
