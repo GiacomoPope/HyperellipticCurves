@@ -1,3 +1,4 @@
+
 import sage.all
 from sage.schemes.toric.toric_subscheme import AlgebraicScheme_subscheme_toric
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -6,8 +7,8 @@ from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.real_mpfr import RR
 from sage.functions.all import log
-from sage.structure.category_object import normalize_names
 
+from weighted_projective_curve import WeightedProjectiveCurve
 
 def is_HyperellipticCurveSmoothModel(C):
     """
@@ -15,8 +16,7 @@ def is_HyperellipticCurveSmoothModel(C):
     """
     return isinstance(C, HyperellipticCurveSmoothModel_generic)
 
-# TODO is AlgebraicScheme_subscheme_toric a reasonable inheritance?
-class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
+class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
     def __init__(self, projective_model, f, h, genus):
         self._projective_model = projective_model
         self._genus = genus
@@ -32,6 +32,11 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
 
         # TODO: is this simply genus + 1
         self._d = max(h.degree(), (f.degree() / 2).ceil())
+
+        # Initalise the underlying curve
+        A = self._projective_model.ambient_space()
+        X = self._projective_model.defining_polynomials()
+        WeightedProjectiveCurve.__init__(self, A, X)
 
     # TODO: _richcmp_ instead?
     def __richcmp__(self, other, op):
@@ -542,11 +547,6 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
             True
         """
         return True
-
-    # TODO: ugly hack
-    def dimension(self):
-        from sage.rings.integer import Integer
-        return Integer(1)
 
     # -------------------------------------------
     # Odd degree model functions
