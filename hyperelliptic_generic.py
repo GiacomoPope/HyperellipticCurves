@@ -6,6 +6,7 @@ def is_HyperellipticCurveSmoothModel(C):
     """
     return isinstance(C, HyperellipticCurveSmoothModel_generic)
 
+# TODO is AlgebraicScheme_subscheme_toric a reasonable inheritance?
 class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
     def __init__(self, projective_model, f, h, genus):
         self._projective_model = projective_model
@@ -22,6 +23,21 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
 
         # TODO: is this simply genus + 1
         self._d = max(h.degree(), (f.degree() / 2).ceil())
+
+    # TODO: richcmp?
+    # Also this is stupid?
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return False
+        
+        if self._base_ring != other._base_ring:
+            return False
+
+        return self._hyperelliptic_polynomials == other._hyperelliptic_polynomials
+    
+    def __ne__(self, other):
+        return not self == other
+
 
     def _repr_(self):
         f, h = self._hyperelliptic_polynomials
@@ -64,6 +80,8 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
         fR = f.change_ring(R)
         hR = h.change_ring(R)
         return HyperellipticCurveSmoothModel(fR, hR)
+    
+    base_extend = change_ring
 
     def polynomial_ring(self):
         """
