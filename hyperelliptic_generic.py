@@ -24,16 +24,9 @@ class HyperellipticCurveSmoothModel_generic(AlgebraicScheme_subscheme_toric):
         # TODO: is this simply genus + 1
         self._d = max(h.degree(), (f.degree() / 2).ceil())
 
-    # TODO: richcmp?
-    # Also this is stupid?
-    def __eq__(self, other):
-        if not isinstance(other, type(self)):
-            return False
-        
-        if self._base_ring != other._base_ring:
-            return False
-
-        return self._hyperelliptic_polynomials == other._hyperelliptic_polynomials
+    # TODO: _richcmp_ instead?
+    def __richcmp__(self, other, op):
+        return self._projective_model.__richcmp__(other._projective_model, op)
     
     def __ne__(self, other):
         return not self == other
