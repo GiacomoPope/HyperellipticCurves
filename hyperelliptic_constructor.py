@@ -12,6 +12,7 @@ AUTHORS:
 # ****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
 #                2019 Anna Somoza <anna.somoza.henares@gmail.com>
+#                2024 TODO
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
@@ -22,24 +23,21 @@ from hyperelliptic_finite_field import HyperellipticCurveSmoothModel_finite_fiel
 from hyperelliptic_rational_field import HyperellipticCurveSmoothModel_rational_field
 from hyperelliptic_padic_field import HyperellipticCurveSmoothModel_padic_field
 
-# TODO: rewrite this class for genus two specifically
-# from .hyperelliptic_g2 import HyperellipticCurve_g2
-
-# TODO: use categories to determine which field the base ring is?
 from sage.categories.finite_fields import FiniteFields
 from sage.rings.abc import pAdicField
-from sage.rings.rational_field import is_RationalField
-
-from sage.structure.dynamic_class import dynamic_class
-
 from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.rational_field import is_RationalField
 from sage.schemes.toric.library import toric_varieties
-
+from sage.structure.dynamic_class import dynamic_class
 
 def HyperellipticCurveSmoothModel(f, h=0):
     r"""
     TODO
     """
+
+    # -----------------
+    # Helper functions
+    # -----------------
 
     def __genus(f, h):
         """
@@ -89,6 +87,10 @@ def HyperellipticCurveSmoothModel(f, h=0):
 
         return T.subscheme(G)
 
+    # -------------------------------------------
+    # Typechecking and projective model creation
+    # -------------------------------------------
+
     # Check the polynomials are of the right type
     F = h**2 + 4 * f
     if not isinstance(F, Polynomial):
@@ -111,18 +113,18 @@ def HyperellipticCurveSmoothModel(f, h=0):
     # using a weighted projective space (via Toric Variety)
     projective_model = __projective_model(f, h, genus)
 
-    # ----------------------
+    # -----------------------
     # Dynamic class creation
-    # ----------------------
+    # -----------------------
 
-    superclass = []
+    bases = []
     cls_name = ["HyperellipticCurveSmoothModel"]
     genus_classes = {2: HyperellipticCurveSmoothModel_g2}
 
     # Look to see if the curve genus puts us in a special case
     # currently only genus two has additional methods
     if genus in genus_classes:
-        superclass.append(genus_classes[genus])
+        bases.append(genus_classes[genus])
         cls_name.append(f"g{genus}")
 
     def is_FiniteField(x):
@@ -148,22 +150,17 @@ def HyperellipticCurveSmoothModel(f, h=0):
     # fields with additional methods
     for name, test, cls in fields:
         if test(base_ring):
-            superclass.append(cls)
+            bases.append(cls)
             cls_name.append(name)
             break
 
-    # If there are no superclasses detected then make simply use 
-    # HyperellipticCurveSmoothModel_generic
-    # TODO: is this a good fix???
-    base_cls = None
-    if len(superclass) == 0:
-        base_cls = HyperellipticCurveSmoothModel_generic
+    if not bases:
+        bases = [HyperellipticCurveSmoothModel_generic]
 
     class_name = "_".join(cls_name)
     cls = dynamic_class(
         class_name,
-        tuple(superclass),
-        cls=base_cls,
+        tuple(bases),
         doccls=HyperellipticCurveSmoothModel,
     )
     return cls(projective_model, f, h, genus)
