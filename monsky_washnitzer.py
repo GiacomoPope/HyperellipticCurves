@@ -84,6 +84,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 from hyperelliptic_constructor import HyperellipticCurveSmoothModel
 from hyperelliptic_generic import is_HyperellipticCurveSmoothModel
+from hyperelliptic_generic import HyperellipticCurveSmoothModel_generic
 
 class SpecialCubicQuotientRingElement(ModuleElement):
     """
@@ -108,7 +109,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
 
             sage: B.<t> = PolynomialRing(Integers(125))
             sage: R = monsky_washnitzer.SpecialCubicQuotientRing(t^3 - t + B(1/4))
-            sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import SpecialCubicQuotientRingElement
+            sage: from monsky_washnitzer import SpecialCubicQuotientRingElement
             sage: SpecialCubicQuotientRingElement(R, 2, 3, 4)
             (2) + (3)*x + (4)*x^2
 
@@ -673,7 +674,7 @@ def transpose_list(input) -> list[list]:
 
     EXAMPLES::
 
-        sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import transpose_list
+        sage: from monsky_washnitzer import transpose_list
         sage: L = [[1, 2], [3, 4], [5, 6]]
         sage: transpose_list(L)
         [[1, 3, 5], [2, 4, 6]]
@@ -704,7 +705,7 @@ def helper_matrix(Q):
     EXAMPLES::
 
         sage: t = polygen(QQ,'t')
-        sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import helper_matrix
+        sage: from monsky_washnitzer import helper_matrix
         sage: helper_matrix(t**3-4*t-691)
         [     64/12891731  -16584/12891731 4297329/12891731]
         [   6219/12891731     -32/12891731    8292/12891731]
@@ -741,7 +742,7 @@ def lift(x):
     EXAMPLES::
 
         sage: # needs sage.rings.padics
-        sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import lift
+        sage: from monsky_washnitzer import lift
         sage: l = lift(Qp(13)(131)); l
         131
         sage: l.parent()
@@ -1119,7 +1120,7 @@ def frobenius_expansion_by_newton(Q, p, M):
 
     EXAMPLES::
 
-        sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import frobenius_expansion_by_newton
+        sage: from monsky_washnitzer import frobenius_expansion_by_newton
         sage: R.<x> = Integers(5^3)['x']
         sage: Q = x^3 - x + R(1/4)
         sage: frobenius_expansion_by_newton(Q,5,3)
@@ -1307,7 +1308,7 @@ def frobenius_expansion_by_series(Q, p, M):
 
     EXAMPLES::
 
-        sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import frobenius_expansion_by_series
+        sage: from monsky_washnitzer import frobenius_expansion_by_series
         sage: R.<x> = Integers(5^3)['x']
         sage: Q = x^3 - x + R(1/4)
         sage: frobenius_expansion_by_series(Q,5,3)                                      # needs sage.libs.pari
@@ -1387,7 +1388,7 @@ def adjusted_prec(p, prec):
 
     EXAMPLES::
 
-        sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import adjusted_prec
+        sage: from monsky_washnitzer import adjusted_prec
         sage: adjusted_prec(5,2)
         3
     """
@@ -2404,7 +2405,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
             sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
-            sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import SpecialHyperellipticQuotientRing
+            sage: from monsky_washnitzer import SpecialHyperellipticQuotientRing
             sage: HQR = SpecialHyperellipticQuotientRing(E)
             sage: TestSuite(HQR).run()                                                  # needs sage.rings.real_interval_field
 
@@ -2422,16 +2423,19 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             if E.a1() != 0 or E.a2() != 0:
                 raise NotImplementedError("curve must be in Weierstrass normal form")
             Q = -E.change_ring(R).defining_polynomial()(x, 0, 1)
+            seld._Q = Q
             self._curve = E
 
-        elif is_HyperellipticCurveSmoothModel(Q):
+        #elif is_HyperellipticCurveSmoothModel(Q):
+        elif isinstance(Q, HyperellipticCurveSmoothModel_generic):
             C = Q
             if C.hyperelliptic_polynomials()[1] != 0:
                 raise NotImplementedError("curve must be of form y^2 = Q(x)")
             Q = C.hyperelliptic_polynomials()[0].change_ring(R)
+            self._Q = Q
             self._curve = C
 
-        if isinstance(Q, Polynomial):
+        elif isinstance(Q, Polynomial):
             self._Q = Q.change_ring(R)
             self._coeffs = self._Q.coefficients(sparse=False)
             if self._coeffs.pop() != 1:
@@ -2444,7 +2448,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
                     self._curve = HyperellipticCurveSmoothModel(self._Q, check_squarefree=R.is_field())
 
         else:
-            raise NotImplementedError("must be an elliptic curve or polynomial "
+            raise NotImplementedError("must be an elliptic curve, hyperelliptic curve or polynomial "
                                       "Q for y^2 = Q(x)\n(Got element of %s)" % Q.parent())
 
         self._n = int(Q.degree())
@@ -2822,7 +2826,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: type(x.parent().monsky_washnitzer())
-            <class 'sage.schemes.hyperelliptic_curves.monsky_washnitzer.MonskyWashnitzerDifferentialRing_with_category'>
+            <class 'monsky_washnitzer.MonskyWashnitzerDifferentialRing_with_category'>
         """
         return self._monsky_washnitzer
 
@@ -3585,7 +3589,7 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
             sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
             sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
-            sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import SpecialHyperellipticQuotientRing, MonskyWashnitzerDifferentialRing
+            sage: from monsky_washnitzer import SpecialHyperellipticQuotientRing, MonskyWashnitzerDifferentialRing
             sage: S = SpecialHyperellipticQuotientRing(E)
             sage: DR = MonskyWashnitzerDifferentialRing(S)
             sage: TestSuite(DR).run()                                                   # needs sage.rings.real_interval_field

@@ -29,6 +29,7 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational_field import is_RationalField
 from sage.schemes.toric.library import toric_varieties
 from sage.structure.dynamic_class import dynamic_class
+from sage.rings.integer import Integer
 
 def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
     r"""
@@ -76,7 +77,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         )
         (X, Y, Z) = T.gens()
 
-        d = max(h.degree(), (f.degree() / 2).ceil())
+        d = max(h.degree(), (f.degree() / Integer(2)).ceil())
         F = sum(f[i] * X**i * Z ** (2 * d - i) for i in range(2 * d + 1))
 
         if h.is_zero():

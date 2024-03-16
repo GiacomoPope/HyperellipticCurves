@@ -7,6 +7,7 @@ from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.real_mpfr import RR
 from sage.functions.all import log
+from sage.rings.integer import Integer
 
 from weighted_projective_curve import WeightedProjectiveCurve
 
@@ -31,7 +32,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         self._distinguished_point = None
 
         # TODO: is this simply genus + 1
-        self._d = max(h.degree(), (f.degree() / 2).ceil())
+        self._d = max(h.degree(), (f.degree() / Integer(2)).ceil())
 
         # Initalise the underlying curve
         A = self._projective_model.ambient_space()

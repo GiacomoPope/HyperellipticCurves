@@ -1,3 +1,4 @@
+import sage.all
 import hyperelliptic_generic
 
 from sage.rings.power_series_ring import PowerSeriesRing
@@ -42,7 +43,12 @@ class HyperellipticCurveSmoothModel_padic_field(
         Returns a point `X(t) = ( x(t) : y(t) : z(t) )` such that:
 
         (1) `X(0) = P` and `X(1) = Q` if `P, Q` are not in the infinite disc
-        (2) `X(P[0]^g/P[1]) = P` and `X(Q[0]^g/Q[1]) = Q` if `P, Q` are in the infinite disc
+        (2) `X(P[1]/P[0]^(g+1)) = P` and `X(Q[1]/Q[0]^(g+1)) = Q` if `P, Q` are in the infinite disc
+
+        TODO: I'm not sure if this function is adapted correctly to the smooth setting.
+        For case 2, I chose `t = y/x^(g+1)` as local parameter. 
+        The output is in homogenous coordinates. Should it be weighted homogenous?
+
 
         EXAMPLES::
 
@@ -75,13 +81,14 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: x,y,z = HK.local_analytic_interpolation(P,Q)
             sage: x = x/z
             sage: y = y/z
-            sage: x(P[0]/P[1]) == P[0]
+            sage: g = HK.genus()
+            sage: x(P[1]/P[0]^(g+1)) == P[0]
             True
-            sage: x(Q[0]/Q[1]) == Q[0]
+            sage: x(Q[1]/Q[0]^(g+1)) == Q[0]
             True
-            sage: y(P[0]/P[1]) == P[1]
+            sage: y(P[1]/P[0]^(g+1)) == P[1]
             True
-            sage: y(Q[0]/Q[1]) == Q[1]
+            sage: y(Q[1]/Q[0]^(g+1)) == Q[1]
             True
 
         An error if points are not in the same disc::
@@ -89,7 +96,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: x,y,z = HK.local_analytic_interpolation(P,HK(1,0))
             Traceback (most recent call last):
             ...
-            ValueError: (5^-2 + O(5^6) : 4*5^-3 + 4*5^-2 + 4*5^-1 + 4 + 4*5 + 3*5^3 + 5^4 + O(5^5) : 1 + O(5^8)) and (1 + O(5^8) : 0 : 1 + O(5^8)) are not in the same residue disc
+            ValueError: [5^-2 + O(5^6) : 4*5^-3 + 4*5^-2 + 4*5^-1 + 4 + 4*5 + 3*5^3 + 5^4 + O(5^5) : 1 + O(5^8)] and [1 + O(5^8) : 0 : 1 + O(5^8)] are not in the same residue disc
 
         TESTS:
 
@@ -99,7 +106,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: HL = H.change_ring(L)
             sage: P = HL.lift_x(1 + 2*5^2)
             sage: Q = HL.lift_x(1 + 3*5^2)
-            sage: x,y,z=HL.local_analytic_interpolation(P, Q)
+            sage: x,y,z = HL.local_analytic_interpolation(P, Q)
             sage: x.polynomial().degree()
             98
 
@@ -113,10 +120,10 @@ class HyperellipticCurveSmoothModel_padic_field(
             raise ValueError("%s and %s are not in the same residue disc" % (P,Q))
         disc = self.residue_disc(P)
         t = PowerSeriesRing(self.base_ring(), 't', prec).gen(0)
-        if disc == self.change_ring(self.base_ring().residue_field())(0,1,0): # Infinite disc
+        if disc == self.change_ring(self.base_ring().residue_field())(1,0,0): # Infinite disc
             x,y = self.local_coordinates_at_infinity(2*prec)
             g = self.genus()
-            return (x*t**(2*g+1),y*t**(2*g+1),t**(2*g+1))
+            return (x*t**2,y*t**(2*g),t**2) #TODO: Is this still correct in our model?
         if disc[1] != 0: # non-Weierstrass disc
             x = P[0]+t*(Q[0]-P[0])
             pts = self.lift_x(x, all=True)
@@ -146,12 +153,14 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: x = polygen(K)
             sage: C = HyperellipticCurveSmoothModel(x^5 + 33/16*x^4 + 3/4*x^3 + 3/8*x^2 - 1/4*x + 1/16)
             sage: C.weierstrass_points()
-            [(0 : 1 + O(11^5) : 0), (7 + 10*11 + 4*11^3 + O(11^5) : 0 : 1 + O(11^5))]
+            [[1 + O(11^5) : 0 : 0], [7 + 10*11 + 4*11^3 + O(11^5) : 0 : 1 + O(11^5)]]
         """
         f, h = self.hyperelliptic_polynomials()
         if h != 0:
             raise NotImplementedError()
-        return [self((0,1,0))] + [self((x, 0, 1)) for x in f.roots(multiplicities=False)]
+        if not self.is_ramified():
+            raise NotImplementedError()
+        return [self(1,0,0)] + [self(x, 0, 1) for x in f.roots(multiplicities=False)]
 
     def is_in_weierstrass_disc(self, P):
         """
@@ -167,14 +176,14 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: P = HK(0,3)
             sage: HK.is_in_weierstrass_disc(P)
             False
-            sage: Q = HK(0,1,0)
+            sage: Q = HK(1,0,0)
             sage: HK.is_in_weierstrass_disc(Q)
             True
             sage: S = HK(1,0)
             sage: HK.is_in_weierstrass_disc(S)
             True
             sage: T = HK.lift_x(1+3*5^2); T
-            (1 + 3*5^2 + O(5^8) : 3*5 + 4*5^2 + 5^4 + 3*5^5 + 5^6 + O(5^7) : 1 + O(5^8))
+            [1 + 3*5^2 + O(5^8) : 3*5 + 4*5^2 + 5^4 + 3*5^5 + 5^6 + O(5^7) : 1 + O(5^8)]
             sage: HK.is_in_weierstrass_disc(T)
             True
 
@@ -182,7 +191,11 @@ class HyperellipticCurveSmoothModel_padic_field(
 
         - Jennifer Balakrishnan (2010-02)
         """
-        return not (P[1].valuation() == 0 and P != self(0, 1, 0))
+        if not self.is_ramified():
+            raise NotImplementedError()
+        if self.hyperelliptic_polynomials()[1]:
+            raise NotImplementedError()
+        return not (P[1].valuation() == 0)
 
     def is_weierstrass(self, P):
         """
@@ -198,14 +211,14 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: P = HK(0,3)
             sage: HK.is_weierstrass(P)
             False
-            sage: Q = HK(0,1,0)
+            sage: Q = HK(1,0,0)
             sage: HK.is_weierstrass(Q)
             True
             sage: S = HK(1,0)
             sage: HK.is_weierstrass(S)
             True
             sage: T = HK.lift_x(1+3*5^2); T
-            (1 + 3*5^2 + O(5^8) : 3*5 + 4*5^2 + 5^4 + 3*5^5 + 5^6 + O(5^7) : 1 + O(5^8))
+            [1 + 3*5^2 + O(5^8) : 3*5 + 4*5^2 + 5^4 + 3*5^5 + 5^6 + O(5^7) : 1 + O(5^8)]
             sage: HK.is_weierstrass(T)
             False
 
@@ -213,7 +226,9 @@ class HyperellipticCurveSmoothModel_padic_field(
 
         - Jennifer Balakrishnan (2010-02)
         """
-        return (P[1] == 0 or P[2] == 0)
+        if self.hyperelliptic_polynomials()[1]:
+            raise NotImplementedError
+        return (P[1] == 0)
 
     def find_char_zero_weier_point(self, Q):
         """
@@ -230,15 +245,15 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: P = HK.lift_x(1 + 2*5^2)
             sage: Q = HK.lift_x(5^-2)
             sage: S = HK(1,0)
-            sage: T = HK(0,1,0)
+            sage: T = HK(1,0,0)
             sage: HK.find_char_zero_weier_point(P)
-            (1 + O(5^8) : 0 : 1 + O(5^8))
+            [1 + O(5^8) : 0 : 1 + O(5^8)]
             sage: HK.find_char_zero_weier_point(Q)
-            (0 : 1 + O(5^8) : 0)
+            [1 + O(5^8) : 0 : 0]
             sage: HK.find_char_zero_weier_point(S)
-            (1 + O(5^8) : 0 : 1 + O(5^8))
+            [1 + O(5^8) : 0 : 1 + O(5^8)]
             sage: HK.find_char_zero_weier_point(T)
-            (0 : 1 + O(5^8) : 0)
+            [1 + O(5^8) : 0 : 0]
 
         AUTHOR:
 
@@ -264,28 +279,35 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: HK = H.change_ring(K)
             sage: P = HK.lift_x(1 + 2*5^2)
             sage: HK.residue_disc(P)
-            (1 : 0 : 1)
+            [1 : 0 : 1]
             sage: Q = HK(0,3)
             sage: HK.residue_disc(Q)
-            (0 : 3 : 1)
+            [0 : 3 : 1]
             sage: S = HK.lift_x(5^-2)
             sage: HK.residue_disc(S)
-            (0 : 1 : 0)
-            sage: T = HK(0,1,0)
+            [1 : 0 : 0]
+            sage: T = HK(1,0,0)
             sage: HK.residue_disc(T)
-            (0 : 1 : 0)
+            [1 : 0 : 0]
 
         AUTHOR:
 
         - Jennifer Balakrishnan
         """
+        if not self.is_ramified():
+            raise NotImplementedError("not implemented for split or inert hyperelliptic curves")
+        _ , h = self.hyperelliptic_polynomials()
+        if h:
+            raise NotImplementedError("h has to be zero")
+
         xPv = P[0].valuation()
         yPv = P[1].valuation()
+
         F = self.base_ring().residue_field()
         HF = self.change_ring(F)
-        # TODO: point at infinity needs to be handled differently!!
-        if P == self(0,1,0):
-            return HF(0,1,0)
+
+        if P == self(1,0,0):
+            return HF(1,0,0)
         elif yPv > 0:
             if xPv > 0:
                 return HF(0,0,1)
@@ -297,7 +319,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             if xPv == 0:
                 return HF(P[0].expansion(0), P[1].expansion(0),1)
         else:
-            return HF(0,1,0)
+            return HF(1,0,0)
 
     def is_same_disc(self, P, Q):
         """
@@ -366,15 +388,21 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: C.tiny_integrals([1,x,x^2,x^3],P,S)
             Traceback (most recent call last):
             ...
-            ValueError: (11^-2 + O(11^3) : 11^-5 + 8*11^-2 + O(11^0) : 1 + O(11^5)) and (0 : 3 + 8*11 + 2*11^2 + 8*11^3 + 2*11^4 + O(11^5) : 1 + O(11^5)) are not in the same residue disc
+            ValueError: [11^-2 + O(11^3) : 11^-5 + 8*11^-2 + O(11^0) : 1 + O(11^5)] and [0 : 3 + 8*11 + 2*11^2 + 8*11^3 + 2*11^4 + O(11^5) : 1 + O(11^5)] are not in the same residue disc
 
         """
+        if  self.hyperelliptic_polynomials()[1]:
+            raise NotImplementedError
+        if not self.is_ramified():
+            raise NotImplementedError
+
+        g = self.genus()
         x, y, z = self.local_analytic_interpolation(P, Q)  #homogeneous coordinates
         x = x/z
-        y = y/z
+        y = y/z #TODO: see todo in the computation of local_analytic_interpolation. 
+        # Do we need weighted projective coordinates?
         dt = x.derivative() / (2*y)
         integrals = []
-        g = self.genus()
         for f in F:
             try:
                 f_dt = f(x,y)*dt
@@ -384,7 +412,7 @@ class HyperellipticCurveSmoothModel_padic_field(
                 I = sum(f_dt[n]/(n+1) for n in range(f_dt.degree() + 1)) # \int_0^1 f dt
             else:
                 If_dt = f_dt.integral().laurent_polynomial()
-                I = If_dt(Q[0]**g/Q[1]) - If_dt(P[0]**g/P[1])
+                I = If_dt(Q[1]/Q[0]**(g+1)) - If_dt(P[1]/P[0]**(g+1))
             integrals.append(I)
         return vector(integrals)
 
@@ -430,7 +458,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: C.tiny_integrals_on_basis(P,S)
             Traceback (most recent call last):
             ...
-            ValueError: (11^-2 + O(11^3) : 11^-5 + 8*11^-2 + O(11^0) : 1 + O(11^5)) and (0 : 3 + 8*11 + 2*11^2 + 8*11^3 + 2*11^4 + O(11^5) : 1 + O(11^5)) are not in the same residue disc
+            ValueError: [11^-2 + O(11^3) : 11^-5 + 8*11^-2 + O(11^0) : 1 + O(11^5)] and [0 : 3 + 8*11 + 2*11^2 + 8*11^3 + 2*11^4 + O(11^5) : 1 + O(11^5)] are not in the same residue disc
 
         """
         if P == Q:
@@ -525,7 +553,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: HK = H.change_ring(K)
             sage: S = HK(1,0)
             sage: P = HK(0,3)
-            sage: T = HK(0,1,0)
+            sage: T = HK(1,0,0)
             sage: Q = HK.lift_x(5^-2)
             sage: R = HK.lift_x(4*5^-2)
             sage: HK.coleman_integrals_on_basis(S,P)
@@ -550,6 +578,12 @@ class HyperellipticCurveSmoothModel_padic_field(
         - Robert Bradshaw (2007-03): non-Weierstrass points
         - Jennifer Balakrishnan and Robert Bradshaw (2010-02): Weierstrass points
         """
+
+        if self.hyperelliptic_polynomials()[1]:
+            raise NotImplementedError
+        if not self.is_ramified():
+            raise NotImplementedError
+
         import monsky_washnitzer # TODO resolve import after globals
         from sage.misc.profiler import Profiler
         prof = Profiler()
@@ -602,7 +636,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             offset = (2*g-1)*max(TPv, TQv)
             if offset == +Infinity:
                 offset = (2*g-1)*min(TPv,TQv)
-            if (offset > prec and (xTPv < 0 or xTQv < 0) and (self.residue_disc(P) == self.change_ring(GF(p))(0,1,0) or self.residue_disc(Q) == self.change_ring(GF(p))(0,1,0))):
+            if (offset > prec and (xTPv < 0 or xTQv < 0) and (self.residue_disc(P) == self.change_ring(GF(p))(1,0,0) or self.residue_disc(Q) == self.change_ring(GF(p))(1,0,0))):
                 newprec = offset + prec
                 K = pAdicField(p,newprec)
                 A = PolynomialRing(RationalField(),'x')
@@ -775,7 +809,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: H = HyperellipticCurveSmoothModel(x*(x-1)*(x+9))
             sage: K = Qp(7,10)
             sage: HK = H.change_ring(K)
-            sage: import sage.schemes.hyperelliptic_curves.monsky_washnitzer as mw
+            sage: import monsky_washnitzer as mw
             sage: M_frob, forms = mw.matrix_of_frobenius_hyperelliptic(HK)
             sage: w = HK.invariant_differential()
             sage: x,y = HK.monsky_washnitzer_gens()
@@ -817,7 +851,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: S = HK(1,0)
             sage: P = HK(0,3)
             sage: negP = HK(0,-3)
-            sage: T = HK(0,1,0)
+            sage: T = HK(1,0,0)
             sage: w = HK.invariant_differential()
             sage: x,y = HK.monsky_washnitzer_gens()
             sage: HK.coleman_integral(w*x^3,S,T)
@@ -887,11 +921,11 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: E = HyperellipticCurveSmoothModel(x^5 - 21*x - 20)
             sage: P = E.lift_x(2)
             sage: E.frobenius(P)
-            (2 + 10*11 + 5*11^2 + 11^3 + O(11^5) : 6 + 11 + 8*11^2 + 8*11^3 + 10*11^4 + O(11^5) : 1 + O(11^5))
+            [2 + 10*11 + 5*11^2 + 11^3 + O(11^5) : 6 + 11 + 8*11^2 + 8*11^3 + 10*11^4 + O(11^5) : 1 + O(11^5)]
             sage: Q = E.teichmuller(P); Q
-            (2 + 10*11 + 4*11^2 + 9*11^3 + 11^4 + O(11^5) : 6 + 11 + 4*11^2 + 9*11^3 + 4*11^4 + O(11^5) : 1 + O(11^5))
+            [2 + 10*11 + 4*11^2 + 9*11^3 + 11^4 + O(11^5) : 6 + 11 + 4*11^2 + 9*11^3 + 4*11^4 + O(11^5) : 1 + O(11^5)]
             sage: E.frobenius(Q)
-            (2 + 10*11 + 4*11^2 + 9*11^3 + 11^4 + O(11^5) : 6 + 11 + 4*11^2 + 9*11^3 + 4*11^4 + O(11^5) : 1 + O(11^5))
+            [2 + 10*11 + 4*11^2 + 9*11^3 + 11^4 + O(11^5) : 6 + 11 + 4*11^2 + 9*11^3 + 4*11^4 + O(11^5) : 1 + O(11^5)]
 
         ::
 
@@ -904,7 +938,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: HL = H.change_ring(L)
             sage: S = HL(u(a),v(a))
             sage: HL.frobenius(S)
-            (8*a^22 + 10*a^42 + 4*a^44 + 2*a^46 + 9*a^48 + 8*a^50 + a^52 + 7*a^54 +
+            [8*a^22 + 10*a^42 + 4*a^44 + 2*a^46 + 9*a^48 + 8*a^50 + a^52 + 7*a^54 +
             7*a^56 + 5*a^58 + 9*a^62 + 5*a^64 + a^66 + 6*a^68 + a^70 + 6*a^74 +
             2*a^76 + 2*a^78 + 4*a^82 + 5*a^84 + 2*a^86 + 7*a^88 + a^90 + 6*a^92 +
             a^96 + 5*a^98 + 2*a^102 + 2*a^106 + 6*a^108 + 8*a^110 + 3*a^112 +
@@ -914,12 +948,17 @@ class HyperellipticCurveSmoothModel_padic_field(
             4*a^65 + 10*a^69 + 3*a^71 + 2*a^73 + 9*a^75 + 10*a^77 + 6*a^79 +
             10*a^81 + 7*a^85 + a^87 + 4*a^89 + 8*a^91 + a^93 + 8*a^95 + 2*a^97 +
             7*a^99 + a^101 + 3*a^103 + 6*a^105 + 7*a^107 + 4*a^109 + O(a^111) :
-            1 + O(a^100))
+            1 + O(a^100)]
 
         AUTHORS:
 
         - Robert Bradshaw and Jennifer Balakrishnan (2010-02)
         """
+        if self.hyperelliptic_polynomials()[1]:
+            raise NotImplementedError
+        if not self.is_ramified():
+            raise NotImplementedError
+
         try:
             _frob = self._frob
         except AttributeError:
@@ -933,7 +972,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             h = (f(x**p) - f**p)
 
             def _frob(P):
-                if P == self(0,1,0):
+                if P == self(1,0,0):
                     return P
                 x0 = P[0]
                 y0 = P[1]
@@ -1031,7 +1070,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: HK = H.change_ring(K)
             sage: HL = HK.curve_over_ram_extn(2)
             sage: HL
-            Hyperelliptic Curve over 11-adic Eisenstein Extension Field in a defined by x^2 - 11 defined by (1 + O(a^10))*y^2 = (1 + O(a^10))*x^5 + (10 + 8*a^2 + 10*a^4 + 10*a^6 + 10*a^8 + O(a^10))*x^3 + (7 + a^2 + O(a^10))*x^2 + (7 + 3*a^2 + O(a^10))*x
+            Hyperelliptic Curve over 11-adic Eisenstein Extension Field in a defined by x^2 - 11 defined by y^2 = x^5 + (10 + 8*a^2 + 10*a^4 + 10*a^6 + 10*a^8 + O(a^10))*x^3 + (7 + a^2 + O(a^10))*x^2 + (7 + 3*a^2 + O(a^10))*x
 
         AUTHOR:
 
@@ -1077,7 +1116,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: HJ  = H.change_ring(J)
             sage: S = HK.get_boundary_point(HJ,P)
             sage: S
-            (1 + 2*a^2 + 2*a^6 + 2*a^18 + a^32 + a^34 + a^36 + 2*a^38 + 2*a^40 + a^42 + 2*a^44 + a^48 + 2*a^50 + 2*a^52 + a^54 + a^56 + 2*a^60 + 2*a^62 + a^70 + 2*a^72 + a^76 + 2*a^78 + a^82 + a^88 + a^96 + 2*a^98 + 2*a^102 + a^104 + 2*a^106 + a^108 + 2*a^110 + a^112 + 2*a^116 + a^126 + 2*a^130 + 2*a^132 + a^144 + 2*a^148 + 2*a^150 + a^152 + 2*a^154 + a^162 + a^164 + a^166 + a^168 + a^170 + a^176 + a^178 + O(a^180) : a + O(a^180) : 1 + O(a^180))
+            [1 + 2*a^2 + 2*a^6 + 2*a^18 + a^32 + a^34 + a^36 + 2*a^38 + 2*a^40 + a^42 + 2*a^44 + a^48 + 2*a^50 + 2*a^52 + a^54 + a^56 + 2*a^60 + 2*a^62 + a^70 + 2*a^72 + a^76 + 2*a^78 + a^82 + a^88 + a^96 + 2*a^98 + 2*a^102 + a^104 + 2*a^106 + a^108 + 2*a^110 + a^112 + 2*a^116 + a^126 + 2*a^130 + 2*a^132 + a^144 + 2*a^148 + 2*a^150 + a^152 + 2*a^154 + a^162 + a^164 + a^166 + a^168 + a^170 + a^176 + a^178 + O(a^180) : a + O(a^180) : 1 + O(a^180)]
 
         AUTHOR:
 
@@ -1246,7 +1285,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             x,y = self.local_coord(P,prec2)
             integrals = [(x**i*x.derivative()/(2*y)).integral() for i in range(dim)]
             S_to_FS = vector([I.polynomial()(FS[1]) - I.polynomial()(S[1]) for I in integrals])
-        if HJ(Q[0],Q[1]) == HJ(FQ):
+        if HJ(Q[0],Q[1],Q[2]) == HJ(FQ[0],FQ[1],FQ[2]):
             FQ_to_Q = V(dim*[0])
         else:
             FQ_to_Q = V(self.tiny_integrals_on_basis(FQ, Q))
@@ -1339,6 +1378,7 @@ class HyperellipticCurveSmoothModel_padic_field(
 
         EXAMPLES::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
             sage: H = HyperellipticCurveSmoothModel(x^3-10*x+9)
             sage: K = Qp(5,6)
