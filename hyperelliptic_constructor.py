@@ -44,8 +44,9 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         """
         TODO
         """
-        df = f.degree()
-        dh_2 = 2 * h.degree()
+        # Some classes still have issues with degrees returning `int`
+        df = Integer(f.degree())
+        dh_2 = 2 * Integer(h.degree())
         if dh_2 < df:
             return (df - 1) // 2
         return (dh_2 - 1) // 2
@@ -77,7 +78,8 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         )
         (X, Y, Z) = T.gens()
 
-        d = max(h.degree(), (f.degree() / Integer(2)).ceil())
+        # Some classes still have issues with degrees returning `int`
+        d = max(Integer(h.degree()), (Integer(f.degree()) / 2).ceil())
         F = sum(f[i] * X**i * Z ** (2 * d - i) for i in range(2 * d + 1))
 
         if h.is_zero():
