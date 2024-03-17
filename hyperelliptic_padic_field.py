@@ -75,13 +75,13 @@ class HyperellipticCurveSmoothModel_padic_field(
             (True, True, True, True)
 
         The infinite disc::
-
+            
+            sage: g = HK.genus()
             sage: P = HK.lift_x(5^-2)
             sage: Q = HK.lift_x(4*5^-2)
             sage: x,y,z = HK.local_analytic_interpolation(P,Q)
             sage: x = x/z
-            sage: y = y/z
-            sage: g = HK.genus()
+            sage: y = y/z^(g+1)
             sage: x(P[1]/P[0]^(g+1)) == P[0]
             True
             sage: x(Q[1]/Q[0]^(g+1)) == Q[0]
@@ -123,7 +123,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         if disc == self.change_ring(self.base_ring().residue_field())(1,0,0): # Infinite disc
             x,y = self.local_coordinates_at_infinity(2*prec)
             g = self.genus()
-            return (x*t**(2*g+1),y*t**(2*g+1),t**(2*g+1)) #TODO: Is this correct?
+            return (x*t**2,y*t**(2*g+2),t**(2)) #TODO: Is this correct?
         if disc[1] != 0: # non-Weierstrass disc
             x = P[0]+t*(Q[0]-P[0])
             pts = self.lift_x(x, all=True)
@@ -399,7 +399,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         g = self.genus()
         x, y, z = self.local_analytic_interpolation(P, Q)  #homogeneous coordinates
         x = x/z
-        y = y/z #TODO: see todo in the computation of local_analytic_interpolation. 
+        y = y/z**(g+1) #TODO: see todo in the computation of local_analytic_interpolation. 
         # Do we need weighted projective coordinates?
         dt = x.derivative() / (2*y)
         integrals = []
