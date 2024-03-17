@@ -123,7 +123,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         if disc == self.change_ring(self.base_ring().residue_field())(1,0,0): # Infinite disc
             x,y = self.local_coordinates_at_infinity(2*prec)
             g = self.genus()
-            return (x*t**2,y*t**(2*g),t**2) #TODO: Is this still correct in our model?
+            return (x*t**(2*g+1),y*t**(2*g+1),t**(2*g+1)) #TODO: Is this correct?
         if disc[1] != 0: # non-Weierstrass disc
             x = P[0]+t*(Q[0]-P[0])
             pts = self.lift_x(x, all=True)
