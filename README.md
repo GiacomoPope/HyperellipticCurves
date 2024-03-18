@@ -20,11 +20,11 @@ stills works:
 
 ### Hyperelliptic Curves
 
-- [ ] `Hyperelliptic_generic` (some failing doctests)
+- [ ] `Hyperelliptic_generic` (need to implement `rational_points())
 - [ ] `Hyperelliptic_g2` (to copy paste)
 - [x] `Hyperelliptic_rational_field`
 - [x] `Hyperelliptic_finite_field`
-- [ ] `Hyperelliptic_padic_field` (many failing doctests)
+- [x] `Hyperelliptic_padic_field`
 
 ### Jacobians
 
@@ -36,8 +36,8 @@ stills works:
 ### Other
 
 - [x] `mestre.py`
-- [ ] `monsky_washnitzer.py`
-- [ ] `kummer_surface.py`
+- [ ] `monsky_washnitzer.py` (failing examples as we don't support curves over rings)
+- [ ] `kummer_surface.py` (to rewrite)
 - [x] `hyperellfrob` library (no changes needed)
 
 ## Plan
