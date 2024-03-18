@@ -75,15 +75,12 @@ from sage.rings.padics.factory import Qp as pAdicField
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
-# from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
-# from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import is_HyperellipticCurve
 from sage.structure.element import ModuleElement
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
 from hyperelliptic_constructor import HyperellipticCurveSmoothModel
-from hyperelliptic_generic import is_HyperellipticCurveSmoothModel
 from hyperelliptic_generic import HyperellipticCurveSmoothModel_generic
 
 class SpecialCubicQuotientRingElement(ModuleElement):
@@ -2423,10 +2420,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             if E.a1() != 0 or E.a2() != 0:
                 raise NotImplementedError("curve must be in Weierstrass normal form")
             Q = -E.change_ring(R).defining_polynomial()(x, 0, 1)
-            seld._Q = Q
+            self._Q = Q
             self._curve = E
 
-        #elif is_HyperellipticCurveSmoothModel(Q):
         elif isinstance(Q, HyperellipticCurveSmoothModel_generic):
             C = Q
             if C.hyperelliptic_polynomials()[1] != 0:

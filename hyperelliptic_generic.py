@@ -671,12 +671,12 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         EXAMPLES::
 
             sage: # optional - magma
-            sage: R.<x> = QQ[]; C = HyperellipticCurve(x^3 + x - 1, x); C
+            sage: R.<x> = QQ[]; C = HyperellipticCurveSmoothModel(x^3 + x - 1, x); C
             Hyperelliptic Curve over Rational Field
             defined by y^2 + x*y = x^3 + x - 1
             sage: magma(C)
             Hyperelliptic Curve defined by y^2 + x*y = x^3 + x - 1 over Rational Field
-            sage: R.<x> = GF(9,'a')[]; C = HyperellipticCurve(x^3 + x - 1, x^10); C     # needs sage.rings.finite_rings
+            sage: R.<x> = GF(9,'a')[]; C = HyperellipticCurveSmoothModel(x^3 + x - 1, x^10); C     # needs sage.rings.finite_rings
             Hyperelliptic Curve over Finite Field in a of size 3^2
             defined by y^2 + x^10*y = x^3 + x + 2
             sage: D = magma(C); D                                                       # needs sage.rings.finite_rings

@@ -31,6 +31,15 @@ from sage.schemes.toric.library import toric_varieties
 from sage.structure.dynamic_class import dynamic_class
 from sage.rings.integer import Integer
 
+"""
+TODO:
+
+- We currently cannot support the construction of curves over rings
+- ...
+
+"""
+
+
 def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
     r"""
     TODO
