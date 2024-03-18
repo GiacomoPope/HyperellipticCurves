@@ -35,7 +35,7 @@ stills works:
 ### Hyperelliptic Curves
 
 - [ ] `Hyperelliptic_generic` (need to implement `rational_points()`)
-- [x] `Hyperelliptic_g2` (to copy paste)
+- [x] `Hyperelliptic_g2`
 - [x] `Hyperelliptic_rational_field`
 - [x] `Hyperelliptic_finite_field`
 - [x] `Hyperelliptic_padic_field`
