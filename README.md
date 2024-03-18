@@ -13,6 +13,20 @@ The aim is ultimately to introduce the new class `HyperellipticCurveSmoothModel`
 into SageMath as an alternative class to `HyperellipticCurve` with the potential
 to deprecate and replace this model in the future.
 
+## Usage
+
+`HyperellipticCurveSmoothModel` has been designed as a drop in replacement for `HyperellipticCurve`, so from the 
+root of this repo run the following:
+
+```py
+from hyperelliptic_constructor import HyperellipticCurveSmoothModel
+R.<x> = QQ[]
+f = x^7 + 1
+H = HyperellipticCurveSmoothModel(f)
+```
+
+and you should be able to work "as normal" with `H`, but without arithmetic bugs
+
 ## Progress
 
 First we should copy everything from sage and make sure it
