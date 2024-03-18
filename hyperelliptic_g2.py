@@ -1,6 +1,10 @@
 import hyperelliptic_generic
 import invariants
 
+from hyperelliptic_padic_field import HyperellipticCurveSmoothModel_padic_field
+from hyperelliptic_finite_field import HyperellipticCurveSmoothModel_finite_field
+from hyperelliptic_rational_field import HyperellipticCurveSmoothModel_rational_field
+
 """
 TODO List
 
@@ -162,3 +166,13 @@ class HyperellipticCurveSmoothModel_g2(
         """
         f, h = self.hyperelliptic_polynomials()
         return invariants.absolute_igusa_invariants_kohel(4 * f + h**2)
+
+
+class HyperellipticCurveSmoothModel_g2_padic_field(HyperellipticCurveSmoothModel_g2, HyperellipticCurveSmoothModel_padic_field):
+    pass
+
+class HyperellipticCurveSmoothModel_g2_finite_field(HyperellipticCurveSmoothModel_g2, HyperellipticCurveSmoothModel_finite_field):
+    pass
+
+class HyperellipticCurveSmoothModel_g2_rational_field(HyperellipticCurveSmoothModel_g2, HyperellipticCurveSmoothModel_rational_field):
+    pass

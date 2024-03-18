@@ -1,12 +1,11 @@
 """
 Constructor for Hyperelliptic Curves using the smooth model
 
-Adapted from /hyperelliptic/constructor.py 
+Adapted from /hyperelliptic/constructor.py
 
 AUTHORS:
 
 - David Kohel (2006): initial version
-- Anna Somoza (2019-04): dynamic class creation
 - TODO
 """
 # ****************************************************************************
@@ -18,7 +17,12 @@ AUTHORS:
 # ****************************************************************************
 
 from hyperelliptic_generic import HyperellipticCurveSmoothModel_generic
-from hyperelliptic_g2 import HyperellipticCurveSmoothModel_g2
+from hyperelliptic_g2 import (
+    HyperellipticCurveSmoothModel_g2,
+    HyperellipticCurveSmoothModel_g2_finite_field,
+    HyperellipticCurveSmoothModel_g2_rational_field,
+    HyperellipticCurveSmoothModel_g2_padic_field,
+)
 from hyperelliptic_finite_field import HyperellipticCurveSmoothModel_finite_field
 from hyperelliptic_rational_field import HyperellipticCurveSmoothModel_rational_field
 from hyperelliptic_padic_field import HyperellipticCurveSmoothModel_padic_field
@@ -28,7 +32,6 @@ from sage.rings.abc import pAdicField
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational_field import is_RationalField
 from sage.schemes.toric.library import toric_varieties
-from sage.structure.dynamic_class import dynamic_class
 from sage.rings.integer import Integer
 
 """
@@ -126,53 +129,32 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
     projective_model = __projective_model(f, h, genus)
 
     # -----------------------
-    # Dynamic class creation
+    # Class selection
     # -----------------------
 
-    bases = []
-    cls_name = ["HyperellipticCurveSmoothModel"]
-    genus_classes = {2: HyperellipticCurveSmoothModel_g2}
+    # Special class for finite fields
+    if base_ring in FiniteFields():
+        if genus == 2:
+            cls = HyperellipticCurveSmoothModel_g2_finite_field
+        else:
+            cls = HyperellipticCurveSmoothModel_finite_field
+    # Special class for padic fields
+    elif isinstance(base_ring, pAdicField):
+        if genus == 2:
+            cls = HyperellipticCurveSmoothModel_g2_padic_field
+        else:
+            cls = HyperellipticCurveSmoothModel_padic_field
+    # Special class for rational fields
+    elif is_RationalField(base_ring):
+        if genus == 2:
+            cls = HyperellipticCurveSmoothModel_g2_rational_field
+        else:
+            cls = HyperellipticCurveSmoothModel_rational_field
+    # Default class for all other fields
+    else:
+        if genus == 2:
+            cls = HyperellipticCurveSmoothModel_g2
+        else:
+            cls = HyperellipticCurveSmoothModel_generic
 
-    # Look to see if the curve genus puts us in a special case
-    # currently only genus two has additional methods
-    if genus in genus_classes:
-        bases.append(genus_classes[genus])
-        cls_name.append(f"g{genus}")
-
-    def is_FiniteField(x):
-        return x in FiniteFields()
-
-    def is_pAdicField(x):
-        # TODO: is there a category way to do this?
-        return isinstance(x, pAdicField)
-
-    fields = [
-        ("FiniteField", is_FiniteField, HyperellipticCurveSmoothModel_finite_field),
-        (
-            "RationalField",
-            is_RationalField,
-            HyperellipticCurveSmoothModel_rational_field,
-        ),
-        ("pAdicField", is_pAdicField, HyperellipticCurveSmoothModel_padic_field),
-    ]
-
-    # TODO:
-    # Is this really the best way to do this construction???
-    # Test the base field to check if it is in the singled out
-    # fields with additional methods
-    for name, test, cls in fields:
-        if test(base_ring):
-            bases.append(cls)
-            cls_name.append(name)
-            break
-
-    if not bases:
-        bases = [HyperellipticCurveSmoothModel_generic]
-
-    class_name = "_".join(cls_name)
-    cls = dynamic_class(
-        class_name,
-        tuple(bases),
-        doccls=HyperellipticCurveSmoothModel,
-    )
     return cls(projective_model, f, h, genus)
