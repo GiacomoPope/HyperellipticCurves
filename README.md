@@ -62,7 +62,7 @@ work with the smooth model.
 ### Hyperelliptic Curves
 
 - Write a constructor function which picks an appropriate
-  `HyperellipticSmothModel_*` class determined by the base ring of the defining
+  `HyperellipticSmoothModel_*` class determined by the base ring of the defining
   polynomials
 - Rewrite the `Hyperelliptic_generic` class as
   `HyperellipticSmoothModel_generic`
