@@ -46,7 +46,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         (2) `X(P[1]/P[0]^(g+1)) = P` and `X(Q[1]/Q[0]^(g+1)) = Q` if `P, Q` are in the infinite disc
 
         TODO: I'm not sure if this function is adapted correctly to the smooth setting.
-        For case 2, I chose `t = y/x^(g+1)` as local parameter. 
+        For case 2, I chose `t = y/x^(g+1)` as local parameter.
         The output is in homogenous coordinates. Should it be weighted homogenous?
 
 
@@ -75,7 +75,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             (True, True, True, True)
 
         The infinite disc::
-            
+
             sage: g = HK.genus()
             sage: P = HK.lift_x(5^-2)
             sage: Q = HK.lift_x(4*5^-2)
@@ -399,7 +399,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         g = self.genus()
         x, y, z = self.local_analytic_interpolation(P, Q)  #homogeneous coordinates
         x = x/z
-        y = y/z**(g+1) #TODO: see todo in the computation of local_analytic_interpolation. 
+        y = y/z**(g+1) #TODO: see todo in the computation of local_analytic_interpolation.
         # Do we need weighted projective coordinates?
         dt = x.derivative() / (2*y)
         integrals = []

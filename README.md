@@ -15,7 +15,7 @@ to deprecate and replace this model in the future.
 
 ## Usage
 
-`HyperellipticCurveSmoothModel` has been designed as a drop in replacement for `HyperellipticCurve`, so from the 
+`HyperellipticCurveSmoothModel` has been designed as a drop in replacement for `HyperellipticCurve`, so from the
 root of this repo run the following:
 
 ```py
@@ -57,7 +57,7 @@ stills works:
 ## Plan
 
 To maintain functionality there are several files which need to be rewritten to
-work with the smooth model. 
+work with the smooth model.
 
 ### Hyperelliptic Curves
 

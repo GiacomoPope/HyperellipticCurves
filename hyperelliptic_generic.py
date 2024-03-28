@@ -1,4 +1,3 @@
-
 import sage.all
 from sage.schemes.toric.toric_subscheme import AlgebraicScheme_subscheme_toric
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -42,7 +41,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
     # TODO: _richcmp_ instead?
     def __richcmp__(self, other, op):
         return self._projective_model.__richcmp__(other._projective_model, op)
-    
+
     def __ne__(self, other):
         return not self == other
 
@@ -78,7 +77,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         TODO
         """
         return self._base_ring
-    
+
     def change_ring(self, R):
         """
         TODO
@@ -88,7 +87,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         fR = f.change_ring(R)
         hR = h.change_ring(R)
         return HyperellipticCurveSmoothModel(fR, hR)
-    
+
     base_extend = change_ring
 
     def polynomial_ring(self):
@@ -616,7 +615,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             ...
             NotImplementedError: odd_degree_model only implemented for curves in Weierstrass form
 
-            sage: # TODO this used to have names="U, V" 
+            sage: # TODO this used to have names="U, V"
             sage: HyperellipticCurveSmoothModel(x^5 + 1).odd_degree_model()
             Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + 1
         """
@@ -711,7 +710,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             1 dx/2y
 
         """
-        import monsky_washnitzer as m_w # TODO global import 
+        import monsky_washnitzer as m_w # TODO global import
         S = m_w.SpecialHyperellipticQuotientRing(self)
         MW = m_w.MonskyWashnitzerDifferentialRing(S)
         return MW.invariant_differential()
@@ -829,10 +828,10 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         For the genus `g` hyperelliptic curve `y^2 = f(x)`, return
         `(x(t), y(t))` such that `(y(t))^2 = f(x(t))`, where `t = y/x^{g+1}` is
         the local parameter at infinity.
-        
+
         TODO/NOTE: In the previous implementation `t = x^g/y` was used.
         This is not a valid parameter on the smooth model, and the output is necessarily different.
-        
+
         INPUT:
 
         - ``prec`` -- desired precision of the local coordinates
@@ -870,8 +869,8 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
 
         if not self.is_ramified():
-            raise NotImplementedError("only implemented for hyperelliptic curves with exactly one point at infinity") 
-        
+            raise NotImplementedError("only implemented for hyperelliptic curves with exactly one point at infinity")
+
         g = self.genus()
         pol, h = self.hyperelliptic_polynomials()
         if h:
@@ -888,7 +887,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             x = x - w(x)/wprime(x)
         y = x**(g+1)*t
         return x+O(t**(prec+2)) , y+O(t**(prec+2))
-        
+
 
     def local_coord(self, P, prec=20, name='t'):
         """

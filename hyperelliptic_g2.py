@@ -8,17 +8,17 @@ from hyperelliptic_rational_field import HyperellipticCurveSmoothModel_rational_
 """
 TODO List
 
-### Invariants 
+### Invariants
 
 There seems to be massive redundancy in having these methods and the ones imported into
-invariants. I think we should fix this by putting the methods themseleves into this class. 
+invariants. I think we should fix this by putting the methods themseleves into this class.
 """
 
 
 class HyperellipticCurveSmoothModel_g2(
     hyperelliptic_generic.HyperellipticCurveSmoothModel_generic
 ):
-    
+
     def is_odd_degree(self):
         """
         Return ``True`` if the curve is an odd degree model.
@@ -41,14 +41,14 @@ class HyperellipticCurveSmoothModel_g2(
             a0 = f.leading_coefficient()
             c0 = h.leading_coefficient()
             return (c0**2 + 4*a0) == 0
-    
+
     def jacobian(self):
         from jacobian_g2_generic import HyperellipticJacobian_g2_generic
         return HyperellipticJacobian_g2_generic(self)
 
     # -----------------------------------
     # Genus Two invariant computations
-    # 
+    #
     # TODO: should we move logic from functions in `invariants()`
     # into this file rather than import them
     # -----------------------------------

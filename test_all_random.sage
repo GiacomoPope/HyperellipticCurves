@@ -26,7 +26,7 @@ def random_curve(genus=2):
             f = R.random_element((1, 2*genus))
             h = R.random_element(degree = genus + 1)
 
-        # Ensure that there are two points at infinity and the curve is non-singular 
+        # Ensure that there are two points at infinity and the curve is non-singular
         try:
             H = HyperellipticCurveSmoothModel(f, h)
             # Cannot do arithmetic with odd genus curves which are inert
@@ -36,7 +36,7 @@ def random_curve(genus=2):
             return f, h, H
         except Exception as e:
             continue
-    
+
 # Test that randomly sampling gets all elements in the group
 for _ in range(1):
     f, h, H = random_curve(genus=2)

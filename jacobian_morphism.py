@@ -38,7 +38,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
 
     def parent(self):
         return self._parent
-    
+
     def scheme(self):
         r"""
         Return the scheme this morphism maps to; or, where this divisor lives.
@@ -87,20 +87,20 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         u2, v2 = other.uv()
 
         return u1 == u2 and v1 == v2
-    
+
     def __list__(self):
         return list(self._u, self._v)
-    
+
     def __tuple__(self):
         return tuple(self._u, self._v)
-    
+
     def __getitem__(self, n):
         return (self._u, self._v)[n]
 
     def __hash__(self):
         data = (self._u, self._v)
         return hash(data)
-    
+
     def __bool__(self):
         return not self.is_zero()
 
@@ -189,7 +189,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
 # =======================================================================
 # Child classes for representation for ramified, inert and split models
 # =======================================================================
-    
+
 
 class MumfordDivisorClassFieldRamified(MumfordDivisorClassField):
     def __init__(self, parent, u, v, check=True):
@@ -213,10 +213,10 @@ class MumfordDivisorClassFieldInert(MumfordDivisorClassField):
 
     def __repr__(self):
         return f"({self._u}, {self._v} : {self._n})"
-    
+
     def __list__(self):
         return list(self._u, self._v, self._n)
-    
+
     def __tuple__(self):
         return tuple(self._u, self._v, self._n)
 
@@ -262,7 +262,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
 
     def __list__(self):
         return list(self._u, self._v, self._n)
-    
+
     def __tuple__(self):
         return tuple(self._u, self._v, self._n)
 

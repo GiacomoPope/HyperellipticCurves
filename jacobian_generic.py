@@ -57,6 +57,6 @@ class HyperellipticJacobian_generic(Jacobian_generic):
     @cached_method
     def order(self):
         return self.point_homset().order()
-    
+
     def random_element(self, fast=True):
         return self.point_homset().random_element(fast=fast)

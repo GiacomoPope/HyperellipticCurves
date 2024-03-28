@@ -13,8 +13,8 @@ class HyperellipticCurveSmoothModel_rational_field(
         """
         Compute the matrix of Frobenius on Monsky-Washnitzer cohomology using
         the `p`-adic field with precision ``prec``.
-        
-        This function is essentially a wrapper function of 
+
+        This function is essentially a wrapper function of
         :meth:`sage.schemes.hyperelliptic_curves.monsky_washnitzer.matrix_of_frobenius_hyperelliptic`.
 
         INPUT:
@@ -37,10 +37,10 @@ class HyperellipticCurveSmoothModel_rational_field(
             [      3*5 + 5^2 + O(5^3)             3*5 + O(5^3)             4*5 + O(5^3)         2 + 5^2 + O(5^3)]
             [    4*5 + 4*5^2 + O(5^3)     3*5 + 2*5^2 + O(5^3)       5 + 3*5^2 + O(5^3)     2*5 + 2*5^2 + O(5^3)]
             [            5^2 + O(5^3)       5 + 4*5^2 + O(5^3)     4*5 + 3*5^2 + O(5^3)             2*5 + O(5^3)]
-        
+
         You can also pass directly a prime `p` with to construct a pAdic field with precision
-        ``prec``:: 
-            
+        ``prec``::
+
             sage: H.matrix_of_frobenius(3, prec=2)
             [        O(3^2)     3 + O(3^2)         O(3^2)         O(3^2)]
             [    3 + O(3^2)         O(3^2)         O(3^2) 2 + 3 + O(3^2)]
@@ -74,12 +74,12 @@ class HyperellipticCurveSmoothModel_rational_field(
         return L
 
 #
-# 
+#
 # TODO: this is from `sage/src/sage/lfunctions/pari.py` but it uses the old method
 # so I have copy-pasted it here for now with the new curve...
 #
 #
-    
+
 def lfun_genus2(C):
     """
     Return the L-function of a curve of genus 2.

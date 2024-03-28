@@ -79,7 +79,7 @@ class HyperellipticCurveSmoothModel_finite_field(
             [[0 : 1 : 1], [0 : 6 : 1], [1 : 3 : 1], [1 : 4 : 1], [2 : 3 : 1],
              [2 : 4 : 1], [3 : 1 : 1], [3 : 6 : 1]]
 
-        TODO: 
+        TODO:
 
         The original implementation has a method which
         caches all square roots to make this whole thing
