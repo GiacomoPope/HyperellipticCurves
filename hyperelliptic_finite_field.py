@@ -40,6 +40,28 @@ class HyperellipticCurveSmoothModel_finite_field(
             except IndexError:
                 pass
 
+    def rational_points_iterator(self):
+        """
+        Return all the points on this hyperelliptic curve as an iterator.
+
+        EXAMPLES::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: x = polygen(GF(7))
+            sage: C = HyperellipticCurveSmoothModel(x^7 - x^2 - 1)
+            sage: list(C.rational_points_iterator())
+            [[1 : 0 : 0], [2 : 2 : 1], [2 : 5 : 1], [3 : 0 : 1], [4 : 1 : 1],
+             [4 : 6 : 1], [5 : 0 : 1], [6 : 2 : 1], [6 : 5 : 1]]
+            sage: _ == C.points()
+            True
+
+        .. SEEALSO:: :meth:`points`
+        """
+        # TODO: this is very silly but works
+        yield from self.points_at_infinity()
+        for x in self.base_ring():
+            yield from self.lift_x(x, all=True)
+
     @cached_method
     def points(self):
         """
@@ -79,21 +101,20 @@ class HyperellipticCurveSmoothModel_finite_field(
             [[0 : 1 : 1], [0 : 6 : 1], [1 : 3 : 1], [1 : 4 : 1], [2 : 3 : 1],
              [2 : 4 : 1], [3 : 1 : 1], [3 : 6 : 1]]
 
-        TODO:
+        .. TODO::
 
-        The original implementation has a method which
-        caches all square roots to make this whole thing
-        run faster, but I'm not sure it's really worth it
-        considering for large fields this is too slow to
-        use anyway?
+            Giacomo: The original implementation has a method which caches all
+            square roots to make this whole thing run faster, but I'm not sure
+            it's really worth it considering for large fields this is too slow
+            to use anyway?
 
-        Something to think about
+            Gareth: +1
+
+        .. SEEALSO:: :meth:`rational_points_iterator`
         """
-        # TODO: this is very silly but works
-        points = self.points_at_infinity()
-        for x in self.base_ring():
-            points.extend(self.lift_x(x, all=True))
-        return points
+        return list(self.rational_points_iterator())
+
+    rational_points = points
 
     def count_points_matrix_traces(self, n=1, M=None, N=None):
         r"""

@@ -1,12 +1,13 @@
-import sage.all
-from sage.schemes.toric.toric_subscheme import AlgebraicScheme_subscheme_toric
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.big_oh import O
-from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.laurent_series_ring import LaurentSeriesRing
-from sage.rings.real_mpfr import RR
+from sage.categories.fields import Fields
 from sage.functions.all import log
+from sage.misc.cachefunc import cached_method
+from sage.rings.big_oh import O
 from sage.rings.integer import Integer
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.real_mpfr import RR
+from sage.schemes.toric.toric_subscheme import AlgebraicScheme_subscheme_toric
 
 from weighted_projective_curve import WeightedProjectiveCurve
 
@@ -90,6 +91,14 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     base_extend = change_ring
 
+    def _point_homset(self, *_, **__):
+        """
+        TODO: The default implemention (with toric varieties) fails because
+        HyperellipticCurve is not a real toric variety, e.g. it doesn't have a
+        fan. Do we need a new class?
+        """
+        raise NotImplementedError
+
     def polynomial_ring(self):
         """
         TODO
@@ -105,6 +114,9 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             Z = self.base_ring().one()
         elif len(coords) == 3:
             X, Y, Z = coords
+        elif len(coords) == 1 and coords[0] in Fields():
+            # H(K) returns the K-rational point homset
+            return self.point_homset(coords[0])
         else:
             raise ValueError("TODO")
 
@@ -319,7 +331,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def lift_x(self, x, all=False):
         """
-        Return one or all points with given `x`-coordinate.
+        Return one or all finite points with given `x`-coordinate.
 
         This method is deterministic: It returns the same data each
         time when called again with the same `x`.
@@ -400,6 +412,15 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: H = HyperellipticCurveSmoothModel(f, h)
             sage: H.lift_x(z4^3 + z4^2 + z4, all=True)
             [[z4^3 + z4^2 + z4 : z4^2 + z4 + 1 : 1], [z4^3 + z4^2 + z4 : z4^3 : 1]]
+
+        Points at infinity are not included, as they do not have a unique x-coordinate::
+
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(x^8 + 1)
+            sage: H(1, -1, 0)
+            [1 : -1 : 0]
+            sage: H.lift_x(1, all=True)
+            []
 
         TESTS::
 
@@ -501,11 +522,9 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
         Change the distinguished point of the hyperelliptic curve to P0.
         """
-        assert isinstance(
-            P0, AlgebraicScheme_subscheme_toric
-        ), "the input has to be a point on the curve"
+        if not isinstance(P0, AlgebraicScheme_subscheme_toric):
+            raise ValueError("the input has to be a point on the curve")
         self._distinguished_point = P0
-        return None
 
     def __call__(self, *args):
         return self.point(args)
