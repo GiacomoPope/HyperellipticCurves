@@ -533,6 +533,43 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         from jacobian_generic import HyperellipticJacobian_generic
         return HyperellipticJacobian_generic(self)
 
+    @cached_method
+    def projective_curve(self):
+        """
+        unweighted projective model
+        """
+        from sage.schemes.curves.constructor import Curve
+        f, h = self._hyperelliptic_polynomials
+        R, (_, y, z) = PolynomialRing(self.base_ring(), 3, "x, y, z").objgens()
+        return Curve(R(y**2 + h * y - f).homogenize(z))
+
+    def rational_points(self, **kwds):
+        r"""
+        Find rational points on the hyperelliptic curve. Arguments are passed
+        on to :meth:`sage.schemes.generic.algebraic_scheme.rational_points`.
+
+        ALGORITHM:
+
+        We use :meth:`points_at_infinity` to compute the points at infinity, and
+        `sage.schemes.generic.algebraic_scheme.rational_points` on this curve's
+        :meth:`projective_curve` for the finite points.
+
+        EXAMPLES::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(x^8 + 33)
+            sage: H.rational_points(bound=20)                                           # long time (6s)
+            [[1 : 1 : 0],
+             [1 : -1 : 0],
+             [-2 : -17 : 1],
+             [-2 : 17 : 1],
+             [2 : -17 : 1],
+             [2 : 17 : 1]]
+        """
+        proj_pts = self.projective_curve().rational_points(**kwds)
+        return self.points_at_infinity() + [self(*P) for P in proj_pts if P[2] != 0]
+
     # -------------------------------------------
     # Hacky things
     # -------------------------------------------
