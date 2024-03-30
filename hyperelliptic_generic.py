@@ -741,7 +741,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             defined by y^2 + x^10*y = x^3 + x + 2
         """
         f, h = self._hyperelliptic_polynomials
-        return 'HyperellipticCurve(%s, %s)' % (f._magma_init_(magma), h._magma_init_(magma))
+        return f'HyperellipticCurve({f._magma_init_(magma)}, {h._magma_init_(magma)})'
 
     # -------------------------------------------
     # monsky washnitzer things... TODO

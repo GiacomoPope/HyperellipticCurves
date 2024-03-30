@@ -117,7 +117,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         """
         prec = self.base_ring().precision_cap()
         if not self.is_same_disc(P,Q):
-            raise ValueError("%s and %s are not in the same residue disc" % (P,Q))
+            raise ValueError(f"{P} and {Q} are not in the same residue disc")
         disc = self.residue_disc(P)
         t = PowerSeriesRing(self.base_ring(), 't', prec).gen(0)
         if disc == self.change_ring(self.base_ring().residue_field())(1,0,0): # Infinite disc

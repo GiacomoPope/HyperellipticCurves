@@ -196,7 +196,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
             sage: x + T*x - 2*T^2
             (123*T^2) + (T + 1)*x + (0)*x^2
         """
-        return "(%s) + (%s)*x + (%s)*x^2" % self._triple
+        return "({}) + ({})*x + ({})*x^2".format(*self._triple)
 
     def _latex_(self) -> str:
         """
@@ -209,8 +209,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
             sage: latex(f)
             (123 T^{2}) + (T + 1)x + (0)x^2
         """
-        return ("(%s) + (%s)x + (%s)x^2"
-                % tuple(column._latex_() for column in self._triple))
+        return "({}) + ({})x + ({})x^2".format(column._latex_() for column in self._triple)
 
     def _add_(self, other):
         """
@@ -554,9 +553,8 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
             SpecialCubicQuotientRing over Ring of integers modulo 125
             with polynomial T = x^3 + 124*x + 94
         """
-        return "SpecialCubicQuotientRing over %s with polynomial T = %s" % \
-            (self.base_ring(), PolynomialRing(self.base_ring(), 'x')(
-                [self._b, self._a, 0, 1]))
+        T = PolynomialRing(self.base_ring(), 'x')([self._b, self._a, 0, 1])
+        return f"SpecialCubicQuotientRing over {self.base_ring()} with polynomial T = {T}"
 
     def poly_ring(self):
         """
@@ -659,7 +657,7 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
     Element = SpecialCubicQuotientRingElement
 
 
-def transpose_list(input) -> list[list]:
+def transpose_list(lst) -> list[list]:
     """
     INPUT:
 
@@ -676,16 +674,8 @@ def transpose_list(input) -> list[list]:
         sage: transpose_list(L)
         [[1, 3, 5], [2, 4, 6]]
     """
-    h = len(input)
-    w = len(input[0])
-
-    output = []
-    for i in range(w):
-        row = []
-        for j in range(h):
-            row.append(input[j][i])
-        output.append(row)
-    return output
+    h, w = len(lst), len(lst[0])
+    return [[lst[j][i] for j in range(h)] for i in range(w)]
 
 
 def helper_matrix(Q):
@@ -854,7 +844,7 @@ def reduce_negative(Q, p, coeffs, offset, exact_form=None):
     except NotImplementedError:
         raise NotImplementedError("It looks like you've found a "
                                   "non-integral matrix of Frobenius! "
-                                  "(Q=%s, p=%s)\nTime to write a paper." % (Q, p))
+                                  f"(Q={Q}, p={p})\nTime to write a paper.")
 
     coeffs[int(offset)] = next_a
 
@@ -2480,7 +2470,8 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 3*x + 1) over Rational Field
         """
         y_inverse = ",y^-1" if is_LaurentSeriesRing(self._series_ring) else ""
-        return "SpecialHyperellipticQuotientRing K[x,y%s] / (y^2 = %s) over %s" % (y_inverse, self._Q, self.base_ring())
+        return "SpecialHyperellipticQuotientRing K[x,y{}] / (y^2 = {}) over {}".format(
+            y_inverse, self._Q, self.base_ring())
 
     def base_extend(self, R):
         r"""

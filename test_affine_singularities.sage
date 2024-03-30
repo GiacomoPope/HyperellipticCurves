@@ -18,3 +18,5 @@ for R in [R1, R2, R3]:
             assert not failed, "Oh no"
         except:
             assert failed, f"Whoops!"
+
+    print(f"Test passed for {R}")
