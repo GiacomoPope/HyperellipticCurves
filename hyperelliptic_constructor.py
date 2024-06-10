@@ -6,12 +6,13 @@ Adapted from /hyperelliptic/constructor.py
 AUTHORS:
 
 - David Kohel (2006): initial version
-- TODO
+- Hyperelliptic-Team (TODO)
 """
+
 # ****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
 #                2019 Anna Somoza <anna.somoza.henares@gmail.com>
-#                2024 TODO
+#                2024 Hyperelliptic-Team (TODO)
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
@@ -38,13 +39,17 @@ from sage.rings.integer import Integer
 TODO:
 
 - We currently cannot support the construction of curves over rings
-- ...
 
 """
 
 
 def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
     r"""
+    Constructor function for creating a hyperelliptic curve with
+    smooth model with polynomials f, h.
+
+    EXAMPLES:
+
     TODO
     """
 
