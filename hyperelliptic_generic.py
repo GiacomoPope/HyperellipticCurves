@@ -725,6 +725,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         EXAMPLES::
 
+            from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: # optional - magma
             sage: R.<x> = QQ[]; C = HyperellipticCurveSmoothModel(x^3 + x - 1, x); C
             Hyperelliptic Curve over Rational Field
