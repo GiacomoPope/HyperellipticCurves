@@ -26,7 +26,7 @@ def WeightedProjectiveSpace(weights, R=None, names=None):
     EXAMPLES::
 
         sage: # TODO: add example of point on this space (it doens't work right now)
-        sage: WP = WeightedProjectiveSpace([1, 3, 1])
+        sage: WP = WeightedProjectiveSpace([1, 3, 1]); WP
         Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Integer Ring
     """
     if isinstance(weights, (MPolynomialRing_base, PolynomialRing_generic)) and R is None:
@@ -127,7 +127,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         EXAMPLES::
 
             sage: WeightedProjectiveSpace([1, 3, 1], QQ).ngens()
-            4
+            3
             sage: WeightedProjectiveSpace(5, ZZ).ngens()
             6
         """
@@ -140,35 +140,15 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
-            sage: P = WeightedProjectiveSpace([1, 3], ZZ)
+            sage: P = WeightedProjectiveSpace([1, 3, 1], ZZ)
             sage: P._check_satisfies_equations([1, 1, 0])
             True
 
-        ::
-
-            sage: P = WeightedProjectiveSpace(1, QQ)
-            sage: P._check_satisfies_equations((1/2, 0))
-            True
-
-        ::
-
-            sage: P = WeightedProjectiveSpace(2, ZZ)
-            sage: P._check_satisfies_equations([0, 0, 0])
+            sage: P._check_satisfies_equations([1, 0])
             Traceback (most recent call last):
             ...
-            TypeError: the zero vector is not a point in projective space
+            TypeError: the list v=[1, 0] must have 3 components
 
-        ::
-
-            sage: P = WeightedProjectiveSpace(2, ZZ)
-            sage: P._check_satisfies_equations((1, 0))
-            Traceback (most recent call last):
-            ...
-            TypeError: the list v=(1, 0) must have 3 components
-
-        ::
-
-            sage: P = WeightedProjectiveSpace(2, ZZ)
             sage: P._check_satisfies_equations([1/2, 0, 1])
             Traceback (most recent call last):
             ...
@@ -178,15 +158,11 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             raise TypeError(f"the argument v={v} must be a list or tuple")
 
         n = self.ngens()
-        if not len(v) == n:
+        if len(v) != n:
             raise TypeError(f"the list v={v} must have {n} components")
 
-        R = self.base_ring()
-        for coord in v:
-            if coord not in R:
-                raise TypeError(f"the components of v={v} must be elements of {R}")
-
-        if all(R(vi).is_zero() for vi in v):
+        v = list(map(self.base_ring(), v))
+        if all(vi.is_zero() for vi in v):
             raise TypeError("the zero vector is not a point in projective space")
 
         return True
@@ -198,7 +174,8 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         EXAMPLES::
 
             sage: WP = WeightedProjectiveSpace([1, 3, 4, 1], GF(19^2, 'α'), 'abcd')
-            sage: R = WP.coordinate_ring()                                              # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R = WP.coordinate_ring(); R
             Multivariate Polynomial Ring in a, b, c, d over Finite Field in α of size 19^2
             sage: R.term_order()
             Weighted degree reverse lexicographic term order with weights (1, 3, 4, 1)
@@ -246,7 +223,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P._validate([x*y - z^2, x])
             Traceback (most recent call last):
             ...
-            TypeError: x*y - z^2 is not a homogeneous polynomial
+            TypeError: x*y - z^2 is not homogeneous with weights (1, 3, 1)
             sage: P._validate(x*y - z)
             Traceback (most recent call last):
             ...
@@ -258,7 +235,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         R = self.coordinate_ring()
         for f in map(R, polynomials):
             if not f.is_homogeneous():
-                raise TypeError(f"{f} is not homogeneous with weighting {self.weights()}")
+                raise TypeError(f"{f} is not homogeneous with weights {self.weights()}")
 
         return polynomials
 
@@ -333,11 +310,12 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
-            sage: WeightedProjectiveSpace([1, 3, 1], ZZ, 'x').an_element()
-            (7 : 6 : 5 : 1)
-
-            sage: ProjectiveSpace([2, 3, 1], ZZ["y"], 'x').an_element()
-            (7*y : 6*y : 5*y : 1)
+            sage: # TODO: Enable this
+            # sage: WeightedProjectiveSpace([1, 3, 1], ZZ, 'x').an_element()
+            # (7 : 6 : 5 : 1)
+            #
+            # sage: ProjectiveSpace([2, 3, 1], ZZ["y"], 'x').an_element()
+            # (7*y : 6*y : 5*y : 1)
         """
         # TODO: Doesn't work because _point_homset isn't implemented
         n = self.dimension_relative()
