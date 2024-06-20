@@ -95,12 +95,12 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
-            sage: WeightedProjectiveSpace([1, 3, 1], Zp(5), 'y')                        # needs sage.rings.padics
+            sage: WeightedProjectiveSpace(Zp(5), [1, 3, 1], 'y')                        # needs sage.rings.padics
             Weighted Projective Space of dimension 2 with weights (1, 3, 1) over 5-adic Ring with
             capped relative precision 20
-            sage: WeightedProjectiveSpace(5, QQ, 'y')
+            sage: WeightedProjectiveSpace(QQ, 5, 'y')
             Projective Space of dimension 5 over Rational Field
-            sage: _ is ProjectiveSpace(5, QQ, 'y')
+            sage: _ is ProjectiveSpace(QQ, 5, 'y')
             True
         """
         AmbientSpace.__init__(self, len(weights) - 1, R)
@@ -113,7 +113,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
-            sage: WeightedProjectiveSpace([1, 3, 1], QQ).weights()
+            sage: WeightedProjectiveSpace(QQ, [1, 3, 1]).weights()
             (1, 3, 1)
         """
         return self._weights
@@ -126,9 +126,9 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
-            sage: WeightedProjectiveSpace([1, 3, 1], QQ).ngens()
+            sage: WeightedProjectiveSpace(QQ, [1, 3, 1]).ngens()
             3
-            sage: WeightedProjectiveSpace(5, ZZ).ngens()
+            sage: WeightedProjectiveSpace(ZZ, 5).ngens()
             6
         """
         return self.dimension_relative() + 1
@@ -140,7 +140,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
-            sage: P = WeightedProjectiveSpace([1, 3, 1], ZZ)
+            sage: P = WeightedProjectiveSpace(ZZ, [1, 3, 1])
             sage: P._check_satisfies_equations([1, 1, 0])
             True
 
@@ -173,7 +173,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
-            sage: WP = WeightedProjectiveSpace([1, 3, 4, 1], GF(19^2, 'α'), 'abcd')
+            sage: WP = WeightedProjectiveSpace(GF(19^2, 'α'), [1, 3, 4, 1], 'abcd')
             sage: # needs sage.rings.finite_rings
             sage: R = WP.coordinate_ring(); R
             Multivariate Polynomial Ring in a, b, c, d over Finite Field in α of size 19^2
@@ -182,7 +182,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         ::
 
-            sage: WP = WeightedProjectiveSpace([1, 1, 1], QQ, ['alpha', 'beta', 'gamma'])
+            sage: WP = WeightedProjectiveSpace(QQ, [1, 1, 1], ['alpha', 'beta', 'gamma'])
             sage: R = WP.coordinate_ring(); R
             Multivariate Polynomial Ring in alpha, beta, gamma over Rational Field
             sage: R.term_order()
@@ -217,7 +217,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
-            sage: P.<x, y, z> = WeightedProjectiveSpace([1, 3, 1], ZZ)
+            sage: P.<x, y, z> = WeightedProjectiveSpace(QQ, [1, 3, 1])
             sage: P._validate([x*y - z^4, x])
             [x*y - z^4, x]
             sage: P._validate([x*y - z^2, x])
@@ -245,12 +245,12 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
-            sage: print(latex(WeightedProjectiveSpace([1, 3, 1], ZZ, 'x')))
+            sage: print(latex(WeightedProjectiveSpace(ZZ, [1, 3, 1], 'x')))
             {\mathbf P}_{\Bold{Z}}^{[1, 3, 1]}
 
         TESTS::
 
-            sage: WeightedProjectiveSpace([2, 1, 3], Zp(5), 'y')._latex_()              # needs sage.rings.padics
+            sage: WeightedProjectiveSpace(Zp(5), [2, 1, 3], 'y')._latex_()              # needs sage.rings.padics
             '{\\mathbf P}_{\\Bold{Z}_{5}}^{[2, 1, 3]}'
         """
         return f"{{\\mathbf P}}_{{{latex(self.base_ring())}}}^{{{list(self.weights())}}}"
@@ -277,6 +277,36 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         """
         raise NotImplementedError("_point_homset not implemented for weighted projective space")
 
+    def point(self, v, check=True):
+        """
+        Create a point on this weighted projective space.
+
+        INPUT:
+
+        INPUT:
+
+        - ``v`` -- anything that defines a point
+
+        - ``check`` -- boolean (default: ``True``); whether
+          to check the defining data for consistency
+
+        OUTPUT: A point of this weighted projective space.
+
+        EXAMPLES::
+
+            sage: WP = WeightedProjectiveSpace(QQ, [1, 3, 1])
+            sage: WP.point([2, 3, 1])
+            (2 : 3 : 1)
+        """
+        from sage.rings.infinity import infinity
+
+        if v is infinity or (isinstance(v, (list, tuple)) and len(v) == 1 and v[0] is infinity):
+            if self.dimension_relative() > 1:
+                raise ValueError("%s not well defined in dimension > 1" % v)
+            v = [1, 0]
+
+        return self.point_homset()(v, check=check)
+
     def _point(self, *_, **__):
         """
         Construct a point.
@@ -291,7 +321,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
-            sage: WeightedProjectiveSpace([1, 3, 1], Qp(5), 'x')                        # needs sage.rings.padics
+            sage: WeightedProjectiveSpace(Qp(5), [1, 3, 1], 'x')                        # needs sage.rings.padics
             Weighted Projective Space of dimension 2 with weights (1, 3, 1)
             over 5-adic Field with capped relative precision 20
         """
@@ -311,10 +341,10 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         EXAMPLES::
 
             sage: # TODO: Enable this
-            # sage: WeightedProjectiveSpace([1, 3, 1], ZZ, 'x').an_element()
+            # sage: WeightedProjectiveSpace(ZZ, [1, 3, 1], 'x').an_element()
             # (7 : 6 : 5 : 1)
             #
-            # sage: ProjectiveSpace([2, 3, 1], ZZ["y"], 'x').an_element()
+            # sage: WeightedProjectiveSpace(ZZ["y"], [2, 3, 1], 'x').an_element()
             # (7*y : 6*y : 5*y : 1)
         """
         # TODO: Doesn't work because _point_homset isn't implemented
