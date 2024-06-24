@@ -69,19 +69,58 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def genus(self):
         """
-        Compute the genus of the hyperelliptic curve
+        Return the genus of the hyperelliptic curve.
+
+        EXAMPLES:
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(x^7 + 3*x + 2)
+            sage: H.genus()
+            3
+            sage: H = HyperellipticCurveSmoothModel(x^3 + 2, x^5 + 1)
+            sage: H.genus()
+            4
         """
         return self._genus
 
     def base_ring(self):
         """
-        TODO
+        Return the base ring of the hyperelliptic curve.
+
+         EXAMPLES::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(x^7 + 3*x + 2)
+            sage: H.base_ring()
+            Rational Field
+
+            sage: S.<x> = FiniteField(19)[]
+            sage: H = HyperellipticCurveSmoothModel(x^5 - x + 2)
+            sage: H.base_ring()
+            Finite Field of size 19
         """
         return self._base_ring
 
     def change_ring(self, R):
         """
-        TODO
+        Return this hyperelliptic curve over a new ring "R".
+
+        EXAMPLES::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(x^5 - 10*x + 9)
+            sage: K = Qp(3, 5)                                                          # optional - sage.rings.padics
+            sage: L.<a> = K.extension(x^30 - 3)                                         # optional - sage.rings.padics
+            sage: HK = H.change_ring(K)                                                 # optional - sage.rings.padics
+            sage: HL = HK.change_ring(L); HL                                            # optional - sage.rings.padics
+            Hyperelliptic Curve over 3-adic Eisenstein Extension Field in a defined by x^30 - 3 defined by y^2 = x^5 + (2 + 2*a^30 + a^60 + 2*a^90 + 2*a^120 + O(a^150))*x + a^60 + O(a^210)
+
+            sage: R.<x> = FiniteField(7)[]                                              # optional - sage.rings.finite_rings
+            sage: H = HyperellipticCurveSmoothModel(x^8 + x + 5)                                   # optional - sage.rings.finite_rings
+            sage: H.base_extend(FiniteField(7^2, 'a'))                                  # optional - sage.rings.finite_rings
+            Hyperelliptic Curve over Finite Field in a of size 7^2 defined by y^2 = x^8 + x + 5
         """
         from hyperelliptic_constructor import HyperellipticCurveSmoothModel
         f, h = self._hyperelliptic_polynomials
@@ -101,7 +140,21 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def polynomial_ring(self):
         """
-        TODO
+        Returns the parent of f,h, where self is the hyperelliptic curve 
+        defined by y^2 + h*y = f.
+
+        EXAMPLES::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(x^7 + 3*x + 2)
+            sage: H.polynomial_ring()
+            Univariate Polynomial Ring in x over Rational Field
+
+            sage: K = Qp(7, 10)                                                          # optional - sage.rings.padics
+            sage: HK = H.change_ring(K)   
+            sage: HK.polynomial_ring()
+            Univariate Polynomial Ring in x over 7-adic Field with capped relative precision 10
         """
         return self._polynomial_ring
 
@@ -495,6 +548,131 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         else:
             raise ValueError(f"No point with x-coordinate {x} on {self}")
 
+    def affine_coordinates(self, P):
+        """
+        Returns the affine coordinates of a point P of self.
+        That is for P = [X,Y,Z], the output is X/Z¸ Y/Z^(g+1).
+
+        EXAMPLES::
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(x^6 - 1)
+            sage: P = H.point([2,0,2])
+            sage: H.affine_coordinates(P)
+            (1, 0)
+            sage: Q = H.point([1,1,0])
+            sage: H.affine_coordinates(Q)
+            Traceback (most recent call last):
+            ...
+            ValueError: The point [1 : 1 : 0] is not an affine point of Hyperelliptic Curve over Rational Field defined by y^2 = x^6 - 1
+        """
+        if P[2] == 0:
+            raise ValueError(f"The point {P} is not an affine point of {self}")
+        
+        g = self.genus()
+        return P[0]/P[2], P[1]/P[2]**(g+1)
+
+    def is_weierstrass_point(self, P):
+        """
+        Return True if P is a Weierstrass point of self.
+        TODO: It would be better to define this function for points directly.
+
+        EXAMPLES::
+        
+        We consider the hyperelliptic curve `y^2 = x^6 -1` over the rational numbers.
+        For instance, the point P = (1,0) is a Weierstrass point, 
+        while the points at infinity are not::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(x^6 - 1)
+            sage: P = H.point([1,0])
+            sage: H.is_weierstrass_point(P)
+            True
+            sage: Q = H.point([1,1,0])
+            sage: H.is_weierstrass_point(Q)
+            False
+
+        This also works for hyperelliptic curves with `h(x)` nonzero.
+        Note that in this case the `y`-coordinate of a Weierstrass point
+        is not necessarily zero::
+
+            sage: R.<x> = FiniteField(17)[]
+            sage: H = HyperellipticCurveSmoothModel(x^6 + 2, x^2 + 1)
+            sage: P = H.point([15,6,1])
+            sage: H.is_weierstrass_point(P)
+            True
+            sage: Q = H.point([3,0,1])
+            sage: H.is_weierstrass_point(Q)
+            False
+
+        TESTS::
+
+        Check that the examples from the p-adic file work.
+            
+            sage: R.<x> = QQ['x']
+            sage: H = HyperellipticCurveSmoothModel(x^3-10*x+9)
+            sage: K = Qp(5,8)
+            sage: HK = H.change_ring(K)
+            sage: P = HK(0,3)
+            sage: HK.is_weierstrass_point(P)
+            False
+            sage: Q = HK(1,0,0)
+            sage: HK.is_weierstrass_point(Q)
+            True
+            sage: S = HK(1,0)
+            sage: HK.is_weierstrass_point(S)
+            True
+            sage: T = HK.lift_x(1+3*5^2); T
+            [1 + 3*5^2 + O(5^8) : 3*5 + 4*5^2 + 5^4 + 3*5^5 + 5^6 + O(5^7) : 1 + O(5^8)]
+            sage: HK.is_weierstrass_point(T)
+            False
+
+        """
+
+        f, h = self.hyperelliptic_polynomials()
+        if P[2] == 0:
+            return self.is_ramified()
+        else: 
+            x,y = self.affine_coordinates(P)
+            return y == - y - h(x)
+
+    def rational_weierstrass_points(self):
+        """
+        Return the rational Weierstrass points of the hyperelliptic curve.
+        These are the points that are fixed by the hyperelliptic involution.
+        
+        EXAMPLES::
+        
+        When `h(x)` is zero, then the Weierstrass points are the points with 
+        `y`-coordinate equal to zero::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(x^5 - x)
+            sage: H.rational_weierstrass_points()
+            [[1 : 0 : 0], [1 : 0 : 1], [0 : 0 : 1], [-1 : 0 : 1]]
+
+        The function also handles the case with `h(x)` nonzero::
+            
+            sage: R.<x> = FiniteField(17)[]
+            sage: H = HyperellipticCurveSmoothModel(x^6 + 2, x^2 + 1)
+            sage: H.rational_weierstrass_points()
+            [[15 : 6 : 1], [2 : 6 : 1]]
+            sage: P = H.point([15,6,1])
+            sage: H.is_weierstrass_point(P)
+            True
+        """
+        f, h = self.hyperelliptic_polynomials()
+
+        F = h**2 + 4*f
+        affine_weierstrass_points = [self(r,-h(r)/2) for r in F.roots(multiplicities=False)]
+
+        if self.is_ramified(): #the point at infinity is Weierstrass
+            return self.points_at_infinity() + affine_weierstrass_points
+        else:
+            return affine_weierstrass_points
+
     def distinguished_point(self):
         """
         Return the distinguished point of the hyperelliptic curve.
@@ -536,7 +714,45 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
     @cached_method
     def projective_curve(self):
         """
-        unweighted projective model
+        Returns a singular plane model of the hyperelliptic curve self.
+
+        TODO: renaming to plane_model ?
+        
+        EXAMPLES::
+        
+        We consider the hyperelliptic curve with affine equation 
+         `y^2 = x^5  + x` ::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = FiniteField(11)[]
+            sage: H = HyperellipticCurveSmoothModel(x^6 + 2)
+            sage: C = H.projective_curve(); C
+            Projective Plane Curve over Finite Field of size 11 defined by -x^6 + y^2*z^4 - 2*z^6
+
+
+        Note that the projective coordinates of points on H and their images in C
+        are in general not the same::
+
+            sage: P = H.point([9,4,2])
+            sage: Q = C.point([9,4,2])
+            Traceback (most recent call last):
+            ...                  
+            TypeError: Coordinates [10, 2, 1] do not define a point on Projective Plane Curve over Finite Field of size 11 defined by -x^6 + y^2*z^4 - 2*z^6
+
+
+        However, the affine coordinates coincide::
+
+            sage: H.affine_coordinates(P)
+            (10, 6)
+            sage: Q = C.point([10,6,1])
+
+        The model C has one singular point at infinity, while H is non-singular 
+        and has two points at infinity.
+
+            sage: H.points_at_infinity()
+            [[1 : 1 : 0], [1 : 10 : 0]]
+            sage: [P for P in C.rational_points() if P[2]==0]
+            [(0 : 1 : 0)]
         """
         from sage.schemes.curves.constructor import Curve
         f, h = self._hyperelliptic_polynomials
@@ -552,7 +768,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         We use :meth:`points_at_infinity` to compute the points at infinity, and
         `sage.schemes.generic.algebraic_scheme.rational_points` on this curve's
-        :meth:`projective_curve` for the finite points.
+        :meth:`projective_curve` for the affine points.
 
         EXAMPLES::
 
@@ -611,6 +827,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
     def odd_degree_model(self):
         r"""
         Return an odd degree model of self, or raise ValueError if one does not exist over the field of definition.
+        The term odd degree model refers to a model of the form y^2 = f(x) with deg(f) = 2*g + 1.
 
         EXAMPLES::
 
@@ -663,24 +880,27 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: H.change_ring(GF(67)).odd_degree_model().frobenius_polynomial()       # needs sage.rings.finite_rings
             x^4 - 8*x^3 + 150*x^2 - 536*x + 4489
 
-        TESTS::
+            The case where `h(x)` is nonzero is also supported::
 
-            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: HyperellipticCurveSmoothModel(x^5 + 1, 1).odd_degree_model()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: odd_degree_model only implemented for curves in Weierstrass form
+            Hyperelliptic Curve over Rational Field defined by y^2 = 4*x^5 + 5
+
+        TESTS::
 
             sage: # TODO this used to have names="U, V"
             sage: HyperellipticCurveSmoothModel(x^5 + 1).odd_degree_model()
             Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + 1
         """
+        from hyperelliptic_constructor import HyperellipticCurveSmoothModel
+
         f, h = self._hyperelliptic_polynomials
+        if f.base_ring().characteristic() == 2:
+            raise ValueError("There are no odd degree models over a field with characteristic 2.")
         if h:
-            raise NotImplementedError("odd_degree_model only implemented for curves in Weierstrass form")
+            f = 4*f + h**2 # move h to the right side of the equation 
         if f.degree() % 2:
-            # already odd, so just yield self
-            return self
+            # already odd
+            return HyperellipticCurveSmoothModel(f, 0)
 
         rts = f.roots(multiplicities=False)
         if not rts:
@@ -689,7 +909,6 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         x = f.parent().gen()
         fnew = f((x * rt + 1) / x).numerator()  # move rt to "infinity"
 
-        from hyperelliptic_constructor import HyperellipticCurveSmoothModel
         return HyperellipticCurveSmoothModel(fnew, 0)
 
     def has_odd_degree_model(self):
