@@ -30,7 +30,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         """
         For points `P`, `Q` in the same residue disc,
         this constructs an interpolation from `P` to `Q`
-        (in homogeneous coordinates) in a power series in
+        (in weighted homogeneous coordinates) in a power series in
         the local parameter `t`, with precision equal to
         the `p`-adic precision of the underlying ring.
 
@@ -44,11 +44,6 @@ class HyperellipticCurveSmoothModel_padic_field(
 
         (1) `X(0) = P` and `X(1) = Q` if `P, Q` are not in the infinite disc
         (2) `X(P[1]/P[0]^(g+1)) = P` and `X(Q[1]/Q[0]^(g+1)) = Q` if `P, Q` are in the infinite disc
-
-        TODO: I'm not sure if this function is adapted correctly to the smooth setting.
-        For case 2, I chose `t = y/x^(g+1)` as local parameter.
-        The output is in homogenous coordinates. Should it be weighted homogenous?
-
 
         EXAMPLES::
 
@@ -114,16 +109,19 @@ class HyperellipticCurveSmoothModel_padic_field(
 
         - Robert Bradshaw (2007-03)
         - Jennifer Balakrishnan (2010-02)
+        - Hyperelliptic-Team (TODO)
         """
+
+        #TODO: adapt to general curve form.
         prec = self.base_ring().precision_cap()
         if not self.is_same_disc(P,Q):
             raise ValueError(f"{P} and {Q} are not in the same residue disc")
         disc = self.residue_disc(P)
         t = PowerSeriesRing(self.base_ring(), 't', prec).gen(0)
         if disc == self.change_ring(self.base_ring().residue_field())(1,0,0): # Infinite disc
-            x,y = self.local_coordinates_at_infinity(2*prec)
+            x,y = self.local_coordinates_at_infinity_ramified(2*prec)
             g = self.genus()
-            return (x*t**2,y*t**(2*g+2),t**(2)) #TODO: Is this correct?
+            return (x*t**2,y*t**(2*g+2),t**(2))
         if disc[1] != 0: # non-Weierstrass disc
             x = P[0]+t*(Q[0]-P[0])
             pts = self.lift_x(x, all=True)
@@ -132,7 +130,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             else:
                 return pts[1]
         else: # Weierstrass disc
-            S = self.find_char_zero_weier_point(P)
+            S = self.find_char_zero_weierstrass_point(P)
             x,y = self.local_coord(S, prec)
             a = P[1]
             b = Q[1] - P[1]
@@ -140,33 +138,14 @@ class HyperellipticCurveSmoothModel_padic_field(
             x = x.polynomial()(y).add_bigoh(x.prec())
             return (x, y, 1)
 
-    def weierstrass_points(self):
-        """
-        Return the Weierstrass points of self defined over self.base_ring(),
-        that is, the point at infinity and those points in the support
-        of the divisor of `y`
-
-        EXAMPLES::
-
-            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
-            sage: K = pAdicField(11, 5)
-            sage: x = polygen(K)
-            sage: C = HyperellipticCurveSmoothModel(x^5 + 33/16*x^4 + 3/4*x^3 + 3/8*x^2 - 1/4*x + 1/16)
-            sage: C.weierstrass_points()
-            [[1 + O(11^5) : 0 : 0], [7 + 10*11 + 4*11^3 + O(11^5) : 0 : 1 + O(11^5)]]
-        """
-        f, h = self.hyperelliptic_polynomials()
-        if h != 0:
-            raise NotImplementedError()
-        if not self.is_ramified():
-            raise NotImplementedError()
-        return [self(1,0,0)] + [self(x, 0, 1) for x in f.roots(multiplicities=False)]
-
     def is_in_weierstrass_disc(self, P):
         """
-        Checks if `P` is in a Weierstrass disc
+        Checks if `P` is in a Weierstrass disc.
 
         EXAMPLES::
+
+        For odd degree models, the points with `y`-coordinate equivalent to zero
+        are contained in a Weierstrass discs::
 
             sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
@@ -186,56 +165,45 @@ class HyperellipticCurveSmoothModel_padic_field(
             [1 + 3*5^2 + O(5^8) : 3*5 + 4*5^2 + 5^4 + 3*5^5 + 5^6 + O(5^7) : 1 + O(5^8)]
             sage: HK.is_in_weierstrass_disc(T)
             True
+        
+        The method is also implemented for general models of hyperelliptic 
+        curves::
 
-        AUTHOR:
-
-        - Jennifer Balakrishnan (2010-02)
-        """
-        if not self.is_ramified():
-            raise NotImplementedError()
-        if self.hyperelliptic_polynomials()[1]:
-            raise NotImplementedError()
-        return not (P[1].valuation() == 0)
-
-    def is_weierstrass(self, P):
-        """
-        Checks if `P` is a Weierstrass point (i.e., fixed by the hyperelliptic involution)
-
-        EXAMPLES::
-
-            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
-            sage: R.<x> = QQ['x']
-            sage: H = HyperellipticCurveSmoothModel(x^3-10*x+9)
-            sage: K = Qp(5,8)
+            sage: H = HyperellipticCurveSmoothModel(x^6+3, x^2+1)
             sage: HK = H.change_ring(K)
-            sage: P = HK(0,3)
-            sage: HK.is_weierstrass(P)
-            False
-            sage: Q = HK(1,0,0)
-            sage: HK.is_weierstrass(Q)
+            sage: P = HK.lift_x(1+3*5+4*5^2+4*5^3); P
+            [1 + 3*5 + 4*5^2 + 4*5^3 + O(5^8) : 4 + 5 + 4*5^2 + 5^3 + 3*5^4 + 5^5 + O(5^6) : 1 + O(5^8)]
+            sage: HK.is_in_weierstrass_disc(P)
             True
-            sage: S = HK(1,0)
-            sage: HK.is_weierstrass(S)
+
+        Note that `y = - y - h(x)` for Weierstrass points. We check that this relation
+        is satisfied for the point above (mod p)::
+
+            sage: f,h = H.hyperelliptic_polynomials()
+            sage: (2*P[1] + h(P[0])).valuation() > 0
             True
-            sage: T = HK.lift_x(1+3*5^2); T
-            [1 + 3*5^2 + O(5^8) : 3*5 + 4*5^2 + 5^4 + 3*5^5 + 5^6 + O(5^7) : 1 + O(5^8)]
-            sage: HK.is_weierstrass(T)
-            False
 
         AUTHOR:
 
         - Jennifer Balakrishnan (2010-02)
         """
-        if self.hyperelliptic_polynomials()[1]:
-            raise NotImplementedError
-        return (P[1] == 0)
 
-    def find_char_zero_weier_point(self, Q):
+        f,h = self.hyperelliptic_polynomials()
+        if P[2].valuation() > P[0].valuation(): # infinite W-disc
+            return self.is_ramified()
+        else: # affine W-disc
+            x,y = self.affine_coordinates(P) 
+            return (2*y + h(x)).valuation() > 0
+
+    
+    def find_char_zero_weierstrass_point(self, Q):
         """
         Given `Q` a point on self in a Weierstrass disc, finds the
         center of the Weierstrass disc (if defined over self.base_ring())
 
         EXAMPLES::
+
+        Examples for a hyperelliptic curve with odd degree model::
 
             sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
@@ -246,22 +214,39 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: Q = HK.lift_x(5^-2)
             sage: S = HK(1,0)
             sage: T = HK(1,0,0)
-            sage: HK.find_char_zero_weier_point(P)
+            sage: HK.find_char_zero_weierstrass_point(P)
             [1 + O(5^8) : 0 : 1 + O(5^8)]
-            sage: HK.find_char_zero_weier_point(Q)
+            sage: HK.find_char_zero_weierstrass_point(Q)
             [1 + O(5^8) : 0 : 0]
-            sage: HK.find_char_zero_weier_point(S)
+            sage: HK.find_char_zero_weierstrass_point(S)
             [1 + O(5^8) : 0 : 1 + O(5^8)]
-            sage: HK.find_char_zero_weier_point(T)
+            sage: HK.find_char_zero_weierstrass_point(T)
             [1 + O(5^8) : 0 : 0]
+
+        An example for a hyperelltiptic curve with split model::
+
+            sage: H = HyperellipticCurveSmoothModel(x^6+3, x^2+1)
+            sage: HK = H.change_ring(K)
+            sage: P = HK.lift_x(1+3*5+4*5^2+4*5^3)
+            sage: HK.find_char_zero_weierstrass_point(P)
+            [1 + 3*5 + 4*5^2 + 4*5^3 + 3*5^4 + 2*5^6 + 4*5^7 + O(5^8) : 4 + 5 + 3*5^2 + 4*5^3 + 2*5^5 + 4*5^6 + 4*5^7 + O(5^8) : 1 + O(5^8)]
+        
+        The input needs to be a point in a Weierstrass disc, 
+        otherwise an error is returned::
+
+            sage: Q = HK.point([1,1,0])
+            sage: HK.find_char_zero_weierstrass_point(Q)
+            Traceback (most recent call last):
+            ...
+            ValueError: [1 + O(5^8) : 1 + O(5^8) : 0] is not in a Weierstrass disc.
 
         AUTHOR:
 
         - Jennifer Balakrishnan
         """
         if not self.is_in_weierstrass_disc(Q):
-            raise ValueError("%s is not in a Weierstrass disc" % Q)
-        points = self.weierstrass_points()
+            raise ValueError("%s is not in a Weierstrass disc." % Q)
+        points = self.rational_weierstrass_points()
         for P in points:
             if self.is_same_disc(P,Q):
                 return P
@@ -270,7 +255,13 @@ class HyperellipticCurveSmoothModel_padic_field(
         """
         Gives the residue disc of `P`
 
+        TODO: Really, this gives the reduction over the residue field. Isn't the residue disc a disc over the p-adics?
+        Maybe rename to residue_point or reduction ?
+
         EXAMPLES::
+
+        We compute the residue discs for diffferent points on the elliptic curve 
+        `y^2 = x^3 = 10*x + 9` over the `5`-adics::
 
             sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ['x']
@@ -290,10 +281,65 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: HK.residue_disc(T)
             [1 : 0 : 0]
 
+        We can also compute residue discs for points on curves with a split or inert model::
+
+            sage: H = HyperellipticCurveSmoothModel(x^6+3, x^2+1)
+            sage: H.is_split()
+            True
+            sage: HK = H.change_ring(K)
+            sage: P = HK.lift_x(1+3*5+4*5^2+4*5^3)
+            sage: Pbar = HK.residue_disc(P); Pbar
+            [1 : 4 : 1]
+
+        We note that `P` is in a Weierstrass disc and its reduction is indeed a Weierstrass point.
+            sage: HK.is_in_weierstrass_disc(P)
+            True
+            sage: HF = HK.change_ring(FiniteField(5))
+            sage: HF.is_weierstrass_point(Pbar)
+            True
+
         AUTHOR:
 
         - Jennifer Balakrishnan
         """
+
+        F = self.base_ring().residue_field()
+        HF = self.change_ring(F)
+
+        if not P[2].is_zero():
+            xP, yP = self.affine_coordinates(P)
+            xPv = xP.valuation()
+            yPv = yP.valuation()
+
+            if yPv > 0:
+                if xPv > 0: 
+                    return HF(0,0,1)
+                if xPv == 0:
+                    return HF(xP.expansion(0), 0,1)
+            elif yPv == 0:
+                if xPv > 0:
+                    return HF(0, yP.expansion(0),1)
+                if xPv == 0:
+                    return HF(xP.expansion(0), yP.expansion(0),1)
+
+
+        #in any other case, the point reduces to infinity.
+        if HF.is_ramified():
+                return HF.points_at_infinity()[0]
+        elif HF.is_split():
+            [Q1,Q2] = HF.points_at_infinity()
+            alpha = P[1].expansion(0)/P[0].expansion(0)**(g+1)
+            if alpha == Q1[1]: #we assume that the points at infinity are normalized, w.r.t. x !
+                return Q1
+            if alpha == Q2[1]:
+                return Q2
+            else:
+                raise ValueError("Unexpected behaviour.")
+        else:
+            raise ValueError("The reduction of the hyperelliptic curve is inert. This case should not appear.")
+
+        """previous implementation
+
         if not self.is_ramified():
             raise NotImplementedError("not implemented for split or inert hyperelliptic curves")
         _ , h = self.hyperelliptic_polynomials()
@@ -320,6 +366,7 @@ class HyperellipticCurveSmoothModel_padic_field(
                 return HF(P[0].expansion(0), P[1].expansion(0),1)
         else:
             return HF(1,0,0)
+        """
 
     def is_same_disc(self, P, Q):
         """
@@ -399,8 +446,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         g = self.genus()
         x, y, z = self.local_analytic_interpolation(P, Q)  #homogeneous coordinates
         x = x/z
-        y = y/z**(g+1) #TODO: see todo in the computation of local_analytic_interpolation.
-        # Do we need weighted projective coordinates?
+        y = y/z**(g+1) 
         dt = x.derivative() / (2*y)
         integrals = []
         for f in F:
@@ -480,12 +526,13 @@ class HyperellipticCurveSmoothModel_padic_field(
 
             sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: K = pAdicField(7, 5)
-            sage: E = EllipticCurve(K, [-31/3, -2501/108]) # 11a
+            sage: R.<x> = K[]
+            sage: E = HyperellipticCurveSmoothModel(x^3 - 31/3*x - 2501/108) # 11a
             sage: P = E(K(14/3), K(11/2))
             sage: E.frobenius(P) == P
             False
             sage: TP = E.teichmuller(P); TP
-            (0 : 2 + 3*7 + 3*7^2 + 3*7^4 + O(7^5) : 1 + O(7^5))
+            [0 : 2 + 3*7 + 3*7^2 + 3*7^4 + O(7^5) : 1 + O(7^5)]
             sage: E.frobenius(TP) == TP
             True
             sage: (TP[0] - P[0]).valuation() > 0, (TP[1] - P[1]).valuation() > 0
@@ -595,15 +642,15 @@ class HyperellipticCurveSmoothModel_padic_field(
         dim = 2*g
         V = VectorSpace(K, dim)
         #if P or Q is Weierstrass, use the Frobenius algorithm
-        if self.is_weierstrass(P):
-            if self.is_weierstrass(Q):
+        if self.is_weierstrass_point(P):
+            if self.is_weierstrass_point(Q):
                 return V(0)
             else:
                 PP = None
                 QQ = Q
                 TP = None
                 TQ = self.frobenius(Q)
-        elif self.is_weierstrass(Q):
+        elif self.is_weierstrass_point(Q):
             PP = P
             QQ = None
             TQ = None
@@ -878,6 +925,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         - Jennifer Balakrishnan (2010-02)
 
         """
+        # TODO: exceptions for general curve form
         # TODO: implement Jacobians and show the relationship directly
         import monsky_washnitzer # TODO resolve import after globals
         K = self.base_ring()
@@ -888,9 +936,9 @@ class HyperellipticCurveSmoothModel_padic_field(
         f, vec = w.reduce_fast()
         basis_values = self.coleman_integrals_on_basis(P, Q, algorithm)
         dim = len(basis_values)
-        x,y = self.local_coordinates_at_infinity(2*prec)
-        if self.is_weierstrass(P):
-            if self.is_weierstrass(Q):
+        x,y = self.local_coordinates_at_infinity_ramified(2*prec)
+        if self.is_weierstrass_point(P):
+            if self.is_weierstrass_point(Q):
                 return 0
             elif f == 0:
                 return sum([vec[i] * basis_values[i] for i in range(dim)])
@@ -899,7 +947,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             else:
                 raise ValueError("The differential is not odd: use coleman_integral_from_weierstrass_via_boundary")
 
-        elif self.is_weierstrass(Q):
+        elif self.is_weierstrass_point(Q):
             if f == 0:
                 return sum([vec[i] * basis_values[i] for i in range(dim)])
             elif w._coeff(x,-y)*x.derivative()/(-2*y)+w._coeff(x,y)*x.derivative()/(2*y) == 0:
