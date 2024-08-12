@@ -177,7 +177,28 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def point(self, coords, check=True):
         """
-        TODO
+        Create a point on the hyperelliptic curve self.
+
+        INPUT:
+
+        - ``coords`` -- coordinates defining the point, these can be 
+            projective or affine coordinates.
+
+        - ``check`` -- boolean (optional, default: ``True``); whether
+          to check the defining data for consistency
+
+        OUTPUT: A point of the hyperelliptic curve.
+
+        EXAMPLES:
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: H = HyperellipticCurveSmoothModel(R([0, -1, 0, 0, -2, 0, 1]), R([1, 1, 1]));
+            sage: H.point([1,-1,0])
+            [1 : -1 : 0]
+            sage: H.point([-1,0])
+            [-1 : 0 : 1]
+            sage: H.point([-6,195])
+            [-6 : 195 : 1]
         """
         if len(coords) == 2:
             X, Y = coords
@@ -196,12 +217,24 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
         Return the polynomials (f, h) such that
         C : y^2 + h*y = f
+
+        EXAMPLES:
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: H = HyperellipticCurveSmoothModel(R([0, 1, 2, 0, 0, 1]), R([1, 1, 0, 1]))
+            sage: H.hyperelliptic_polynomials()
+            (x^5 + 2*x^2 + x, x^3 + x + 1)
+
+            sage: H = HyperellipticCurveSmoothModel(x^7 + x + 2)
+            sage: H.hyperelliptic_polynomials()
+            (x^7 + x + 2, 0)
         """
         return self._hyperelliptic_polynomials
 
     def roots_at_infinity(self):
         """
-        Compute the roots of: Y^2 + h[d]Y - d[2d] = 0
+        Compute the roots of: Y^2 + h[d]Y - f[2d] = 0.
         When the curve is ramified, we expect one root, when
         the curve is inert or split we expect zero or two roots.
         """
@@ -226,6 +259,18 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
         Return True if the curve is split, i.e. there are two rational
         points at infinity.
+
+        EXAMPLES:
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: H = HyperellipticCurveSmoothModel(x^6+1, x^3+1)
+            sage: H.is_split()
+            False
+
+            sage: HK = H.change_ring(FiniteField(19))
+            sage: HK.is_split()
+            True
         """
         return len(self.roots_at_infinity()) == 2
 
@@ -233,6 +278,18 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
         Return True if the curve is ramified, i.e. there is one rational
         point at infinity.
+
+        EXAMPLES:
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: H = HyperellipticCurveSmoothModel(x^5+1)
+            sage: H.is_ramified()
+            True
+
+            sage: H = HyperellipticCurveSmoothModel(x^5+1, x^3+1)
+            sage: H.is_ramified()
+            False
         """
         return len(self.roots_at_infinity()) == 1
 
@@ -240,6 +297,23 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
         Return True if the curve is inert, i.e. there are no rational
         points at infinity.
+
+        EXAMPLES:
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: H = HyperellipticCurveSmoothModel(x^6+1,-x^3+1)
+            sage: H.is_inert()
+            True
+
+            sage: K.<a> = QQ.extension(x^2+x-1)
+            sage: HK = H.change_ring(K)
+            sage: HK.is_inert()
+            False
+
+            sage: HF = H.change_ring(FiniteField(29))
+            sage: HF.is_inert()
+            False
         """
         return len(self.roots_at_infinity()) == 0
 
