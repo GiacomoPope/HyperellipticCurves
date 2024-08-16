@@ -1,4 +1,5 @@
 from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
+from sage.rings.polynomial.polynomial_element import Polynomial
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import choice, randint
@@ -44,7 +45,8 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
     def point_to_mumford_coordinates(self, P):
         """
-        TODO
+        On input a point P, return the Mumford coordinates
+        of (the affine part of) the divisor [P].
         """
         R, x = self.curve().polynomial_ring().objgen()
         [X, Y, Z] = P._coords
@@ -56,20 +58,97 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
     def __call__(self, *args, check=True):
         """
-        TODO:
+        Return a rational point in the abstract Homset J(K), given:
 
-        Allow sending two points P, Q to compute the divisor (P) - (Q)
-        Allow sending a field element correesponding to the x-coordinate of a point?
+        0. The integer 0, returning 0 in J;
+
+        1. A point P in J = Jac(C), returning P;
+
+        2. A point P on the curve H such that J = Jac(H),
+           returning [P - P0], where P0 is the distinguished point of H
+           (by default P0 = oo)
+
+        2. Two points P, Q on the curve H such that J = Jac(H),
+           returning [P-Q];
+
+        3. Polynomials (u,v) such that `v^2 + h*v - f = 0 mod u`,
+           returning [(u(x),y-v(x))].
+
+        EXAMPLES::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel
+
+        First consider a hyperelliptic curve with an odd-degree model, 
+        hence a unique point at infinity
+
+            sage: R.<x> = PolynomialRing(GF(13))
+            sage: H = HyperellipticCurveSmoothModel(x^7 + x + 1)
+            sage: J = Jacobian(H)
+            sage: JH = Jacobian.point_homset()
+            sage: P = H.lift_x(1) 
+            sage: Q = H.lift_x(2)
+            sage: D1 = JH(P); D1
+            (x + 12, 4)
+            sage: D2 = JH(Q); D2
+            (x + 11, 1)
+            sage: D = JH(P,Q); D
+            (x^2 + 10*x + 2, 8*x + 9)
+            sage: D == D1 - D2
+            True
+            sage: JH(x^2+10*x+2, 8*x+9) == D
+            True
+
+        In general, a distinguished point is used to embed points on the curve 
+        into the Jacobian. This works for general models of hyperelliptic curves.
+            
+            sage: R.<x> = PolynomialRing(GF(13))
+            sage: H = HyperellipticCurveSmoothModel(2*x^8 + x + 1)
+            sage: H.is_inert()
+            True
+            sage: J = Jacobian(H)
+            sage: JH = J.point_homset()
+            sage: P = H.lift_x(1)
+            sage: D1 = JH(P); D1
+            (x^4 + 12*x^3, 5*x^3 + 5*x^2 + 6*x + 12 : -1)
+
+        To understand this output, one needs to look at the distinguished point.
+            sage: Q = H.lift_x(3)
+
+
+
+
+        
+        TODO:
+        Allow sending a field element corresponding to the x-coordinate of a point?
         """
-        if isinstance(args[0], SchemeMorphism_point_toric_field) and len(args) == 1:
-            u, v = self.point_to_mumford_coordinates(args[0])
-        # TODO handle this better!!
-        elif len(args) == 1:
-            return self.zero()
-        elif len(args) == 2:
-            u, v = args
-        else:
-            raise NotImplementedError
+        if len(args) == 1 and isinstance(args[0], (list,tuple)):
+            args = args[0]
+        if len(args) == 1:
+            P1 = args[0]
+            if P1 == 0:
+                u = R.one()
+                v = R.zero()
+            elif isinstance(P1, self._morphism_element):
+                return P1
+            elif isinstance(P1, SchemeMorphism_point_toric_field):
+                args = args + (self.curve().distinguished_point(),) #this case will now be handeled below.
+        if len(args) == 2:
+            P1 = args[0]
+            P2 = args[1]
+            if isinstance(P1, SchemeMorphism_point_toric_field) and isinstance(P2, SchemeMorphism_point_toric_field):
+                u1,v1 = self.point_to_mumford_coordinates(P1)
+                P2_inv = self.curve().hyperelliptic_involution(P2)
+                u2,v2 = self.point_to_mumford_coordinates(P2_inv)
+                print(u1,v1,u2,v2)
+                u,v = self.cantor_composition(u1,v1,u2,v2)
+            elif isinstance(P1, Polynomial) and isinstance(P2, Polynomial):
+                u = P1
+                v = P2
+            else:
+                raise ValueError("The input must consist of one or two points, or Mumford coordinates.")
+        if len(args) > 2:
+            raise ValueError("At most two arguments are allowed as input.")
+
         return self._morphism_element(self, u, v, check=check)
 
     def __cantor_double_generic(self, u1, v1):

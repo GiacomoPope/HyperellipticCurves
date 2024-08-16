@@ -27,9 +27,9 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         return Integer(self.curve().genus())
 
     # TODO why is check passed here and not used
-    def point(self, mumford, check=True):
+    def point(self, *mumford, check=True):
         try:
-            return self.point_homset(mumford, check=check)
+            return self.point_homset()(*mumford, check=check)
         except AttributeError:
             raise ValueError("Arguments must determine a valid Mumford divisor.")
 

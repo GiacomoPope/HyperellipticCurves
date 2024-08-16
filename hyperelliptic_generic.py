@@ -766,6 +766,41 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         else:
             return affine_weierstrass_points
 
+
+    def hyperelliptic_involution(self, P):
+        """
+        Returns the image of P under the hyperelliptic involution.
+
+        EXAMPLES::
+            
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = FiniteField(17)[]
+            sage: H = HyperellipticCurveSmoothModel(x^6 + 2, x^2 + 1)
+            sage: P = H.point([8,12])
+            sage: H.hyperelliptic_involution(P)
+
+            sage: Q = H.point([15,6])
+            sage: H.is_weierstrass_point(Q)
+            sage: H.hyperelliptic_involution(Q) == Q
+            True
+        """
+        [X,Y,Z] = P._coords
+        f,h = self.hyperelliptic_polynomials()
+        if Z == 0:
+            if self.is_ramified():
+                return P
+            else:
+                points = self.points_at_infinity()
+                if P == points[0]:
+                    return points[1]
+                else:
+                    return points[0]
+        elif Z == 1:
+            Y_inv = - Y - h(X)
+            return self.point([X, Y_inv])
+        else:
+            raise ValueError("the point P has to be normalized")
+
     def distinguished_point(self):
         """
         Return the distinguished point of the hyperelliptic curve.
@@ -793,8 +828,10 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
         Change the distinguished point of the hyperelliptic curve to P0.
         """
-        if not isinstance(P0, AlgebraicScheme_subscheme_toric):
-            raise ValueError("the input has to be a point on the curve")
+        try:
+            P0 = self.point(P0)
+        except (ValueError):
+            raise TypeError('P0 must be a point on the hyperelliptic curve')
         self._distinguished_point = P0
 
     def __call__(self, *args):
@@ -919,6 +956,8 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
         proj_pts = self.projective_curve().rational_points(**kwds)
         return self.points_at_infinity() + [self(*P) for P in proj_pts if P[2] != 0]
+
+
 
     # -------------------------------------------
     # Hacky things
