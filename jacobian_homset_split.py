@@ -103,6 +103,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         """
 
         g = self.curve().genus()
+        R = self.curve().polynomial_ring()
 
         if len(args) == 1 and isinstance(args[0], (list,tuple)):
             args = args[0] #unpack

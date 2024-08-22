@@ -777,10 +777,13 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: R.<x> = FiniteField(17)[]
             sage: H = HyperellipticCurveSmoothModel(x^6 + 2, x^2 + 1)
             sage: P = H.point([8,12])
-            sage: H.hyperelliptic_involution(P)
-
+            sage: P_inv = H.hyperelliptic_involution(P); P_inv
+            [8 : 8 : 1]
+            sage: H.hyperelliptic_involution(P_inv) == P
+            True
             sage: Q = H.point([15,6])
             sage: H.is_weierstrass_point(Q)
+            True
             sage: H.hyperelliptic_involution(Q) == Q
             True
         """

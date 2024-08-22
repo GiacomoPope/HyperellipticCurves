@@ -79,7 +79,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel
 
         First consider a hyperelliptic curve with an odd-degree model, 
-        hence a unique point at infinity
+        hence a unique point at infinity.
 
             sage: R.<x> = PolynomialRing(GF(13))
             sage: H = HyperellipticCurveSmoothModel(x^7 + x + 1)
@@ -98,8 +98,8 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: JH(x^2+10*x+2, 8*x+9) == D
             True
 
-        In general, a distinguished point is used to embed points on the curve 
-        into the Jacobian. This works for general models of hyperelliptic curves.
+        In general, a distinguished point is used to embed points of the curve 
+        in the Jacobian. This works for general models of hyperelliptic curves.
             
             sage: R.<x> = PolynomialRing(GF(13))
             sage: H = HyperellipticCurveSmoothModel(2*x^8 + x + 1)
@@ -109,18 +109,34 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: JH = J.point_homset()
             sage: P = H.lift_x(1)
             sage: D1 = JH(P); D1
-            (x^4 + 12*x^3, 5*x^3 + 5*x^2 + 6*x + 12 : -1)
+            (x^2 + 12*x, 3*x + 12 : 0)
 
         To understand this output, one needs to look at the distinguished point.
+            sage: P0 = H.distinguished_point(); P0
+            [0 : 1 : 1]
+            sage: JH(P) == JH(P,P0)
+            True
+            sage: JH(P0) 
+            (1, 0 : 1)
+        
+        We may change the distinguished point. Of course, the divisor [P-Q] does 
+        not depend on the choice of the distinguished point.
+
             sage: Q = H.lift_x(3)
-
-
-
-
+            sage: JH(P,Q)
+            (x^2 + 9*x + 3, 4*x + 11 : 0)
+            sage: newP0 = H.lift_x(6)
+            sage: H.set_distinguished_point(newP0)
+            sage: JH(P)
+            (x^2 + 6*x + 6, 10*x + 5 : 0)
+            sage: JH(P,Q)
+            (x^2 + 9*x + 3, 4*x + 11 : 0)
         
         TODO:
         Allow sending a field element corresponding to the x-coordinate of a point?
         """
+        R = self.curve().polynomial_ring()
+
         if len(args) == 1 and isinstance(args[0], (list,tuple)):
             args = args[0]
         if len(args) == 1:
@@ -139,7 +155,6 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
                 u1,v1 = self.point_to_mumford_coordinates(P1)
                 P2_inv = self.curve().hyperelliptic_involution(P2)
                 u2,v2 = self.point_to_mumford_coordinates(P2_inv)
-                print(u1,v1,u2,v2)
                 u,v = self.cantor_composition(u1,v1,u2,v2)
             elif isinstance(P1, Polynomial) and isinstance(P2, Polynomial):
                 u = P1
