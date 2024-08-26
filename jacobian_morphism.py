@@ -88,6 +88,9 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
 
         return u1 == u2 and v1 == v2
 
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def __list__(self):
         return list(self._u, self._v)
 

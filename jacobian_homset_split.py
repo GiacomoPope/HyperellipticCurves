@@ -117,6 +117,8 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
                 return P1
             elif isinstance(P1, SchemeMorphism_point_toric_field):
                 args = args + (self.curve().distinguished_point(),) #this case will now be handeled below.
+            else:
+                raise ValueError("The input must consist of points or polynomials.")
         if len(args) == 2 or len(args) == 3:
             P1 = args[0]
             P2 = args[1]

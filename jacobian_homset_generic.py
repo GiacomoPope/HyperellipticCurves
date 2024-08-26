@@ -148,6 +148,8 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
                 return P1
             elif isinstance(P1, SchemeMorphism_point_toric_field):
                 args = args + (self.curve().distinguished_point(),) #this case will now be handeled below.
+            else:
+                raise ValueError("The input must consist of one or two points, or Mumford coordinates.")
         if len(args) == 2:
             P1 = args[0]
             P2 = args[1]
