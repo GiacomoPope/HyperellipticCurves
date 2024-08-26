@@ -31,7 +31,7 @@ from hyperelliptic_padic_field import HyperellipticCurveSmoothModel_padic_field
 from sage.categories.finite_fields import FiniteFields
 from sage.rings.abc import pAdicField
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.schemes.toric.library import toric_varieties
 from sage.rings.integer import Integer
 
@@ -150,7 +150,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         else:
             cls = HyperellipticCurveSmoothModel_padic_field
     # Special class for rational fields
-    elif is_RationalField(base_ring):
+    elif isinstance(base_ring, RationalField):
         if genus == 2:
             cls = HyperellipticCurveSmoothModel_g2_rational_field
         else:

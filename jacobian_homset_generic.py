@@ -9,8 +9,9 @@ from sage.schemes.generic.homset import SchemeHomset_points
 # at the moment, this is the type we get from calling a point from the projective model
 from sage.schemes.toric.morphism import SchemeMorphism_point_toric_field
 
-# Needed until https://github.com/sagemath/sage/pull/37118 is merged.
-from uniform_random_sampling import uniform_random_polynomial
+from sage.misc.banner import SAGE_VERSION
+assert SAGE_VERSION.startswith("10."), "please update to Sage 10"
+assert int(SAGE_VERSION.lstrip("10.").split(".")[0]) >= 4, "please update to Sage 10.4+ (#37118)"
 
 
 class HyperellipticJacobianHomset(SchemeHomset_points):
@@ -57,35 +58,34 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return u, v
 
     def __call__(self, *args, check=True):
-        """
-        Return a rational point in the abstract Homset J(K), given:
+        r"""
+        Return a rational point in the abstract Homset `J(K)`, given:
 
-        0. The integer 0, returning 0 in J;
+        0. The integer `0`; return `0 \in J`;
 
-        1. A point P in J = Jac(C), returning P;
+        1. A point `P` on `J = Jac(C)`, return `P`;
 
-        2. A point P on the curve H such that J = Jac(H),
-           returning [P - P0], where P0 is the distinguished point of H
-           (by default P0 = oo)
+        2. A point `P` on the curve `H` such that `J = Jac(H)`;
+           return `[P - P_0]`, where `P_0` is the distinguished point of `H`.
+           By default, `P_0 = \infty`;
 
-        2. Two points P, Q on the curve H such that J = Jac(H),
-           returning [P-Q];
+        2. Two points `P, Q` on the curve `H` such that `J = Jac(H)`;
+           return `[P - Q]`;
 
-        3. Polynomials (u,v) such that `v^2 + h*v - f = 0 mod u`,
-           returning [(u(x),y-v(x))].
+        3. Polynomials `(u, v)` such that `v^2 + h*v - f \equiv 0 \pmod u`;
+           reutrn `[(u(x), y - v(x))]`.
 
-        EXAMPLES::
+        EXAMPLES:
 
-            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel
+        First consider a hyperelliptic curve with an odd-degree model,
+        hence a unique point at infinity::
 
-        First consider a hyperelliptic curve with an odd-degree model, 
-        hence a unique point at infinity.
-
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = PolynomialRing(GF(13))
             sage: H = HyperellipticCurveSmoothModel(x^7 + x + 1)
             sage: J = Jacobian(H)
-            sage: JH = Jacobian.point_homset()
-            sage: P = H.lift_x(1) 
+            sage: JH = J.point_homset()
+            sage: P = H.lift_x(1)
             sage: Q = H.lift_x(2)
             sage: D1 = JH(P); D1
             (x + 12, 4)
@@ -98,9 +98,9 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: JH(x^2+10*x+2, 8*x+9) == D
             True
 
-        In general, a distinguished point is used to embed points of the curve 
-        in the Jacobian. This works for general models of hyperelliptic curves.
-            
+        In general, a distinguished point is used to embed points of the curve
+        in the Jacobian. This works for general models of hyperelliptic curves::
+
             sage: R.<x> = PolynomialRing(GF(13))
             sage: H = HyperellipticCurveSmoothModel(2*x^8 + x + 1)
             sage: H.is_inert()
@@ -111,34 +111,56 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: D1 = JH(P); D1
             (x^2 + 12*x, 3*x + 12 : 0)
 
-        To understand this output, one needs to look at the distinguished point.
+        To understand this output, one needs to look at the distinguished
+        point::
+
             sage: P0 = H.distinguished_point(); P0
             [0 : 1 : 1]
             sage: JH(P) == JH(P,P0)
             True
-            sage: JH(P0) 
+            sage: JH(P0)
             (1, 0 : 1)
-        
-        We may change the distinguished point. Of course, the divisor [P-Q] does 
-        not depend on the choice of the distinguished point.
+
+        We may change the distinguished point. Of course, the divisor `[P - Q]`
+        does not depend on the choice of the distinguished point::
 
             sage: Q = H.lift_x(3)
             sage: JH(P,Q)
             (x^2 + 9*x + 3, 4*x + 11 : 0)
-            sage: newP0 = H.lift_x(6)
-            sage: H.set_distinguished_point(newP0)
-            sage: JH(P)
+            sage: H.set_distinguished_point(H.random_point())
+            sage: JH(P)  # random
             (x^2 + 6*x + 6, 10*x + 5 : 0)
             sage: JH(P,Q)
             (x^2 + 9*x + 3, 4*x + 11 : 0)
-        
+
+        TESTS:
+
+        Ensure that field elements are treated as mumford coordinates::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = GF(7)[]
+            sage: H = HyperellipticCurveSmoothModel(x^7 - x^2 - 1)
+            sage: J = H.jacobian(); J
+            Jacobian of Hyperelliptic Curve over Finite Field of size 7 defined by y^2 = x^7 + 6*x^2 + 6
+            sage: J(H.lift_x(3))
+            (x + 4, 0)
+            sage: _ == J(x + 4, 0) == J(x + 4, R(0))
+            True
+
         TODO:
-        Allow sending a field element corresponding to the x-coordinate of a point?
+
+        - Allow sending a field element corresponding to the x-coordinate of a point?
+
+        - Use `__classcall__` to sanitise input?
         """
         R = self.curve().polynomial_ring()
 
+        if len(args) > 2:
+            raise ValueError("at most two arguments are allowed as input")
+
         if len(args) == 1 and isinstance(args[0], (list,tuple)):
             args = args[0]
+
         if len(args) == 1:
             P1 = args[0]
             if P1 == 0:
@@ -147,9 +169,10 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             elif isinstance(P1, self._morphism_element):
                 return P1
             elif isinstance(P1, SchemeMorphism_point_toric_field):
-                args = args + (self.curve().distinguished_point(),) #this case will now be handeled below.
+                args = args + (self.curve().distinguished_point(),) #this case will now be handled below.
             else:
-                raise ValueError("The input must consist of one or two points, or Mumford coordinates.")
+                raise ValueError("the input must consist of one or two points, or Mumford coordinates")
+
         if len(args) == 2:
             P1 = args[0]
             P2 = args[1]
@@ -158,13 +181,11 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
                 P2_inv = self.curve().hyperelliptic_involution(P2)
                 u2,v2 = self.point_to_mumford_coordinates(P2_inv)
                 u,v = self.cantor_composition(u1,v1,u2,v2)
-            elif isinstance(P1, Polynomial) and isinstance(P2, Polynomial):
-                u = P1
-                v = P2
+            elif isinstance(P1, Polynomial) or isinstance(P2, Polynomial):
+                u = R(P1)
+                v = R(P2)
             else:
-                raise ValueError("The input must consist of one or two points, or Mumford coordinates.")
-        if len(args) > 2:
-            raise ValueError("At most two arguments are allowed as input.")
+                raise ValueError("the input must consist of one or two points, or Mumford coordinates")
 
         return self._morphism_element(self, u, v, check=check)
 
@@ -193,11 +214,13 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
     def _cantor_composition_generic(self, u1, v1, u2, v2):
         """
-        Cantor composition
+        Helper function for the Cantor composition algorithm.
 
-        Returns the Cantor composition of (u1, v1) with (u2, v2)
+        OUTPUT:
+
+        The Cantor composition of ``(u1, v1)`` with ``(u2, v2)``,
         together with the degree of the polynomial ``s`` which is
-        needed for computing weights for the split and inert models
+        needed for computing the weights for the split and inert models.
         """
         # Collect data from HyperellipticCurve
         H = self.curve()
@@ -248,10 +271,16 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
     def _cantor_reduction_generic(self, u0, v0):
         """
-        TODO
+        Helper function for the Cantor composition algorithm.
 
-        NOTE: we do not make u1 monic, but leave this for *after* reduction
-        to save on calls to this method.
+        OUTPUT:
+
+        The reduced divisor of ``(u0, v0)``.
+
+        NOTE:
+
+        The `u`-coordinate of the output is not necessarily monic. That step is
+        delayed to :meth:`cantor_reduction` to save time.
         """
         # Collect data from HyperellipticCurve
         H = self.curve()
@@ -264,16 +293,31 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return u1, v1
 
     def cantor_composition(self, u1, v1, u2, v2):
+        """
+        Return the Cantor composition of ``(u1, v1)`` and ``(u2, v2)``.
+
+        EXAMPLES::
+
+        TODO
+        """
         u3, v3, _ = self._cantor_composition_generic(u1, v1, u2, v2)
         return u3, v3
 
     def cantor_reduction(self, u0, v0):
+        """
+        Return the Cantor reduced ``(u0, v0)``.
+
+        EXAMPLES::
+
+        TODO
+        """
         return self._cantor_reduction_generic(u0, v0)
 
     def _random_element_cover(self, degree=None):
         r"""
-        Returns a random element from the Jacobian. Distribution is not
-        uniformly random, but returns the entire group.
+        Return a random element from the Jacobian.
+
+        Distribution is not uniformly random, but returns the entire group.
         """
         H = self.curve()
         K = H.base_ring()
@@ -290,7 +334,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             degree = (-1, g)
 
         while True:
-            u = uniform_random_polynomial(R, degree=degree)
+            u = R.random_element(degree=degree)
             if u.is_zero():
                 if H.is_split():
                     n = randint(0, g)
@@ -359,8 +403,22 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
     def _random_element_rational(self):
         r"""
-        Returns a random element from the Jacobian. It does not necessarily
-        return the entire group.
+        Return a random element from the Jacobian. This algorithm is faster
+        than :meth:`_random_element_cover` but is **NOT** surjective on the set
+        of points.
+
+        EXAMPLES::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel
+            sage: R.<x> = GF(5)[]
+            sage: f = x^5 + 2*x^4 + 4*x^3 + x^2 + 4*x + 3
+            sage: H = HyperellipticCurveSmoothModel(f)
+            sage: J = H.jacobian()
+            sage: J.order()
+            16
+            sage: JH = J.point_homset()
+            sage: len(set(JH._random_element_rational() for _ in range(300)))
+            8
         """
         H = self.curve()
         g = H.genus()
@@ -377,9 +435,9 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             return self.zero()
         return sum(divisors, start=self.zero())
 
-    def random_element(self, fast=True, *args, **kwargs):
+    def random_element(self, fast=False, *args, **kwargs):
         r"""
-        Returns a random element from the Jacobian. Distribution is not
+        Returns a random element from the Jacobian. Distribution is **NOT**
         uniformly random.
 
         INPUT:
@@ -388,6 +446,25 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
           algorithm is used, but the output is **NOT** guaranteed to cover the
           entire Jacobian. See examples below. If set to ``False``, a slower
           algorithm is used, but covers the entire Jacobian.
+
+        EXAMPLES::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel
+            sage: R.<x> = GF(5)[]
+            sage: f = x^5 + 2*x^4 + 4*x^3 + x^2 + 4*x + 3
+            sage: H = HyperellipticCurveSmoothModel(f)
+            sage: J = H.jacobian()
+
+        This example demonstrates that the ``fast`` algorithm is not
+        necessarily surjective on the rational points of the Jacobian::
+
+            sage: JH = J.point_homset()
+            sage: len(set(JH.random_element(fast=True) for _ in range(300)))
+            8
+            sage: len(set(JH.random_element(fast=False) for _ in range(300)))
+            16
+            sage: J.order()
+            16
         """
         if not isinstance(self.base_ring(), FiniteField_generic):
             raise NotImplementedError(
