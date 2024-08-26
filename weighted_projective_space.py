@@ -10,6 +10,8 @@ from sage.schemes.projective.projective_space import ProjectiveSpace, _CommRings
 from sage.structure.all import UniqueRepresentation
 from sage.structure.category_object import normalize_names
 
+from weighted_projective_homset import SchemeHomset_points_weighted_projective_ring
+
 try:
     # TODO: Remove this
     from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
@@ -25,7 +27,7 @@ def WeightedProjectiveSpace(weights, R=None, names=None):
 
     EXAMPLES::
 
-        sage: # TODO: add example of point on this space (it doens't work right now)
+        sage: # TODO: add example of point on this space (it doesn't work right now)
         sage: WP = WeightedProjectiveSpace([1, 3, 1]); WP
         Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Integer Ring
     """
@@ -152,7 +154,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P._check_satisfies_equations([1/2, 0, 1])
             Traceback (most recent call last):
             ...
-            TypeError: the components of v=[1/2, 0, 1] must be elements of Integer Ring
+            TypeError: no conversion of this rational to integer
         """
         if not isinstance(v, (list, tuple)):
             raise TypeError(f"the argument v={v} must be a list or tuple")
@@ -269,13 +271,14 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         """
         raise NotImplementedError("_homset not implemented for weighted projective space")
 
-    def _point_homset(self, *_, **__):
+    def _point_homset(self, *args, **kwds):
         """
         Construct a point Hom-set.
 
         For internal use only. See :mod:`morphism` for details.
         """
-        raise NotImplementedError("_point_homset not implemented for weighted projective space")
+        # raise NotImplementedError("_point_homset not implemented for weighted projective space")
+        return SchemeHomset_points_weighted_projective_ring(*args, **kwds)
 
     def point(self, v, check=True):
         """
