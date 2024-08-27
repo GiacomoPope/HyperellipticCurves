@@ -58,5 +58,19 @@ class HyperellipticJacobian_generic(Jacobian_generic):
     def order(self):
         return self.point_homset().order()
 
-    def random_element(self, fast=True):
-        return self.point_homset().random_element(fast=fast)
+    def lift_u(self, *args, **kwds):
+        return self.point_homset().lift_u(*args, **kwds)
+
+    def random_element(self, *args, **kwds):
+        return self.point_homset().random_element(*args, **kwds)
+
+    def points(self, *args, **kwds):
+        return self.point_homset().points(*args, **kwds)
+
+    def list(self):
+        return self.point_homset().points()
+
+    def __iter__(self):
+        yield from self.list()
+
+    rational_points = points

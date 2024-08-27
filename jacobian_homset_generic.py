@@ -1,9 +1,11 @@
+import itertools
 from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
 
 from sage.structure.element import parent
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import choice, randint
 from sage.schemes.generic.homset import SchemeHomset_points
+from sage.rings.polynomial.polynomial_ring import polygen
 
 # TODO should we make a hyperelliptic point class?
 # at the moment, this is the type we get from calling a point from the projective model
@@ -317,6 +319,124 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         """
         return self._cantor_reduction_generic(u0, v0)
 
+    def lift_u(self, u, all=False):
+        """
+        Return one or all points with given `u`-coordinate.
+
+        This method is deterministic: it returns the same data each time when
+        called with the same `u`.
+
+        Currently only implemented for Jacobians over a finite field.
+
+        INPUT:
+
+        * ``u`` -- an element of the base ring of the Jacobian
+
+        * ``all`` -- boolean (default: ``False``); if ``True``, return a
+          (possibly empty) list of all points with the given `u`-coordinate; if
+          ``False``, return just one point, or raise a ``ValueError`` if there
+          are none.
+
+        OUTPUT:
+
+        A point on this Jacobian.
+
+        EXAMPLES::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = GF(1993)[]
+            sage: H = HyperellipticCurveSmoothModel(x^5 + x + 1)
+            sage: J = H.jacobian()
+            sage: P = J.lift_u(x^2 + 42*x + 270); P
+            (x^2 + 42*x + 270, 1837*x + 838)
+        """
+        H = self.curve()
+        K = H.base_ring()
+        g = H.genus()
+
+        H_is_split = H.is_split()
+
+        if u.is_zero():
+            if H_is_split:
+                if not all:
+                    return self._morphism_element(self, R.one(), R.zero(), 0)
+                return [self._morphism_element(self, R.one(), R.zero(), n) for n in range(g + 1)]
+            if not all:
+                return self.zero()
+            return [self.zero()]
+
+        if not isinstance(K, FiniteField_generic):
+            raise NotImplementedError("lift_u is only implemented for Jacobians over a finite field")
+
+        R = H.polynomial_ring()
+        f, h = H.hyperelliptic_polynomials()
+        u1, v1 = R.one(), R.zero()
+
+        u = R(u).monic()
+        u_factors = u.factor()
+        vss = []
+
+        for x, e in u_factors:
+            # Solve y^2 + hy - f = 0 mod x
+
+            # TODO: is this the most efficient method? Maybe we should write
+            # a helper function which computes y^2 + hy - f = 0 mod x which
+            # properly handles trivial cases like when x is linear?
+            K_ext = K.extension(modulus=x, names="a")
+            y_ext = polygen(K_ext, "y_ext")
+            h_ = K_ext(h % x)
+            f_ = K_ext(f % x)
+            vs = (y_ext**2 + h_ * y_ext - f_).roots(multiplicities=False)
+            if len(vs) == 0 and not all:
+                raise ValueError(f"no point with u-coordinate {u} on {self}")
+
+            vss.append(vs)
+
+        def postprocess_uv(u1, v1, n=None):
+            # This function converts (u, v) into the point being returned, handling split cases
+            if H.is_split():
+                if n is None or not (0 <= n <= g - u1.degree()):
+                    # this is an internal function
+                    raise ValueError(f"bug: n must be an integer between 0 and {g - u1.degree()}")
+                return self._morphism_element(self, u1, v1, n, check=False)
+
+            # We need to ensure the degree of u is even
+            if H.is_inert():
+                if u1.degree() % 2:
+                    # TODO: make composition with distinguished_point its own function?
+                    P0 = self.curve().distinguished_point()
+                    X0, Y0, _ = P0._coords
+                    X = R.gen()  # TODO use better variable names in this function
+                    _, h = self.curve().hyperelliptic_polynomials()
+                    u0 = X - X0
+                    v0 = R(-Y0 - h(X0))
+                    u1, v1, _ = self._cantor_composition_generic(u1, v1, u0, v0)
+                assert not (u1.degree() % 2), f"{u1} must have even degree"
+
+            return self._morphism_element(self, u1, v1, check=False)
+
+        points = []
+        for vv in itertools.product(*vss):
+            u1, v1 = R.one(), R.zero()
+            try:
+                for (x, e), v in zip(u_factors, map(R, vv)):
+                    for _ in range(e):
+                        u1, v1, _ = self._cantor_composition_generic(u1, v1, x, v)
+            # v is not rational, so we skip it
+            except (ValueError, AttributeError):
+                pass
+
+            if not all:
+                return postprocess_uv(u1, v1, n=0)
+
+            if H_is_split:
+                for n in range(g - u1.degree() + 1):
+                    points.append(postprocess_uv(u1, v1, n=n))
+            else:
+                points.append(postprocess_uv(u1, v1))
+
+        return points
+
     def _random_element_cover(self, degree=None):
         r"""
         Return a random element from the Jacobian.
@@ -324,11 +444,8 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         Distribution is not uniformly random, but returns the entire group.
         """
         H = self.curve()
-        K = H.base_ring()
         R = H.polynomial_ring()
         g = H.genus()
-
-        f, h = H.hyperelliptic_polynomials()
 
         # For the inert case, the genus must be even
         if H.is_inert():
@@ -338,69 +455,15 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             degree = (-1, g)
 
         while True:
-            u = R.random_element(degree=degree)
-            if u.is_zero():
-                if H.is_split():
-                    n = randint(0, g)
-                    return self._morphism_element(self, R.one(), R.zero(), n)
-                return self.zero()
-
-            u = u.monic()
-
             # TODO: i think we can skip this and simply ensure u
             #       is even degree with composition with the distinguished
             #       point?
             # if H.is_inert() and (u.degree() % 2) == 1:
             #     #TODO: better method to sample even degree polynomials
             #     continue
-
+            u = R.random_element(degree=degree, monic=True)
             try:
-                u1, v1 = R.one(), R.zero()
-                for x, e in u.factor():
-                    # Solve y^2 + hy - f = 0 mod x
-                    from sage.rings.polynomial.polynomial_ring import polygen
-
-                    # TODO: is this the most efficient method? Maybe we should write
-                    # a helper function which computes y^2 + hy - f = 0 mod x which
-                    # properly handles trivial cases like when x is linear?
-                    K_ext = K.extension(modulus=x, names="a")
-                    y_ext = polygen(K_ext, "y_ext")
-                    h_ = K_ext(h % x)
-                    f_ = K_ext(f % x)
-                    y = choice((y_ext**2 + h_ * y_ext - f_).roots(multiplicities=False))
-                    try:
-                        # Attempt to coerce quotient ring element to the
-                        # polynomial ring
-                        v = R(y)
-
-                        # Sum for the multiplicity of the root x of u
-                        for _ in range(e):
-                            u1, v1, _ = self._cantor_composition_generic(u1, v1, x, v)
-
-                    # v is not rational, so we skip it
-                    except (ValueError, AttributeError):
-                        pass
-
-                if H.is_split():
-                    g = self.curve().genus()
-                    n = randint(0, g - u1.degree())
-                    return self._morphism_element(self, u1, v1, n, check=False)
-
-                # We need to ensure the degree of u is even
-                if H.is_inert():
-                    if u1.degree() % 2:
-                        # TODO: make composition with distinguished_point
-                        #       its own function?
-                        P0 = self.curve().distinguished_point()
-                        X0, Y0, _ = P0._coords
-                        X = R.gen()  # TODO use better variable names in this function
-                        _, h = self.curve().hyperelliptic_polynomials()
-                        u0 = X - X0
-                        v0 = R(-Y0 - h(X0))
-                        u1, v1, _ = self._cantor_composition_generic(u1, v1, u0, v0)
-                    assert not (u1.degree() % 2), f"{u1} must have even degree"
-                return self._morphism_element(self, u1, v1, check=False)
-
+                return choice(self.lift_u(u, all=True))
             # TODO: better handling rather than looping with try / except?
             except IndexError:
                 pass
@@ -478,3 +541,33 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         if fast:
             return self._random_element_rational(*args, **kwargs)
         return self._random_element_cover(*args, **kwargs)
+
+    def points(self):
+        """
+        Return all points on this Jacobian `J(K)`.
+
+        .. WARNING::
+
+            This code is not efficient at all.
+        """
+        H = self.curve()
+        R = H.polynomial_ring()
+        g = H.genus()
+
+        if H.is_split() or H.is_inert():
+            raise NotImplementedError("the algorithm just fails")
+
+        # TODO: after `monic` argument is added, use it
+        ss = []
+        for u in R.polynomials(max_degree=g):
+            if u.is_monic():
+                for P in self.lift_u(u, all=True):
+                    # HACK: it keeps overcounting 0 without this...
+                    # Example: y^2 = x^5 + x over F_5
+                    if not u.is_one() and P.is_zero():
+                        continue
+                    ss.append(P)
+
+        return ss
+
+    rational_points = points

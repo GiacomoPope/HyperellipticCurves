@@ -66,7 +66,7 @@ for curve, order in [
     try_exec("list(J)")
     try_exec("JH.points()")
     try_exec("JH.rational_points()")
-    # try_exec("list(JH)")  # hangs, #38566
+    try_exec("list(JH)")
 
     ### J and JH are two different things but are printed the same
     try_exec("assert type(J) != type(JH)")
