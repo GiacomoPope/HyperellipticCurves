@@ -4,9 +4,7 @@ from sage.schemes.generic.morphism import SchemeMorphism
 from sage.groups.generic import order_from_multiple
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.integer import Integer
-from sage.structure.richcmp import op_EQ, op_NE
-
-# TODO _richcmp_
+from sage.structure.richcmp import richcmp
 
 class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
     r"""
@@ -128,19 +126,12 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: Z != 0
             False
         """
-        if op != op_EQ and op != op_NE:
-            raise NotImplementedError("only equality tests of mumford divisors are implemented")
-
-        if not isinstance(other, MumfordDivisorClassField):
-            return False
-
-        u1, v1 = self.uv()
-        u2, v2 = other.uv()
-
-        return (u1 == u2 and v1 == v2) ^ (op == op_NE)
+        # _richcmp_ is called after type unification/coercion
+        assert isinstance(other, MumfordDivisorClassField)
+        return richcmp(tuple(self), tuple(other), op)
 
     def __list__(self):
-        return list(self._u, self._v)
+        return list(tuple(self))
 
     def __tuple__(self):
         return tuple(self._u, self._v)
@@ -293,15 +284,34 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
 
     def is_zero(self):
         g = self._parent.curve().genus()
-        if self._n != (g / 2).ceil():
+        if self._n != (g + 1) // 2:
             return False
         return self._u.is_one() and self._v.is_zero()
 
-    def __list__(self):
-        return list(self._u, self._v, self._n)
+    def __iter__(self):
+        """
+        TESTS:
 
-    def __tuple__(self):
-        return tuple(self._u, self._v, self._n)
+        Indirect tests::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel
+            sage: R.<x> = GF(7)[]
+            sage: H = HyperellipticCurveSmoothModel(x^6 - x + 1)
+            sage: J = H.jacobian()
+            sage: P = J(x + 2, 5)
+            sage: list(P)
+            [x + 2, 5, 1]
+            sage: tuple(P)
+            (x + 2, 5, 1)
+            sage: Q = J(x + 2, 5, 0)
+            sage: list(Q)
+            [x + 2, 5, 0]
+            sage: tuple(Q)
+            (x + 2, 5, 0)
+            sage: P == Q
+            False
+        """
+        yield from [self._u, self._v, self._n]
 
     def __hash__(self):
         return hash(tuple(self))

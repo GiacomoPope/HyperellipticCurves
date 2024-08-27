@@ -1,7 +1,7 @@
 def try_exec(s):
     try:
         exec(s)
-        # print(f"\x1b[32mSuccessful! ({s})\x1b[0m")
+        print(f"\x1b[32mSuccessful! ({s})\x1b[0m")
     except AttributeError:
         print(f"\x1b[31mAttributeError: {s}\x1b[0m")
     except AssertionError:
@@ -61,12 +61,12 @@ for curve, order in [
     try_exec("assert discrete_log(P, G, operation='+') == k")
 
     ### Some of these haven't been implemented
-    try_exec("J.points()")
-    try_exec("J.rational_points()")
-    try_exec("list(J)")
-    try_exec("JH.points()")
-    try_exec("JH.rational_points()")
-    try_exec("list(JH)")
+    try_exec("assert len(J.points()) == J.order()")
+    try_exec("assert J.points() == J.rational_points() == list(J)")
+    try_exec("assert J.points() == J.points()")
+    try_exec("assert len(JH.points()) == JH.order()")
+    try_exec("assert JH.points() == JH.rational_points() == list(JH)")
+    try_exec("assert JH.points() == JH.points()")
 
     ### J and JH are two different things but are printed the same
     try_exec("assert type(J) != type(JH)")

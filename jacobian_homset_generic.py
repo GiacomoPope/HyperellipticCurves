@@ -554,9 +554,6 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         R = H.polynomial_ring()
         g = H.genus()
 
-        if H.is_split() or H.is_inert():
-            raise NotImplementedError("the algorithm just fails")
-
         # TODO: after `monic` argument is added, use it
         ss = []
         for u in R.polynomials(max_degree=g):
@@ -568,6 +565,13 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
                         continue
                     ss.append(P)
 
+        if H.is_ramified():
+            assert len(ss) == self.order()
+            return ss
+
+        # this currently fails
+        # assert len(ss) == self.order()
+        ss = sorted(set(ss))
         return ss
 
     rational_points = points

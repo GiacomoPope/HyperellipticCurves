@@ -20,7 +20,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         """
         g = self.curve().genus()
         R = self.curve().polynomial_ring()
-        n = (g / 2).ceil()
+        n = (g + 1) // 2
         return self._morphism_element(self, R.one(), R.zero(), n)
 
     def point_to_mumford_coordinates(self, P):
@@ -125,7 +125,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             raise ValueError("at most three arguments are allowed as input")
 
         if len(args) == 0 or (len(args) == 1 and args[0] == ()):
-            return self._morphism_element(self, R.one(), R.zero(), check=check)
+            return self._morphism_element(self, R.one(), R.zero(), n=(g + 1) // 2, check=check)
 
         if len(args) == 1 and isinstance(args[0], (list,tuple)):
             args = args[0]
@@ -161,7 +161,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
                 if len(args) == 3 and isinstance(args[2], (int, Integer)):
                     n = args[2]
                 else:
-                    n = ((g - u.degree()) / 2).ceil() # TODO: do we really want to allow this input?
+                    n = (g - u.degree() + 1) // 2 # TODO: do we really want to allow this input?
             else:
                 raise ValueError("the input must consist of one or two points, or Mumford coordinates")
 
@@ -186,7 +186,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         u3, v3, s_deg = self._cantor_composition_generic(u1, v1, u2, v2)
 
         # Compute new weight
-        n3 = n1 + n2 + s_deg - (g / 2).ceil()
+        n3 = n1 + n2 + s_deg - ((g + 1) // 2)
 
         return u3, v3, n3
 
