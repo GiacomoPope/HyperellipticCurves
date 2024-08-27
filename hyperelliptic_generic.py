@@ -43,10 +43,6 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
     def __richcmp__(self, other, op):
         return self._projective_model.__richcmp__(other._projective_model, op)
 
-    def __ne__(self, other):
-        return not self == other
-
-
     def _repr_(self):
         f, h = self._hyperelliptic_polynomials
 

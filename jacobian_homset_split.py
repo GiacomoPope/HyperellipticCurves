@@ -27,8 +27,8 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         """
         On input a point P, return the Mumford coordinates
         of (the affine part of) the divisor [P] and an integer n,
-        where 
-        * n = 1 if P is the point oo+ 
+        where
+        * n = 1 if P is the point oo+
         * n = 0 otherwise .
         """
 
@@ -77,7 +77,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             True
             sage: J = Jacobian(H)
             sage: JH = J.point_homset()
-            sage: P = H.lift_x(1) 
+            sage: P = H.lift_x(1)
             sage: Q = H.lift_x(2)
             sage: D1 = JH(P); D1
             (x + 12, 4 : 1)
@@ -99,51 +99,53 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             sage: JH(P1)
             (1, 0 : 1)
 
-        TODO: code reuse
+        TODO: merge this code with that of HyperellipticJacobianHomset
         """
-
         g = self.curve().genus()
         R = self.curve().polynomial_ring()
 
+        if len(args) > 3:
+            raise ValueError("at most three arguments are allowed as input")
+
         if len(args) == 1 and isinstance(args[0], (list,tuple)):
-            args = args[0] #unpack
+            args = args[0]
+
         if len(args) == 1:
             P1 = args[0]
             if P1 == 0:
                 u = R.one()
                 v = R.zero()
-                n = (g / 2).ceil()
+                n = (g + 1) // 2
             elif isinstance(P1, self._morphism_element):
                 return P1
             elif isinstance(P1, SchemeMorphism_point_toric_field):
-                args = args + (self.curve().distinguished_point(),) #this case will now be handeled below.
+                args = args + (self.curve().distinguished_point(),) #this case will now be handled below.
             else:
-                raise ValueError("The input must consist of points or polynomials.")
+                raise ValueError("the input must consist of one or two points, or Mumford coordinates")
+
         if len(args) == 2 or len(args) == 3:
             P1 = args[0]
             P2 = args[1]
             if isinstance(P1, SchemeMorphism_point_toric_field) and isinstance(P2, SchemeMorphism_point_toric_field):
+                if len(args) == 3:
+                    raise ValueError("the input must consist of at most two points")
                 u1, v1, n1 = self.point_to_mumford_coordinates(P1)
                 P2_inv = self.curve().hyperelliptic_involution(P2)
                 u2, v2, n2 = self.point_to_mumford_coordinates(P2_inv)
                 u, v, _ = self._cantor_composition_generic(u1, v1, u2, v2)
-                n = (g / 2).ceil() - 1 + n1 + n2 #this solution is a bit hacky
-                if len(args) == 3:
-                    raise ValueError("Only one or two points are allowed as input.")
-            elif isinstance(P1, Polynomial) and isinstance(P2, Polynomial):
-                u = P1
-                v = P2
-                if len(args) == 3 and isinstance(args[2], Integer):
+                n = (g + 1) // 2 - 1 + n1 + n2 # this solution is a bit hacky
+            elif isinstance(P1, Polynomial) or isinstance(P2, Polynomial):
+                u = R(P1)
+                v = R(P2)
+                if len(args) == 3 and isinstance(args[2], (int, Integer)):
                     n = args[2]
                 else:
                     n = ((g - u.degree()) / 2).ceil() #TODO: do we really want to allow this input?
             else:
-                raise ValueError("The input must consist of points or polynomials.")
-        if len(args) > 3:
-            raise ValueError("At most three arguments are allowed as input.")
+                raise ValueError("the input must consist of one or two points, or Mumford coordinates")
 
         return self._morphism_element(self, u, v, n=n, check=check)
-        
+
 
     def cantor_composition(self, u1, v1, n1, u2, v2, n2):
         """

@@ -297,20 +297,6 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
             return False
         return self._u.is_one() and self._v.is_zero()
 
-    def __eq__(self, other):
-        if not isinstance(other, type(self)):
-            return False
-
-        n1, n2 = self._n, other._n
-
-        if n1 != n2:
-            return False
-
-        u1, v1 = self.uv()
-        u2, v2 = other.uv()
-
-        return u1 == u2 and v1 == v2
-
     def __list__(self):
         return list(self._u, self._v, self._n)
 
