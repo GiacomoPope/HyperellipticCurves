@@ -1,9 +1,12 @@
 import itertools
 from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
 
+from sage.misc.functional import symbolic_prod as product
+from sage.rings.integer import Integer
 from sage.structure.element import parent
 from sage.misc.cachefunc import cached_method
-from sage.misc.prandom import choice, randint
+from sage.misc.prandom import choice
+from sage.misc.misc_c import prod
 from sage.schemes.generic.homset import SchemeHomset_points
 from sage.rings.polynomial.polynomial_ring import polygen
 
@@ -30,21 +33,56 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
     def curve(self):
         return self.codomain().curve()
 
-    def zero(self):
-        """
-        Return the zero element of the Jacobian
-        """
-        R = self.curve().polynomial_ring()
-        return self._morphism_element(self, R.one(), R.zero())
-
     @cached_method
-    def cardinality(self):
+    def order(self):
         """
         TODO: currently using lazy methods by calling sage
         """
         return sum(self.curve().frobenius_polynomial())
 
-    order = cardinality
+    @cached_method
+    def _curve_frobenius_roots(self):
+        r"""
+        Return the roots of the charpoly of frobenius on the base curve.
+        """
+        from sage.rings.qqbar import QQbar
+        return self.curve().frobenius_polynomial().roots(QQbar, multiplicities=False)
+
+    def cardinality(self, extension_degree=1):
+        r"""
+        Return `|Jac(C) / \F_{q^n}|`.
+
+        EXAMPLES::
+
+            sage:
+            sage: R.<x> = GF(5)[]
+            sage: f = x^6 = x + 1
+            sage: H = HyperellipticCurveSmoothModel(f)
+            sage: J = H.jacobian()
+            sage: J.count_points(10) == [J.change_ring(GF((5, k))).order() for k in range(1, 11)]
+            True
+        """
+        K = self.curve().base_ring()
+        if not isinstance(K, FiniteField_generic):
+            raise NotImplementedError(
+                "cardinality is only implemented for Jacobians over finite fields"
+            )
+
+        return Integer(product(1 - r**extension_degree for r in self._curve_frobenius_roots()))
+
+    def count_points(self, n=1):
+        try:
+            n = Integer(n)
+        except TypeError:
+            raise TypeError("n must be a positive integer")
+
+        if n < 1:
+            raise ValueError("n must be a positive integer")
+
+        if n == 1:
+            return self.cardinality()
+
+        return [self.cardinality(extension_degree=i) for i in range(1, n + 1)]
 
     def point_to_mumford_coordinates(self, P):
         """
@@ -153,7 +191,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
         - Allow sending a field element corresponding to the x-coordinate of a point?
 
-        - Use `__classcall__` to sanitise input?
+        - Use ``__classcall__`` to sanitise input?
         """
         R = self.curve().polynomial_ring()
 

@@ -50,13 +50,12 @@ class HyperellipticJacobian_generic(Jacobian_generic):
             return jacobian_morphism.MumfordDivisorClassFieldSplit(*args, **kwds)
         return jacobian_morphism.MumfordDivisorClassFieldInert(*args, **kwds)
 
-    # Stupid functions
-    def zero(self):
-        return self.point_homset().zero()
-
     @cached_method
     def order(self):
         return self.point_homset().order()
+
+    def count_points(self, *args, **kwds):
+        return self.point_homset().count_points(*args, **kwds)
 
     def lift_u(self, *args, **kwds):
         return self.point_homset().lift_u(*args, **kwds)

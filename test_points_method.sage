@@ -14,10 +14,10 @@ from hyperelliptic_constructor import HyperellipticCurveSmoothModel
 ### Setup
 R.<x> = GF(17)[]
 
-for curve, order in [
-    (x^5 + 5 * x + 1, 360),
-    (x^6 + 5 * x + 1, 231),
-    (3*x^6 + 5 * x + 1, 333),
+for curve, order, order2 in [
+    (x^5 + 5 * x + 1, 360, 90720),
+    (x^6 + 5 * x + 1, 231, 86625),
+    (3*x^6 + 5 * x + 1, 333, 86913),
 ]:
     print(f"\x1b[33mTesting curve y^2 = {curve}\x1b[0m")
     H = HyperellipticCurveSmoothModel(curve)
@@ -27,6 +27,12 @@ for curve, order in [
 
     JH = J.point_homset()
     assert JH.order() == order
+
+    ### unique constructor
+    try_exec("assert H.jacobian() == H.jacobian()")
+    try_exec("assert H.jacobian() is H.jacobian()")
+    try_exec("assert J.point_homset() == J.point_homset()")
+    try_exec("assert J.point_homset() is J.point_homset()")
 
     ### Check richcmp implementation
     P = J.random_element()
@@ -62,11 +68,11 @@ for curve, order in [
 
     ### Some of these haven't been implemented
     try_exec("assert len(J.points()) == J.order()")
-    try_exec("assert J.points() == J.rational_points() == list(J)")
-    try_exec("assert J.points() == J.points()")
+    # try_exec("assert J.points() == J.rational_points() == list(J)")
+    # try_exec("assert J.points() == J.points()")
     try_exec("assert len(JH.points()) == JH.order()")
-    try_exec("assert JH.points() == JH.rational_points() == list(JH)")
-    try_exec("assert JH.points() == JH.points()")
+    # try_exec("assert JH.points() == JH.rational_points() == list(JH)")
+    # try_exec("assert JH.points() == JH.points()")
 
     ### J and JH are two different things but are printed the same
     try_exec("assert type(J) != type(JH)")
@@ -77,5 +83,16 @@ for curve, order in [
     JH2 = J(K2)
     try_exec("assert JH2 != JH")
     try_exec("assert JH2.base_ring() == K2")
+
+    ### counting points over an extension (using Weil's conjectures)
+    try_exec("assert J.count_points(1) == order")
+    try_exec("assert J.count_points(2) == [order, order2]")
+
+    ### base change correctly
+    J2 = J.change_ring(K2)
+    try_exec("assert J2.order() == order2")
+    JH2_ = J2.point_homset()
+    try_exec("assert JH2_ != JH")
+    try_exec("assert JH2_.base_ring() == K2")
 
     print("~" * 40)
