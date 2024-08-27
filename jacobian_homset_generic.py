@@ -21,8 +21,8 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         SchemeHomset_points.__init__(self, Y, X, **kwds)
         self._morphism_element = None
 
-    def __repr__(self) -> str:
-        return f"Jacobian of {self.curve()}"
+    def _repr_(self) -> str:
+        return f"Abelian group of points on {self.codomain()}"
 
     def _morphism(self, *args, **kwds):
         return self._morphism_element(*args, **kwds)
