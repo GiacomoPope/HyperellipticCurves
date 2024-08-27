@@ -559,19 +559,20 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         for u in R.polynomials(max_degree=g):
             if u.is_monic():
                 for P in self.lift_u(u, all=True):
-                    # HACK: it keeps overcounting 0 without this...
-                    # Example: y^2 = x^5 + x over F_5
-                    if not u.is_one() and P.is_zero():
+                    # UGLY HACK: it keeps overcounting 0 without this...
+                    # failing example: y^2 = x^5 + x over F_5
+                    if not u.is_one() and list(P)[:2] == [1, 0]:
                         continue
                     ss.append(P)
 
-        if H.is_ramified():
+        if H.is_ramified() or H.is_split():
             assert len(ss) == self.order()
             return ss
 
-        # this currently fails
-        # assert len(ss) == self.order()
+        # TODO: remove this
+        # failing example: y^2 = 2x^6 + 1 over F_5
         ss = sorted(set(ss))
+        assert len(ss) == self.order()
         return ss
 
     rational_points = points
