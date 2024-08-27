@@ -571,3 +571,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return ss
 
     rational_points = points
+
+    # TODO: Remove this after #38566 is merged
+    def __iter__(self):
+        yield from self.points()
