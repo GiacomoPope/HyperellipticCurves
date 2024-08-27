@@ -38,7 +38,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         H = self.curve()
         if H.is_ramified():
             return jacobian_homset_ramified.HyperellipticJacobianHomsetRamified(*args, **kwds)
-        elif  H.is_split():
+        elif H.is_split():
             return jacobian_homset_split.HyperellipticJacobianHomsetSplit(*args, **kwds)
         return jacobian_homset_inert.HyperellipticJacobianHomsetInert(*args, **kwds)
 
@@ -46,7 +46,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         H = self.curve()
         if H.is_ramified():
             return jacobian_morphism.MumfordDivisorClassFieldRamified(*args, **kwds)
-        elif  H.is_split():
+        elif H.is_split():
             return jacobian_morphism.MumfordDivisorClassFieldSplit(*args, **kwds)
         return jacobian_morphism.MumfordDivisorClassFieldInert(*args, **kwds)
 

@@ -31,22 +31,38 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return self._morphism_element(*args, **kwds)
 
     def curve(self):
+        # It is unlike you will want to use this, as this returns the original curve H even when
         return self.codomain().curve()
+
+    def extended_curve(self):
+        # Code from schemes/generic/homset.py
+        if '_extended_curve' in self.__dict__:
+            return self._extended_curve
+        R = self.domain().coordinate_ring()
+        if R is not self.curve().base_ring():
+            X = self.curve().base_extend(R)
+        else:
+            X = self.curve()
+        self._extended_curve = X
+        return X
 
     @cached_method
     def order(self):
         """
         TODO: currently using lazy methods by calling sage
         """
-        return sum(self.curve().frobenius_polynomial())
+        return sum(self.extended_curve().frobenius_polynomial())
 
     @cached_method
     def _curve_frobenius_roots(self):
         r"""
-        Return the roots of the charpoly of frobenius on the base curve.
+        Return the roots of the charpoly of frobenius on the extended curve.
+
+        EXAMPLES::
         """
         from sage.rings.qqbar import QQbar
-        return self.curve().frobenius_polynomial().roots(QQbar, multiplicities=False)
+        roots = self.extended_curve().frobenius_polynomial().roots(QQbar)
+        return [r for r, e in roots for _ in range(e)]
 
     def cardinality(self, extension_degree=1):
         r"""
@@ -54,15 +70,17 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
         EXAMPLES::
 
-            sage:
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = GF(5)[]
-            sage: f = x^6 = x + 1
-            sage: H = HyperellipticCurveSmoothModel(f)
+            sage: H = HyperellipticCurveSmoothModel(x^6 + x + 1)
             sage: J = H.jacobian()
             sage: J.count_points(10) == [J.change_ring(GF((5, k))).order() for k in range(1, 11)]
             True
+            sage: J2 = H(GF((5, 2)))
+            sage: J2.count_points(5) == J.count_points(10)[1::2]
+            True
         """
-        K = self.curve().base_ring()
+        K = self.extended_curve().base_ring()
         if not isinstance(K, FiniteField_generic):
             raise NotImplementedError(
                 "cardinality is only implemented for Jacobians over finite fields"
@@ -89,8 +107,8 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         On input a point P, return the Mumford coordinates
         of (the affine part of) the divisor [P].
         """
-        R, x = self.curve().polynomial_ring().objgen()
-        [X, Y, Z] = P._coords
+        R, x = self.extended_curve().polynomial_ring().objgen()
+        X, Y, Z = P._coords
         if Z == 0:
             return R.one(), R.zero()
         u = x - X
@@ -192,8 +210,10 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         - Allow sending a field element corresponding to the x-coordinate of a point?
 
         - Use ``__classcall__`` to sanitise input?
+
+        - Add doctest for base extension
         """
-        R = self.curve().polynomial_ring()
+        R = self.extended_curve().polynomial_ring()
 
         if len(args) > 2:
             raise ValueError("at most two arguments are allowed as input")
@@ -212,7 +232,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             elif isinstance(P1, self._morphism_element):
                 return P1
             elif isinstance(P1, SchemeMorphism_point_toric_field):
-                args = args + (self.curve().distinguished_point(),) #this case will now be handled below.
+                args = args + (self.extended_curve().distinguished_point(),) #this case will now be handled below.
             else:
                 raise ValueError("the input must consist of one or two points, or Mumford coordinates")
 
@@ -221,7 +241,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             P2 = args[1]
             if isinstance(P1, SchemeMorphism_point_toric_field) and isinstance(P2, SchemeMorphism_point_toric_field):
                 u1,v1 = self.point_to_mumford_coordinates(P1)
-                P2_inv = self.curve().hyperelliptic_involution(P2)
+                P2_inv = self.extended_curve().hyperelliptic_involution(P2)
                 u2,v2 = self.point_to_mumford_coordinates(P2_inv)
                 u,v = self.cantor_composition(u1,v1,u2,v2)
             # This checks whether P1 and P2 can be interpreted as polynomials
@@ -241,7 +261,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         together with the degree of the polynomial ``s`` which is
         needed for computing weights for the split and inert models
         """
-        f, h = self.curve().hyperelliptic_polynomials()
+        f, h = self.extended_curve().hyperelliptic_polynomials()
 
         # New mumford coordinates
         if h.is_zero():
@@ -267,7 +287,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         needed for computing the weights for the split and inert models.
         """
         # Collect data from HyperellipticCurve
-        H = self.curve()
+        H = self.extended_curve()
         f, h = H.hyperelliptic_polynomials()
         g = H.genus()
 
@@ -327,7 +347,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         delayed to :meth:`cantor_reduction` to save time.
         """
         # Collect data from HyperellipticCurve
-        H = self.curve()
+        H = self.extended_curve()
         f, h = H.hyperelliptic_polynomials()
 
         # Compute u' and v'
@@ -388,7 +408,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: P = J.lift_u(x^2 + 42*x + 270); P
             (x^2 + 42*x + 270, 1837*x + 838)
         """
-        H = self.curve()
+        H = self.extended_curve()
         K = H.base_ring()
         g = H.genus()
 
@@ -442,10 +462,10 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             if H.is_inert():
                 if u1.degree() % 2:
                     # TODO: make composition with distinguished_point its own function?
-                    P0 = self.curve().distinguished_point()
+                    P0 = self.extended_curve().distinguished_point()
                     X0, Y0, _ = P0._coords
                     X = R.gen()  # TODO use better variable names in this function
-                    _, h = self.curve().hyperelliptic_polynomials()
+                    _, h = self.extended_curve().hyperelliptic_polynomials()
                     u0 = X - X0
                     v0 = R(-Y0 - h(X0))
                     u1, v1, _ = self._cantor_composition_generic(u1, v1, u0, v0)
@@ -481,7 +501,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
         Distribution is not uniformly random, but returns the entire group.
         """
-        H = self.curve()
+        H = self.extended_curve()
         R = H.polynomial_ring()
         g = H.genus()
 
@@ -525,7 +545,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: len(set(JH._random_element_rational() for _ in range(300)))
             8
         """
-        H = self.curve()
+        H = self.extended_curve()
         g = H.genus()
 
         # We randomly sample 2g + 1 points on the hyperelliptic curve
@@ -588,7 +608,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
             This code is not efficient at all.
         """
-        H = self.curve()
+        H = self.extended_curve()
         R = H.polynomial_ring()
         g = H.genus()
 

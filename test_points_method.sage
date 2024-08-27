@@ -12,7 +12,8 @@ def try_exec(s):
 from hyperelliptic_constructor import HyperellipticCurveSmoothModel
 
 ### Setup
-R.<x> = GF(17)[]
+K = GF(17)
+R.<x> = K[]
 
 for curve, order, order2 in [
     (x^5 + 5 * x + 1, 360, 90720),
@@ -82,11 +83,17 @@ for curve, order, order2 in [
     K2 = H.base_ring().extension(2)
     JH2 = J(K2)
     try_exec("assert JH2 != JH")
-    try_exec("assert JH2.base_ring() == K2")
+    # note this shouldn't be K2
+    try_exec("assert JH2.base_ring() == K")
+    try_exec("assert JH2.curve() == H")
+    try_exec("assert JH2.extended_curve() == H.base_extend(K2)")
+    try_exec("assert JH2.codomain() == J")
+    try_exec("assert JH2.extended_codomain() == J.base_extend(K2)")
 
     ### counting points over an extension (using Weil's conjectures)
     try_exec("assert J.count_points(1) == order")
     try_exec("assert J.count_points(2) == [order, order2]")
+    try_exec("assert J.count_points(10)[1::2] == JH2.count_points(5)")
 
     ### base change correctly
     J2 = J.change_ring(K2)

@@ -7,7 +7,6 @@ from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.real_mpfr import RR
-from sage.schemes.toric.toric_subscheme import AlgebraicScheme_subscheme_toric
 
 from weighted_projective_curve import WeightedProjectiveCurve
 
@@ -837,6 +836,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
     def __call__(self, *args):
         return self.point(args)
 
+    @cached_method
     def jacobian(self):
         from jacobian_generic import HyperellipticJacobian_generic
         return HyperellipticJacobian_generic(self)

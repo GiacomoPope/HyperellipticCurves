@@ -1,3 +1,5 @@
+from sage.misc.cachefunc import cached_method
+
 import hyperelliptic_generic
 import invariants
 
@@ -42,6 +44,7 @@ class HyperellipticCurveSmoothModel_g2(
             c0 = h.leading_coefficient()
             return (c0**2 + 4*a0) == 0
 
+    @cached_method
     def jacobian(self):
         from jacobian_g2_generic import HyperellipticJacobian_g2_generic
         return HyperellipticJacobian_g2_generic(self)
