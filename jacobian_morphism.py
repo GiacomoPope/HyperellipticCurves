@@ -4,6 +4,7 @@ from sage.schemes.generic.morphism import SchemeMorphism
 from sage.groups.generic import order_from_multiple
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.integer import Integer
+from sage.structure.richcmp import op_EQ, op_NE
 
 # TODO _richcmp_
 
@@ -70,26 +71,73 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         """
         return self.codomain()
 
-    def __repr__(self) -> str:
+    def _repr_(self) -> str:
         return f"({self._u}, {self._v})"
 
     def is_zero(self):
+        """
+        Return ``True`` if this point is zero.
+
+        EXAMPLES::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: x = polygen(GF(5))
+            sage: H = HyperellipticCurveSmoothModel(x^5 + 3 * x + 1)
+            sage: J = H.jacobian(); J
+        """
         return self._u.is_one() and self._v.is_zero()
 
     def uv(self):
+        """
+        Return the `u` and `v` component of this Mumford divisor.
+
+        EXAMPLES::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: x = polygen(GF(1993))
+            sage: H = HyperellipticCurveSmoothModel(x^7 + 3 * x + 1)
+            sage: J = H.jacobian(); J
+            Jacobian of Hyperelliptic Curve over Finite Field of size 1993 defined by y^2 = x^7 + 3*x + 1
+            sage: u, v = x^3 + 1570*x^2 + 1930*x + 81, 368*x^2 + 1478*x + 256
+            sage: P = J(u, v)
+            sage: P.uv() == (u, v)
+            True
+        """
         return (self._u, self._v)
 
-    def __eq__(self, other):
+    def _richcmp_(self, other, op) -> bool:
+        """
+        Method for rich comparison.
+
+        TESTS::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: x = polygen(GF(23))
+            sage: H = HyperellipticCurveSmoothModel(x^7 + x + 1)
+            sage: J = H.jacobian(); J
+            sage: P = J.random_element()
+            sage: P == P
+            True
+            sage: P != P
+            False
+
+            sage: Z = J(0); Z
+            (1, 0)
+            sage: Z == 0
+            True
+            sage: Z != 0
+            False
+        """
+        if op != op_EQ and op != op_NE:
+            raise NotImplementedError("only equality tests of mumford divisors are implemented")
+
         if not isinstance(other, MumfordDivisorClassField):
             return False
 
         u1, v1 = self.uv()
         u2, v2 = other.uv()
 
-        return u1 == u2 and v1 == v2
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
+        return (u1 == u2 and v1 == v2) ^ (op == op_NE)
 
     def __list__(self):
         return list(self._u, self._v)
