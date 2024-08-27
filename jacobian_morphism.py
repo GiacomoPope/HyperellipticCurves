@@ -214,7 +214,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             raise ValueError
 
         if not n:
-            return self._parent().zero()
+            return self._parent.zero()
 
         P = self
 

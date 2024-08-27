@@ -1,4 +1,4 @@
-from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.structure.element import parent
 from sage.rings.integer import Integer
 
 from jacobian_homset_generic import HyperellipticJacobianHomset
@@ -46,20 +46,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         return u, v, 0
 
     def __call__(self, *args, check=True):
-        """
-        Return a rational point in the abstract Homset J(K), given:
-
-        0. The integer 0, returning 0 in J;
-
-        1. A point P in J = Jac(C), returning P;
-
-        2. A point P on the curve H such that J = Jac(H),
-           returning [P - P0], where P0 is the distinguished point of H
-           (by default P0 = oo+)
-
-        2. Two points P, Q on the curve H such that J = Jac(H),
-           returning [P-Q];
-
+        r"""
         3. Polynomials u,v such that `v^2 + h*v - f = 0 mod u`,
            returning J(u,v,n) with n = ((g - deg(u))/2).ceil().
 
@@ -67,11 +54,30 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
            and 0 <= n <= g/2,
            returning J(u,v,n).
 
+        Return a rational point in the abstract Homset `J(K)`, given:
+
+        1. No arguments or the integer `0`; return `0 \in J`;
+
+        2. A point `P` on `J = Jac(C)`, return `P`;
+
+        3. A point `P` on the curve `H` such that `J = Jac(H)`;
+           return `[P - P_0]`, where `P_0` is the distinguished point of `H`.
+           By default, `P_0 = \infty`;
+
+        4. Two points `P, Q` on the curve `H` such that `J = Jac(H)`;
+           return `[P - Q]`;
+
+        5. Polynomials `(u, v)` such that `v^2 + hv - f \equiv 0 \pmod u`;
+           reutrn `[(u(x), y - v(x)) : \lceil (g - \deg(u)) / 2 \rceil]`;
+
+        6. Polynomials `(u, v)` and an integer `n` such that
+           `v^2 + hv - f \equiv 0 \pmod u` and `0 \leq n \leq g / 2`;
+           return `[u, v : n]`.
 
         EXAMPLES::
 
-            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel
-            sage: R.<x> = PolynomialRing(GF(13))
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = GF(13)[]
             sage: H = HyperellipticCurveSmoothModel(x^8 + x + 1)
             sage: H.is_split()
             True
@@ -92,20 +98,34 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             sage: JH(x^2+10*x+2, 4*x, 0) == D
             False
 
-        The points at infinity may also be embedded into the Jacobian.
+        The points at infinity may also be embedded into the Jacobian::
+
             sage: [P0,P1] = H.points_at_infinity()
             sage: JH(P0)
             (1, 0 : 2)
             sage: JH(P1)
             (1, 0 : 1)
 
-        TODO: merge this code with that of HyperellipticJacobianHomset
+        TESTS::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurveSmoothModel(x^8 + x + 1)
+            sage: J = Jacobian(H)
+            sage: JH = J.point_homset()
+            sage: J() == J(0) == J(1, 0) == J.zero() == JH(0) == 0
+            True
+
+        TODO: Merge this code with that of `HyperellipticJacobianHomset`
         """
         g = self.curve().genus()
         R = self.curve().polynomial_ring()
 
         if len(args) > 3:
             raise ValueError("at most three arguments are allowed as input")
+
+        if len(args) == 0 or (len(args) == 1 and args[0] == ()):
+            return self._morphism_element(self, R.one(), R.zero(), check=check)
 
         if len(args) == 1 and isinstance(args[0], (list,tuple)):
             args = args[0]
@@ -134,13 +154,14 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
                 u2, v2, n2 = self.point_to_mumford_coordinates(P2_inv)
                 u, v, _ = self._cantor_composition_generic(u1, v1, u2, v2)
                 n = (g + 1) // 2 - 1 + n1 + n2 # this solution is a bit hacky
-            elif isinstance(P1, Polynomial) or isinstance(P2, Polynomial):
+            # This checks whether P1 and P2 can be interpreted as polynomials
+            elif R.coerce_map_from(parent(P1)) and R.coerce_map_from(parent(P2)):
                 u = R(P1)
                 v = R(P2)
                 if len(args) == 3 and isinstance(args[2], (int, Integer)):
                     n = args[2]
                 else:
-                    n = ((g - u.degree()) / 2).ceil() #TODO: do we really want to allow this input?
+                    n = ((g - u.degree()) / 2).ceil() # TODO: do we really want to allow this input?
             else:
                 raise ValueError("the input must consist of one or two points, or Mumford coordinates")
 

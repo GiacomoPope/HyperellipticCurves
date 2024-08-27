@@ -1,6 +1,6 @@
 from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
-from sage.rings.polynomial.polynomial_element import Polynomial
 
+from sage.structure.element import parent
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import choice, randint
 from sage.schemes.generic.homset import SchemeHomset_points
@@ -61,18 +61,18 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         r"""
         Return a rational point in the abstract Homset `J(K)`, given:
 
-        0. The integer `0`; return `0 \in J`;
+        1. No arguments or the integer `0`; return `0 \in J`;
 
-        1. A point `P` on `J = Jac(C)`, return `P`;
+        2. A point `P` on `J = Jac(C)`, return `P`;
 
-        2. A point `P` on the curve `H` such that `J = Jac(H)`;
+        3. A point `P` on the curve `H` such that `J = Jac(H)`;
            return `[P - P_0]`, where `P_0` is the distinguished point of `H`.
            By default, `P_0 = \infty`;
 
-        2. Two points `P, Q` on the curve `H` such that `J = Jac(H)`;
+        4. Two points `P, Q` on the curve `H` such that `J = Jac(H)`;
            return `[P - Q]`;
 
-        3. Polynomials `(u, v)` such that `v^2 + h*v - f \equiv 0 \pmod u`;
+        5. Polynomials `(u, v)` such that `v^2 + hv - f \equiv 0 \pmod u`;
            reutrn `[(u(x), y - v(x))]`.
 
         EXAMPLES:
@@ -81,7 +81,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         hence a unique point at infinity::
 
             sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
-            sage: R.<x> = PolynomialRing(GF(13))
+            sage: R.<x> = GF(13)[]
             sage: H = HyperellipticCurveSmoothModel(x^7 + x + 1)
             sage: J = Jacobian(H)
             sage: JH = J.point_homset()
@@ -158,6 +158,9 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         if len(args) > 2:
             raise ValueError("at most two arguments are allowed as input")
 
+        if len(args) == 0 or (len(args) == 1 and args[0] == ()):
+            return self._morphism_element(self, R.one(), R.zero(), check=check)
+
         if len(args) == 1 and isinstance(args[0], (list,tuple)):
             args = args[0]
 
@@ -181,7 +184,8 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
                 P2_inv = self.curve().hyperelliptic_involution(P2)
                 u2,v2 = self.point_to_mumford_coordinates(P2_inv)
                 u,v = self.cantor_composition(u1,v1,u2,v2)
-            elif isinstance(P1, Polynomial) or isinstance(P2, Polynomial):
+            # This checks whether P1 and P2 can be interpreted as polynomials
+            elif R.coerce_map_from(parent(P1)) and R.coerce_map_from(parent(P2)):
                 u = R(P1)
                 v = R(P2)
             else:

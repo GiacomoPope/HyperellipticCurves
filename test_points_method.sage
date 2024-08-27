@@ -1,7 +1,7 @@
 def try_exec(s):
     try:
         exec(s)
-        print(f"\x1b[32mSuccessful! ({s})\x1b[0m")
+        # print(f"\x1b[32mSuccessful! ({s})\x1b[0m")
     except AttributeError:
         print(f"\x1b[31mAttributeError: {s}\x1b[0m")
     except AssertionError:
