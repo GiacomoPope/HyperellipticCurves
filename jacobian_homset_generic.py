@@ -365,8 +365,8 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
                 return self.zero()
             return [self.zero()]
 
-        if not isinstance(K, FiniteField_generic):
-            raise NotImplementedError("lift_u is only implemented for Jacobians over a finite field")
+        if not isinstance(K, FiniteField_generic) or K.degree() != 1:
+            raise NotImplementedError("lift_u is only implemented for Jacobians over a finite field of prime order")
 
         R = H.polynomial_ring()
         f, h = H.hyperelliptic_polynomials()
