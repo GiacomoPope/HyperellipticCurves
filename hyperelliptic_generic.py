@@ -21,7 +21,6 @@ def is_HyperellipticCurveSmoothModel(C):
 
 
 class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
-    # TODO: stop using the "projective model" (which really is a toric model)
     def __init__(self, defining_polynomial, f, h, genus):
         self._genus = genus
         self._hyperelliptic_polynomials = (f, h)
@@ -137,14 +136,6 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         return HyperellipticCurveSmoothModel(fR, hR)
 
     base_extend = change_ring
-    #
-    # def _point_homset(self, *_, **__):
-    #     """
-    #     TODO: The default implemention (with toric varieties) fails because
-    #     HyperellipticCurve is not a real toric variety, e.g. it doesn't have a
-    #     fan. Do we need a new class?
-    #     """
-    #     raise NotImplementedError
 
     def polynomial_ring(self):
         """
@@ -166,45 +157,6 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             Univariate Polynomial Ring in x over 7-adic Field with capped relative precision 10
         """
         return self._polynomial_ring
-    #
-    # def point(self, coords, check=True):
-    #     """
-    #     Create a point on the hyperelliptic curve self.
-    #
-    #     INPUT:
-    #
-    #     - ``coords`` -- coordinates defining the point, these can be
-    #         projective or affine coordinates.
-    #
-    #     - ``check`` -- boolean (optional, default: ``True``); whether
-    #       to check the defining data for consistency
-    #
-    #     OUTPUT: A point of the hyperelliptic curve.
-    #
-    #     EXAMPLES:
-    #         sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
-    #         sage: R.<x> = PolynomialRing(QQ)
-    #         sage: H = HyperellipticCurveSmoothModel(R([0, -1, 0, 0, -2, 0, 1]), R([1, 1, 1]));
-    #         sage: H.point([1,-1,0])
-    #         [1 : -1 : 0]
-    #         sage: H.point([-1,0])
-    #         [-1 : 0 : 1]
-    #         sage: H.point([-6,195])
-    #         [-6 : 195 : 1]
-    #     """
-    #     if len(coords) == 2:
-    #         X, Y = coords
-    #         Z = self.base_ring().one()
-    #     elif len(coords) == 3:
-    #         X, Y, Z = coords
-    #     elif len(coords) == 1 and coords[0] in Fields():
-    #         # H(K) returns the K-rational point homset
-    #         return self.point_homset(coords[0])
-    #     else:
-    #         raise ValueError("TODO")
-    #
-    #     return self.point([X, Y, Z], check=check)
-    #     # return self._projective_model.point([X, Y, Z], check=check)
 
     def hyperelliptic_polynomials(self):
         """

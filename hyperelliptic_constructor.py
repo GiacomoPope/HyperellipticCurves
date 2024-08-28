@@ -91,13 +91,8 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
 
     def __defining_polynomial(f, h):
         """
-        Compute the weighted projective model (1 : g + 1 : 1)
-
-        WARNING::
-
-            Due to limitations of the toric_varieties.WP class, we
-            cannot instantiate hyperelliptic curves over rings, but
-            only fields.
+        Compute the (homogenised weighted projective) defining polynomial of
+        the hyperelliptic curve.
         """
         X, Y, Z = PolynomialRing(f.base_ring(), names="X, Y, Z").gens()
 
