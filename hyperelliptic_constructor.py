@@ -31,7 +31,7 @@ from hyperelliptic_padic_field import HyperellipticCurveSmoothModel_padic_field
 from sage.categories.finite_fields import FiniteFields
 from sage.rings.abc import pAdicField
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.schemes.toric.library import toric_varieties
 from sage.rings.integer import Integer
 
@@ -53,15 +53,17 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
     TODO
     """
 
-    # -----------------
-    # Helper functions
-    # -----------------
+    # ---------------------------
+    # Internal Helper functions
+    # ---------------------------
 
     def __genus(f, h):
         """
-        TODO
+        Helper function to compute the genus of a hyperelliptic curve
+        defined by `y^2 + h(x)y = f(x)`.
         """
         # Some classes still have issues with degrees returning `int`
+        # rather than Sage Integer types
         df = Integer(f.degree())
         dh_2 = 2 * Integer(h.degree())
         if dh_2 < df:
@@ -70,7 +72,8 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
 
     def __check_no_affine_singularities(f, h):
         """
-        TODO
+        Helper function which determines whether there are any
+        affine singularities in the curve `y^2 + h(x)y = f(x)`.
         """
         if f.base_ring().characteristic() == 2:
             if h.is_zero():
@@ -89,6 +92,12 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
     def __projective_model(f, h, genus):
         """
         Compute the weighted projective model (1 : g + 1 : 1)
+
+        WARNING::
+
+            Due to limitations of the toric_varieties.WP class, we
+            cannot instantiate hyperelliptic curves over rings, but
+            only fields.
         """
         T = toric_varieties.WP(
             [1, genus + 1, 1], base_ring=f.base_ring(), names="X, Y, Z"
@@ -96,7 +105,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         (X, Y, Z) = T.gens()
 
         # Some classes still have issues with degrees returning `int`
-        d = max(Integer(h.degree()), (Integer(f.degree()) / 2).ceil())
+        d = max(Integer(h.degree()), (Integer(f.degree()) + 1) // 2)
         F = sum(f[i] * X**i * Z ** (2 * d - i) for i in range(2 * d + 1))
 
         if h.is_zero():
@@ -143,14 +152,14 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
             cls = HyperellipticCurveSmoothModel_g2_finite_field
         else:
             cls = HyperellipticCurveSmoothModel_finite_field
-    # Special class for padic fields
+    # Special class for pAdic fields
     elif isinstance(base_ring, pAdicField):
         if genus == 2:
             cls = HyperellipticCurveSmoothModel_g2_padic_field
         else:
             cls = HyperellipticCurveSmoothModel_padic_field
     # Special class for rational fields
-    elif is_RationalField(base_ring):
+    elif isinstance(base_ring, RationalField):
         if genus == 2:
             cls = HyperellipticCurveSmoothModel_g2_rational_field
         else:

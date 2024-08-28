@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 r"""
 Points on projective schemes
 
@@ -23,7 +24,6 @@ AUTHORS:
 
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.number_fields import NumberFields
-_NumberFields = NumberFields()
 from sage.rings.integer_ring import ZZ
 from sage.rings.fraction_field import FractionField
 from sage.rings.number_field.order import Order as NumberFieldOrder
@@ -73,85 +73,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
 
         EXAMPLES::
 
-            sage: P = ProjectiveSpace(2, QQ)
-            sage: P(2, 3/5, 4)
-            (1/2 : 3/20 : 1)
-
-        ::
-
-            sage: P = ProjectiveSpace(1, ZZ)
-            sage: P([0, 1])
-            (0 : 1)
-
-        ::
-
-            sage: P = ProjectiveSpace(1, ZZ)
-            sage: P([0, 0, 1])
-            Traceback (most recent call last):
-            ...
-            TypeError: v (=[0, 0, 1]) must have 2 components
-
-        ::
-
-            sage: P = ProjectiveSpace(3, ZZ)
-            sage: P(0,0,0,0)
-            Traceback (most recent call last):
-            ...
-            ValueError: [0, 0, 0, 0] does not define a valid projective point since all entries are zero
-
-        ::
-
-            sage: P = ProjectiveSpace(3, Zmod(15))
-            sage: P(3,5,9,10)
-            (3 : 5 : 9 : 10)
-
-        ::
-
-            sage: P = ProjectiveSpace(3, Zmod(15))
-            sage: P(0,5,10,15)
-            Traceback (most recent call last):
-            ...
-            ValueError: [0, 5, 10, 0] does not define a valid projective point since it is a multiple of a zero divisor
-
-        It is possible to avoid the possibly time-consuming checks, but be careful!! ::
-
-            sage: P = ProjectiveSpace(3, QQ)
-            sage: P.point([0,0,0,0], check=False)
-            (0 : 0 : 0 : 0)
-
-        ::
-
-            sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
-            sage: X = P.subscheme([x^2 - y*z])
-            sage: X([2, 2, 2])
-            (2 : 2 : 2)
-
-        ::
-
-            sage: R.<t> = PolynomialRing(ZZ)
-            sage: P = ProjectiveSpace(1, R.quo(t^2 + 1))                                # needs sage.libs.pari
-            sage: P([2*t, 1])                                                           # needs sage.libs.pari
-            (2*tbar : 1)
-
-        ::
-
-            sage: P = ProjectiveSpace(ZZ, 1)
-            sage: P.point(Infinity)
-            (1 : 0)
-            sage: P(infinity)
-            (1 : 0)
-
-        ::
-
-            sage: P = ProjectiveSpace(ZZ, 2)
-            sage: P(Infinity)
-            Traceback (most recent call last):
-            ...
-            ValueError: +Infinity not well defined in dimension > 1
-            sage: P.point(infinity)
-            Traceback (most recent call last):
-            ...
-            ValueError: +Infinity not well defined in dimension > 1
+            TODO
         """
         SchemeMorphism.__init__(self, X)
 
@@ -196,6 +118,9 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         self._coords = tuple(v)
         self._normalized = False
 
+    # def _repr_(self):
+    #     return "({})".format(" : ".join(map(repr, self._coords)))
+
     def _richcmp_(self, right, op):
         """
         Test the projective equality of two points.
@@ -210,152 +135,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
 
         EXAMPLES::
 
-            sage: PS = ProjectiveSpace(ZZ, 1, 'x')
-            sage: P = PS([1, 2])
-            sage: Q = PS([2, 4])
-            sage: P == Q
-            True
-
-        ::
-
-            sage: PS = ProjectiveSpace(ZZ, 1, 'x')
-            sage: P = PS([1, 2])
-            sage: Q = PS([1, 0])
-            sage: P == Q
-            False
-
-        ::
-
-            sage: # needs sage.rings.padics
-            sage: PS = ProjectiveSpace(Zp(5), 1, 'x')
-            sage: P = PS([0, 1])
-            sage: P == PS(0)
-            True
-
-        ::
-
-            sage: R.<t> = PolynomialRing(QQ)
-            sage: PS = ProjectiveSpace(R, 1, 'x')
-            sage: P = PS([t, 1 + t^2])
-            sage: Q = PS([t^2, t + t^3])
-            sage: P == Q
-            True
-
-        ::
-
-            sage: PS = ProjectiveSpace(ZZ, 2, 'x')
-            sage: P = PS([0, 1, 2])
-            sage: P == PS([0, 0])
-            False
-
-        ::
-
-            sage: PS = ProjectiveSpace(ZZ, 1, 'x')
-            sage: P = PS([2, 1])
-            sage: PS2 = ProjectiveSpace(Zp(7), 1, 'x')                                  # needs sage.rings.padics
-            sage: Q = PS2([2, 1])                                                       # needs sage.rings.padics
-            sage: P == Q                                                                # needs sage.rings.padics
-            True
-
-        ::
-
-            sage: PS = ProjectiveSpace(ZZ.quo(6), 2, 'x')
-            sage: P = PS([2, 4, 1])
-            sage: Q = PS([0, 1, 3])
-            sage: P == Q
-            False
-
-        Check that :issue:`17433` is fixed::
-
-            sage: P.<x,y> = ProjectiveSpace(Zmod(10), 1)
-            sage: p1 = P(1/3, 1)
-            sage: p2 = P.point([1, 3], False)
-            sage: p1 == p2
-            True
-
-        ::
-
-            sage: # needs sage.rings.number_field
-            sage: R.<z> = PolynomialRing(QQ)
-            sage: K.<t> = NumberField(z^2 + 5)
-            sage: OK = K.ring_of_integers()
-            sage: t = OK.gen(1)
-            sage: PS.<x,y> = ProjectiveSpace(OK, 1)
-            sage: P = PS(2, 1 + t)
-            sage: Q = PS(1 - t, 3)
-            sage: P == Q
-            True
-
-        Check that :issue:`17429` is fixed::
-
-            sage: # needs sage.rings.complex_interval_field
-            sage: R.<x> = PolynomialRing(QQ)
-            sage: r = (x^2 - x - 3).polynomial(x).roots(ComplexIntervalField(),
-            ....:                                       multiplicities=False)
-            sage: P.<x,y> = ProjectiveSpace(ComplexIntervalField(), 1)
-            sage: P1 = P(r[0], 1)
-            sage: H = End(P)
-            sage: f = H([x^2 - 3*y^2, y^2])
-            sage: Q1 = f(P1)
-            sage: Q1 == P1
-            False
-
-        For inequality::
-
-            sage: PS = ProjectiveSpace(ZZ, 1, 'x')
-            sage: P = PS([1, 2])
-            sage: Q = PS([2, 4])
-            sage: P != Q
-            False
-
-        ::
-
-            sage: PS = ProjectiveSpace(ZZ, 1, 'x')
-            sage: P = PS([1, 2])
-            sage: Q = PS([1, 0])
-            sage: P != Q
-            True
-
-        ::
-
-            sage: # needs sage.rings.padics
-            sage: PS = ProjectiveSpace(Zp(5), 1, 'x')
-            sage: P = PS([0, 1])
-            sage: P != PS(0)
-            False
-
-        ::
-
-            sage: R.<t> = PolynomialRing(QQ)
-            sage: PS = ProjectiveSpace(R, 1, 'x')
-            sage: P = PS([t, 1 + t^2])
-            sage: Q = PS([t^2, t + t^3])
-            sage: P != Q
-            False
-
-        ::
-
-            sage: PS = ProjectiveSpace(ZZ, 2, 'x')
-            sage: P = PS([0, 1, 2])
-            sage: P != PS([0, 0])
-            True
-
-        ::
-
-            sage: PS = ProjectiveSpace(ZZ, 1, 'x')
-            sage: P = PS([2, 1])
-            sage: PS2 = ProjectiveSpace(Zp(7), 1, 'x')                                  # needs sage.rings.padics
-            sage: Q = PS2([2, 1])                                                       # needs sage.rings.padics
-            sage: P != Q                                                                # needs sage.rings.padics
-            False
-
-        ::
-
-            sage: PS = ProjectiveSpace(ZZ.quo(6), 2, 'x')
-            sage: P = PS([2, 4, 1])
-            sage: Q = PS([0, 1, 3])
-            sage: P != Q
-            True
+            TODO
         """
         if not isinstance(right, SchemeMorphism_point):
             try:

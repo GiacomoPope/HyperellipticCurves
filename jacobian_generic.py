@@ -16,10 +16,12 @@ import jacobian_homset_ramified
 import jacobian_homset_split
 import jacobian_homset_inert
 
+
 class HyperellipticJacobian_generic(Jacobian_generic):
     """
     TODO
     """
+
     def dimension(self):
         """
         Return the dimension of this Jacobian.
@@ -37,8 +39,10 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         # TODO: make a constructor for this??
         H = self.curve()
         if H.is_ramified():
-            return jacobian_homset_ramified.HyperellipticJacobianHomsetRamified(*args, **kwds)
-        elif  H.is_split():
+            return jacobian_homset_ramified.HyperellipticJacobianHomsetRamified(
+                *args, **kwds
+            )
+        elif H.is_split():
             return jacobian_homset_split.HyperellipticJacobianHomsetSplit(*args, **kwds)
         return jacobian_homset_inert.HyperellipticJacobianHomsetInert(*args, **kwds)
 
@@ -46,17 +50,30 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         H = self.curve()
         if H.is_ramified():
             return jacobian_morphism.MumfordDivisorClassFieldRamified(*args, **kwds)
-        elif  H.is_split():
+        elif H.is_split():
             return jacobian_morphism.MumfordDivisorClassFieldSplit(*args, **kwds)
         return jacobian_morphism.MumfordDivisorClassFieldInert(*args, **kwds)
-
-    # Stupid functions
-    def zero(self):
-        return self.point_homset().zero()
 
     @cached_method
     def order(self):
         return self.point_homset().order()
 
-    def random_element(self, fast=True):
-        return self.point_homset().random_element(fast=fast)
+    def count_points(self, *args, **kwds):
+        return self.point_homset().count_points(*args, **kwds)
+
+    def lift_u(self, *args, **kwds):
+        return self.point_homset().lift_u(*args, **kwds)
+
+    def random_element(self, *args, **kwds):
+        return self.point_homset().random_element(*args, **kwds)
+
+    def points(self, *args, **kwds):
+        return self.point_homset().points(*args, **kwds)
+
+    def list(self):
+        return self.point_homset().points()
+
+    def __iter__(self):
+        yield from self.list()
+
+    rational_points = points

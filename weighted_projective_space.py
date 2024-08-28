@@ -21,6 +21,7 @@ except ImportError:
         PolynomialRing_general as PolynomialRing_generic,
     )
 
+
 def WeightedProjectiveSpace(weights, R=None, names=None):
     r"""
     Return a weighted projective space with the given ``weights`` over the ring ``R``.
@@ -31,7 +32,10 @@ def WeightedProjectiveSpace(weights, R=None, names=None):
         sage: WP = WeightedProjectiveSpace([1, 3, 1]); WP
         Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Integer Ring
     """
-    if isinstance(weights, (MPolynomialRing_base, PolynomialRing_generic)) and R is None:
+    if (
+        isinstance(weights, (MPolynomialRing_base, PolynomialRing_generic))
+        and R is None
+    ):
         if names is not None:
             # Check for the case that the user provided a variable name
             # That does not match what we wanted to use from R
@@ -59,7 +63,9 @@ def WeightedProjectiveSpace(weights, R=None, names=None):
         # Make it hashable
         weights = tuple(map(Integer, weights))
         if any(w <= 0 for w in weights):
-            raise TypeError(f"weights(={weights}) should only consist of positive integers")
+            raise TypeError(
+                f"weights(={weights}) should only consist of positive integers"
+            )
     else:
         raise TypeError(f"weights={weights} must be an integer, a list or a tuple")
 
@@ -77,7 +83,7 @@ def WeightedProjectiveSpace(weights, R=None, names=None):
 
 class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
     @staticmethod
-    def __classcall__(cls, weights : tuple[Integer], R=ZZ, names=None):
+    def __classcall__(cls, weights: tuple[Integer], R=ZZ, names=None):
         # __classcall_ is the "preprocessing" step for UniqueRepresentation
         # see docs of CachedRepresentation
         # weights should be a tuple, also because it should be hashable
@@ -91,7 +97,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         normalized_names = normalize_names(len(weights), names)
         return super().__classcall__(cls, weights, R, normalized_names)
 
-    def __init__(self, weights : tuple[Integer], R=ZZ, names=None):
+    def __init__(self, weights: tuple[Integer], R=ZZ, names=None):
         """
         Initialization function.
 
@@ -135,7 +141,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         """
         return self.dimension_relative() + 1
 
-    def _check_satisfies_equations(self, v : list[Integer] | tuple[Integer]) -> bool:
+    def _check_satisfies_equations(self, v: list[Integer] | tuple[Integer]) -> bool:
         """
         Return ``True`` if ``v`` defines a point on the weighted projective
         plane; raise a :class:`TypeError` otherwise.
@@ -232,7 +238,9 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             TypeError: the argument polynomials=x*y - z must be a list or tuple
         """
         if not isinstance(polynomials, (list, tuple)):
-            raise TypeError(f"the argument polynomials={polynomials} must be a list or tuple")
+            raise TypeError(
+                f"the argument polynomials={polynomials} must be a list or tuple"
+            )
 
         R = self.coordinate_ring()
         for f in map(R, polynomials):
@@ -255,7 +263,9 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: WeightedProjectiveSpace(Zp(5), [2, 1, 3], 'y')._latex_()              # needs sage.rings.padics
             '{\\mathbf P}_{\\Bold{Z}_{5}}^{[2, 1, 3]}'
         """
-        return f"{{\\mathbf P}}_{{{latex(self.base_ring())}}}^{{{list(self.weights())}}}"
+        return (
+            f"{{\\mathbf P}}_{{{latex(self.base_ring())}}}^{{{list(self.weights())}}}"
+        )
 
     def _morphism(self, *_, **__):
         """
@@ -263,13 +273,17 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         For internal use only. See :mod:`morphism` for details.
         """
-        raise NotImplementedError("_morphism not implemented for weighted projective space")
+        raise NotImplementedError(
+            "_morphism not implemented for weighted projective space"
+        )
 
     def _homset(self, *_, **__):
         """
         Construct the Hom-set.
         """
-        raise NotImplementedError("_homset not implemented for weighted projective space")
+        raise NotImplementedError(
+            "_homset not implemented for weighted projective space"
+        )
 
     def _point_homset(self, *args, **kwds):
         """
@@ -303,20 +317,23 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         """
         from sage.rings.infinity import infinity
 
-        if v is infinity or (isinstance(v, (list, tuple)) and len(v) == 1 and v[0] is infinity):
+        if v is infinity or (
+            isinstance(v, (list, tuple)) and len(v) == 1 and v[0] is infinity
+        ):
             if self.dimension_relative() > 1:
                 raise ValueError("%s not well defined in dimension > 1" % v)
             v = [1, 0]
 
         return self.point_homset()(v, check=check)
 
-    def _point(self, *_, **__):
+    def _point(self, *args, **kwds):
         """
         Construct a point.
 
         For internal use only. See :mod:`morphism` for details.
         """
-        raise NotImplementedError("_point not implemented for weighted projective space")
+        from weighted_projective_point import SchemeMorphism_point_weighted_projective_ring
+        return SchemeMorphism_point_weighted_projective_ring(*args, **kwds)
 
     def _repr_(self) -> str:
         """
@@ -344,15 +361,16 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         EXAMPLES::
 
             sage: # TODO: Enable this
-            # sage: WeightedProjectiveSpace(ZZ, [1, 3, 1], 'x').an_element()
-            # (7 : 6 : 5 : 1)
-            #
-            # sage: WeightedProjectiveSpace(ZZ["y"], [2, 3, 1], 'x').an_element()
-            # (7*y : 6*y : 5*y : 1)
+            sage: WeightedProjectiveSpace(ZZ, [1, 3, 1], 'x').an_element()  # random
+            (7 : 6 : 5 : 1)
+            sage: WeightedProjectiveSpace(ZZ["y"], [2, 3, 1], 'x').an_element()  # random
+            (7*y : 6*y : 5*y : 1)
         """
-        # TODO: Doesn't work because _point_homset isn't implemented
         n = self.dimension_relative()
         R = self.base_ring()
-        coords = [(7 - i) * R.an_element() for i in range(n)] + [R.one()]
+        coords = [(n + 1 - i) * R.an_element() for i in range(n)] + [R.one()]
         shuffle(coords)
         return self(coords)
+
+    def subscheme(self, *_, **__):
+        raise NotImplementedError("subscheme of weighted projective space has not been implemented")

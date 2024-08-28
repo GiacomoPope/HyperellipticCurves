@@ -1,4 +1,4 @@
-from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.structure.element import parent
 from sage.rings.integer import Integer
 
 from jacobian_homset_generic import HyperellipticJacobianHomset
@@ -20,15 +20,15 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         """
         g = self.curve().genus()
         R = self.curve().polynomial_ring()
-        n = (g / 2).ceil()
+        n = (g + 1) // 2
         return self._morphism_element(self, R.one(), R.zero(), n)
 
     def point_to_mumford_coordinates(self, P):
         """
         On input a point P, return the Mumford coordinates
         of (the affine part of) the divisor [P] and an integer n,
-        where 
-        * n = 1 if P is the point oo+ 
+        where
+        * n = 1 if P is the point oo+
         * n = 0 otherwise .
         """
 
@@ -46,20 +46,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         return u, v, 0
 
     def __call__(self, *args, check=True):
-        """
-        Return a rational point in the abstract Homset J(K), given:
-
-        0. The integer 0, returning 0 in J;
-
-        1. A point P in J = Jac(C), returning P;
-
-        2. A point P on the curve H such that J = Jac(H),
-           returning [P - P0], where P0 is the distinguished point of H
-           (by default P0 = oo+)
-
-        2. Two points P, Q on the curve H such that J = Jac(H),
-           returning [P-Q];
-
+        r"""
         3. Polynomials u,v such that `v^2 + h*v - f = 0 mod u`,
            returning J(u,v,n) with n = ((g - deg(u))/2).ceil().
 
@@ -67,17 +54,36 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
            and 0 <= n <= g/2,
            returning J(u,v,n).
 
+        Return a rational point in the abstract Homset `J(K)`, given:
+
+        1. No arguments or the integer `0`; return `0 \in J`;
+
+        2. A point `P` on `J = Jac(C)`, return `P`;
+
+        3. A point `P` on the curve `H` such that `J = Jac(H)`;
+           return `[P - P_0]`, where `P_0` is the distinguished point of `H`.
+           By default, `P_0 = \infty`;
+
+        4. Two points `P, Q` on the curve `H` such that `J = Jac(H)`;
+           return `[P - Q]`;
+
+        5. Polynomials `(u, v)` such that `v^2 + hv - f \equiv 0 \pmod u`;
+           reutrn `[(u(x), y - v(x)) : \lceil (g - \deg(u)) / 2 \rceil]`;
+
+        6. Polynomials `(u, v)` and an integer `n` such that
+           `v^2 + hv - f \equiv 0 \pmod u` and `0 \leq n \leq g / 2`;
+           return `[u, v : n]`.
 
         EXAMPLES::
 
-            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel
-            sage: R.<x> = PolynomialRing(GF(13))
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = GF(13)[]
             sage: H = HyperellipticCurveSmoothModel(x^8 + x + 1)
             sage: H.is_split()
             True
             sage: J = Jacobian(H)
             sage: JH = J.point_homset()
-            sage: P = H.lift_x(1) 
+            sage: P = H.lift_x(1)
             sage: Q = H.lift_x(2)
             sage: D1 = JH(P); D1
             (x + 12, 4 : 1)
@@ -92,58 +98,86 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             sage: JH(x^2+10*x+2, 4*x, 0) == D
             False
 
-        The points at infinity may also be embedded into the Jacobian.
+        The points at infinity may also be embedded into the Jacobian::
+
             sage: [P0,P1] = H.points_at_infinity()
             sage: JH(P0)
             (1, 0 : 2)
             sage: JH(P1)
             (1, 0 : 1)
 
-        TODO: code reuse
-        """
+        TESTS::
 
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurveSmoothModel(x^8 + x + 1)
+            sage: J = Jacobian(H)
+            sage: JH = J.point_homset()
+            sage: J() == J(0) == J(1, 0) == J.zero() == JH(0) == 0
+            True
+
+        TODO: Merge this code with that of `HyperellipticJacobianHomset`
+        """
         g = self.curve().genus()
         R = self.curve().polynomial_ring()
 
-        if len(args) == 1 and isinstance(args[0], (list,tuple)):
-            args = args[0] #unpack
+        if len(args) > 3:
+            raise ValueError("at most three arguments are allowed as input")
+
+        if len(args) == 0 or (len(args) == 1 and args[0] == ()):
+            return self._morphism_element(
+                self, R.one(), R.zero(), n=(g + 1) // 2, check=check
+            )
+
+        if len(args) == 1 and isinstance(args[0], (list, tuple)):
+            args = args[0]
+
         if len(args) == 1:
             P1 = args[0]
             if P1 == 0:
                 u = R.one()
                 v = R.zero()
-                n = (g / 2).ceil()
+                n = (g + 1) // 2
             elif isinstance(P1, self._morphism_element):
                 return P1
             elif isinstance(P1, SchemeMorphism_point_toric_field):
-                args = args + (self.curve().distinguished_point(),) #this case will now be handeled below.
+                args = args + (
+                    self.curve().distinguished_point(),
+                )  # this case will now be handled below.
             else:
-                raise ValueError("The input must consist of points or polynomials.")
+                raise ValueError(
+                    "the input must consist of one or two points, or Mumford coordinates"
+                )
+
         if len(args) == 2 or len(args) == 3:
             P1 = args[0]
             P2 = args[1]
-            if isinstance(P1, SchemeMorphism_point_toric_field) and isinstance(P2, SchemeMorphism_point_toric_field):
+            if isinstance(P1, SchemeMorphism_point_toric_field) and isinstance(
+                P2, SchemeMorphism_point_toric_field
+            ):
+                if len(args) == 3:
+                    raise ValueError("the input must consist of at most two points")
                 u1, v1, n1 = self.point_to_mumford_coordinates(P1)
                 P2_inv = self.curve().hyperelliptic_involution(P2)
                 u2, v2, n2 = self.point_to_mumford_coordinates(P2_inv)
                 u, v, _ = self._cantor_composition_generic(u1, v1, u2, v2)
-                n = (g / 2).ceil() - 1 + n1 + n2 #this solution is a bit hacky
-                if len(args) == 3:
-                    raise ValueError("Only one or two points are allowed as input.")
-            elif isinstance(P1, Polynomial) and isinstance(P2, Polynomial):
-                u = P1
-                v = P2
-                if len(args) == 3 and isinstance(args[2], Integer):
+                n = (g + 1) // 2 - 1 + n1 + n2  # this solution is a bit hacky
+            # This checks whether P1 and P2 can be interpreted as polynomials
+            elif R.coerce_map_from(parent(P1)) and R.coerce_map_from(parent(P2)):
+                u = R(P1)
+                v = R(P2)
+                if len(args) == 3 and isinstance(args[2], (int, Integer)):
                     n = args[2]
                 else:
-                    n = ((g - u.degree()) / 2).ceil() #TODO: do we really want to allow this input?
+                    n = (
+                        g - u.degree() + 1
+                    ) // 2  # TODO: do we really want to allow this input?
             else:
-                raise ValueError("The input must consist of points or polynomials.")
-        if len(args) > 3:
-            raise ValueError("At most three arguments are allowed as input.")
+                raise ValueError(
+                    "the input must consist of one or two points, or Mumford coordinates"
+                )
 
         return self._morphism_element(self, u, v, n=n, check=check)
-        
 
     def cantor_composition(self, u1, v1, n1, u2, v2, n2):
         """
@@ -163,7 +197,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         u3, v3, s_deg = self._cantor_composition_generic(u1, v1, u2, v2)
 
         # Compute new weight
-        n3 = n1 + n2 + s_deg - (g / 2).ceil()
+        n3 = n1 + n2 + s_deg - ((g + 1) // 2)
 
         return u3, v3, n3
 

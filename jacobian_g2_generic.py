@@ -15,7 +15,13 @@ class HyperellipticJacobian_g2_generic(HyperellipticJacobian_generic):
         # TODO: make a constructor for this??
         H = self.curve()
         if H.is_ramified():
-            return jacobian_g2_homset_ramified.HyperellipticJacobianHomsetRamified_g2(*args, **kwds)
-        elif  H.is_split():
-            return jacobian_g2_homset_split.HyperellipticJacobianHomsetSplit_g2(*args, **kwds)
-        return jacobian_g2_homset_inert.HyperellipticJacobianHomsetInert_g2(*args, **kwds)
+            return jacobian_g2_homset_ramified.HyperellipticJacobianHomsetRamified_g2(
+                *args, **kwds
+            )
+        elif H.is_split():
+            return jacobian_g2_homset_split.HyperellipticJacobianHomsetSplit_g2(
+                *args, **kwds
+            )
+        return jacobian_g2_homset_inert.HyperellipticJacobianHomsetInert_g2(
+            *args, **kwds
+        )
