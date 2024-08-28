@@ -1,3 +1,4 @@
+from types import NotImplementedType
 from sage.misc.latex import latex
 from sage.misc.prandom import shuffle
 from sage.rings.integer import Integer
@@ -158,7 +159,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P._check_satisfies_equations([1/2, 0, 1])
             Traceback (most recent call last):
             ...
-            TypeError: the components of v=[1/2, 0, 1] must be elements of Integer Ring
+            TypeError: no conversion of this rational to integer
         """
         if not isinstance(v, (list, tuple)):
             raise TypeError(f"the argument v={v} must be a list or tuple")
@@ -283,15 +284,14 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             "_homset not implemented for weighted projective space"
         )
 
-    def _point_homset(self, *_, **__):
+    def _point_homset(self, *args, **kwds):
         """
         Construct a point Hom-set.
 
         For internal use only. See :mod:`morphism` for details.
         """
-        raise NotImplementedError(
-            "_point_homset not implemented for weighted projective space"
-        )
+        from weighted_projective_homset import SchemeHomset_points_weighted_projective_field
+        return SchemeHomset_points_weighted_projective_field(*args, **kwds)
 
     def point(self, v, check=True):
         """
@@ -325,15 +325,14 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         return self.point_homset()(v, check=check)
 
-    def _point(self, *_, **__):
+    def _point(self, *args, **kwds):
         """
         Construct a point.
 
         For internal use only. See :mod:`morphism` for details.
         """
-        raise NotImplementedError(
-            "_point not implemented for weighted projective space"
-        )
+        from weighted_projective_point import SchemeMorphism_point_weighted_projective_ring
+        return SchemeMorphism_point_weighted_projective_ring(*args, **kwds)
 
     def _repr_(self) -> str:
         """
@@ -361,15 +360,16 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         EXAMPLES::
 
             sage: # TODO: Enable this
-            # sage: WeightedProjectiveSpace(ZZ, [1, 3, 1], 'x').an_element()
-            # (7 : 6 : 5 : 1)
-            #
-            # sage: WeightedProjectiveSpace(ZZ["y"], [2, 3, 1], 'x').an_element()
-            # (7*y : 6*y : 5*y : 1)
+            sage: WeightedProjectiveSpace(ZZ, [1, 3, 1], 'x').an_element()  # random
+            (7 : 6 : 5 : 1)
+            sage: WeightedProjectiveSpace(ZZ["y"], [2, 3, 1], 'x').an_element()  # random
+            (7*y : 6*y : 5*y : 1)
         """
-        # TODO: Doesn't work because _point_homset isn't implemented
         n = self.dimension_relative()
         R = self.base_ring()
-        coords = [(7 - i) * R.an_element() for i in range(n)] + [R.one()]
+        coords = [(n + 1 - i) * R.an_element() for i in range(n)] + [R.one()]
         shuffle(coords)
         return self(coords)
+
+    def subscheme(self, *_, **__):
+        raise NotImplementedError("subscheme of weighted projective space has not been implemented")
