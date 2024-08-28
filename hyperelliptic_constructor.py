@@ -28,11 +28,11 @@ from hyperelliptic_finite_field import HyperellipticCurveSmoothModel_finite_fiel
 from hyperelliptic_rational_field import HyperellipticCurveSmoothModel_rational_field
 from hyperelliptic_padic_field import HyperellipticCurveSmoothModel_padic_field
 
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.categories.finite_fields import FiniteFields
 from sage.rings.abc import pAdicField
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational_field import RationalField
-from sage.schemes.toric.library import toric_varieties
 from sage.rings.integer import Integer
 
 """
@@ -89,20 +89,12 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         g2 = 2 * f.derivative() + h * h.derivative()
         return g1.gcd(g2).is_one()
 
-    def __projective_model(f, h, genus):
+    def __defining_polynomial(f, h):
         """
-        Compute the weighted projective model (1 : g + 1 : 1)
-
-        WARNING::
-
-            Due to limitations of the toric_varieties.WP class, we
-            cannot instantiate hyperelliptic curves over rings, but
-            only fields.
+        Compute the (homogenised weighted projective) defining polynomial of
+        the hyperelliptic curve.
         """
-        T = toric_varieties.WP(
-            [1, genus + 1, 1], base_ring=f.base_ring(), names="X, Y, Z"
-        )
-        (X, Y, Z) = T.gens()
+        X, Y, Z = PolynomialRing(f.base_ring(), names="X, Y, Z").gens()
 
         # Some classes still have issues with degrees returning `int`
         d = max(Integer(h.degree()), (Integer(f.degree()) + 1) // 2)
@@ -114,7 +106,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
             H = sum(h[i] * X**i * Z ** (d - i) for i in range(d + 1))
             G = Y**2 + H * Y - F
 
-        return T.subscheme(G)
+        return G
 
     # -------------------------------------------
     # Typechecking and projective model creation
@@ -140,7 +132,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
 
     # Compute the smooth model for the hyperelliptic curve
     # using a weighted projective space (via Toric Variety)
-    projective_model = __projective_model(f, h, genus)
+    defining_polynomial = __defining_polynomial(f, h)
 
     # -----------------------
     # Class selection
@@ -171,4 +163,4 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         else:
             cls = HyperellipticCurveSmoothModel_generic
 
-    return cls(projective_model, f, h, genus)
+    return cls(defining_polynomial, f, h, genus)

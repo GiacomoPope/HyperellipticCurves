@@ -92,7 +92,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: x,y,z = HK.local_analytic_interpolation(P,HK(1,0))
             Traceback (most recent call last):
             ...
-            ValueError: [5^-2 + O(5^6) : 4*5^-3 + 4*5^-2 + 4*5^-1 + 4 + 4*5 + 3*5^3 + 5^4 + O(5^5) : 1 + O(5^8)] and [1 + O(5^8) : 0 : 1 + O(5^8)] are not in the same residue disc
+            ValueError: (5^-2 + O(5^6) : 4*5^-3 + 4*5^-2 + 4*5^-1 + 4 + 4*5 + 3*5^3 + 5^4 + O(5^5) : 1 + O(5^8)) and (1 + O(5^8) : 0 : 1 + O(5^8)) are not in the same residue disc
 
         TESTS:
 
@@ -165,7 +165,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: HK.is_in_weierstrass_disc(S)
             True
             sage: T = HK.lift_x(1+3*5^2); T
-            [1 + 3*5^2 + O(5^8) : 3*5 + 4*5^2 + 5^4 + 3*5^5 + 5^6 + O(5^7) : 1 + O(5^8)]
+            (1 + 3*5^2 + O(5^8) : 3*5 + 4*5^2 + 5^4 + 3*5^5 + 5^6 + O(5^7) : 1 + O(5^8))
             sage: HK.is_in_weierstrass_disc(T)
             True
 
@@ -175,7 +175,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: H = HyperellipticCurveSmoothModel(x^6+3, x^2+1)
             sage: HK = H.change_ring(K)
             sage: P = HK.lift_x(1+3*5+4*5^2+4*5^3); P
-            [1 + 3*5 + 4*5^2 + 4*5^3 + O(5^8) : 4 + 5 + 4*5^2 + 5^3 + 3*5^4 + 5^5 + O(5^6) : 1 + O(5^8)]
+            (1 + 3*5 + 4*5^2 + 4*5^3 + O(5^8) : 4 + 5 + 4*5^2 + 5^3 + 3*5^4 + 5^5 + O(5^6) : 1 + O(5^8))
             sage: HK.is_in_weierstrass_disc(P)
             True
 
@@ -217,13 +217,13 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: S = HK(1,0)
             sage: T = HK(1,0,0)
             sage: HK.find_char_zero_weierstrass_point(P)
-            [1 + O(5^8) : 0 : 1 + O(5^8)]
+            (1 + O(5^8) : 0 : 1 + O(5^8))
             sage: HK.find_char_zero_weierstrass_point(Q)
-            [1 + O(5^8) : 0 : 0]
+            (1 + O(5^8) : 0 : 0)
             sage: HK.find_char_zero_weierstrass_point(S)
-            [1 + O(5^8) : 0 : 1 + O(5^8)]
+            (1 + O(5^8) : 0 : 1 + O(5^8))
             sage: HK.find_char_zero_weierstrass_point(T)
-            [1 + O(5^8) : 0 : 0]
+            (1 + O(5^8) : 0 : 0)
 
         An example for a hyperelltiptic curve with split model::
 
@@ -231,7 +231,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: HK = H.change_ring(K)
             sage: P = HK.lift_x(1+3*5+4*5^2+4*5^3)
             sage: HK.find_char_zero_weierstrass_point(P)
-            [1 + 3*5 + 4*5^2 + 4*5^3 + 3*5^4 + 2*5^6 + 4*5^7 + O(5^8) : 4 + 5 + 3*5^2 + 4*5^3 + 2*5^5 + 4*5^6 + 4*5^7 + O(5^8) : 1 + O(5^8)]
+            (1 + 3*5 + 4*5^2 + 4*5^3 + 3*5^4 + 2*5^6 + 4*5^7 + O(5^8) : 4 + 5 + 3*5^2 + 4*5^3 + 2*5^5 + 4*5^6 + 4*5^7 + O(5^8) : 1 + O(5^8))
 
         The input needs to be a point in a Weierstrass disc,
         otherwise an error is returned::
@@ -240,7 +240,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: HK.find_char_zero_weierstrass_point(Q)
             Traceback (most recent call last):
             ...
-            ValueError: [1 + O(5^8) : 1 + O(5^8) : 0] is not in a Weierstrass disc.
+            ValueError: (1 + O(5^8) : 1 + O(5^8) : 0) is not in a Weierstrass disc.
 
         AUTHOR:
 
@@ -272,16 +272,16 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: HK = H.change_ring(K)
             sage: P = HK.lift_x(1 + 2*5^2)
             sage: HK.residue_disc(P)
-            [1 : 0 : 1]
+            (1 : 0 : 1)
             sage: Q = HK(0,3)
             sage: HK.residue_disc(Q)
-            [0 : 3 : 1]
+            (0 : 3 : 1)
             sage: S = HK.lift_x(5^-2)
             sage: HK.residue_disc(S)
-            [1 : 0 : 0]
+            (1 : 0 : 0)
             sage: T = HK(1,0,0)
             sage: HK.residue_disc(T)
-            [1 : 0 : 0]
+            (1 : 0 : 0)
 
         We can also compute residue discs for points on curves with a split or inert model::
 
@@ -291,7 +291,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: HK = H.change_ring(K)
             sage: P = HK.lift_x(1+3*5+4*5^2+4*5^3)
             sage: Pbar = HK.residue_disc(P); Pbar
-            [1 : 4 : 1]
+            (1 : 4 : 1)
 
         We note that `P` is in a Weierstrass disc and its reduction is indeed a Weierstrass point.
             sage: HK.is_in_weierstrass_disc(P)
@@ -440,7 +440,8 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: C.tiny_integrals([1,x,x^2,x^3],P,S)
             Traceback (most recent call last):
             ...
-            ValueError: [11^-2 + O(11^3) : 11^-5 + 8*11^-2 + O(11^0) : 1 + O(11^5)] and [0 : 3 + 8*11 + 2*11^2 + 8*11^3 + 2*11^4 + O(11^5) : 1 + O(11^5)] are not in the same residue disc
+            ValueError: (11^-2 + O(11^3) : 11^-5 + 8*11^-2 + O(11^0) : 1 + O(11^5)) and
+             (0 : 3 + 8*11 + 2*11^2 + 8*11^3 + 2*11^4 + O(11^5) : 1 + O(11^5)) are not in the same residue disc
 
         """
         if self.hyperelliptic_polynomials()[1]:
@@ -511,7 +512,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: C.tiny_integrals_on_basis(P,S)
             Traceback (most recent call last):
             ...
-            ValueError: [11^-2 + O(11^3) : 11^-5 + 8*11^-2 + O(11^0) : 1 + O(11^5)] and [0 : 3 + 8*11 + 2*11^2 + 8*11^3 + 2*11^4 + O(11^5) : 1 + O(11^5)] are not in the same residue disc
+            ValueError: (11^-2 + O(11^3) : 11^-5 + 8*11^-2 + O(11^0) : 1 + O(11^5)) and (0 : 3 + 8*11 + 2*11^2 + 8*11^3 + 2*11^4 + O(11^5) : 1 + O(11^5)) are not in the same residue disc
 
         """
         if P == Q:
@@ -539,7 +540,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: E.frobenius(P) == P
             False
             sage: TP = E.teichmuller(P); TP
-            [0 : 2 + 3*7 + 3*7^2 + 3*7^4 + O(7^5) : 1 + O(7^5)]
+            (0 : 2 + 3*7 + 3*7^2 + 3*7^4 + O(7^5) : 1 + O(7^5))
             sage: E.frobenius(TP) == TP
             True
             sage: (TP[0] - P[0]).valuation() > 0, (TP[1] - P[1]).valuation() > 0
@@ -1013,11 +1014,11 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: E = HyperellipticCurveSmoothModel(x^5 - 21*x - 20)
             sage: P = E.lift_x(2)
             sage: E.frobenius(P)
-            [2 + 10*11 + 5*11^2 + 11^3 + O(11^5) : 6 + 11 + 8*11^2 + 8*11^3 + 10*11^4 + O(11^5) : 1 + O(11^5)]
+            (2 + 10*11 + 5*11^2 + 11^3 + O(11^5) : 6 + 11 + 8*11^2 + 8*11^3 + 10*11^4 + O(11^5) : 1 + O(11^5))
             sage: Q = E.teichmuller(P); Q
-            [2 + 10*11 + 4*11^2 + 9*11^3 + 11^4 + O(11^5) : 6 + 11 + 4*11^2 + 9*11^3 + 4*11^4 + O(11^5) : 1 + O(11^5)]
+            (2 + 10*11 + 4*11^2 + 9*11^3 + 11^4 + O(11^5) : 6 + 11 + 4*11^2 + 9*11^3 + 4*11^4 + O(11^5) : 1 + O(11^5))
             sage: E.frobenius(Q)
-            [2 + 10*11 + 4*11^2 + 9*11^3 + 11^4 + O(11^5) : 6 + 11 + 4*11^2 + 9*11^3 + 4*11^4 + O(11^5) : 1 + O(11^5)]
+            (2 + 10*11 + 4*11^2 + 9*11^3 + 11^4 + O(11^5) : 6 + 11 + 4*11^2 + 9*11^3 + 4*11^4 + O(11^5) : 1 + O(11^5))
 
         ::
 
@@ -1030,7 +1031,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: HL = H.change_ring(L)
             sage: S = HL(u(a),v(a))
             sage: HL.frobenius(S)
-            [8*a^22 + 10*a^42 + 4*a^44 + 2*a^46 + 9*a^48 + 8*a^50 + a^52 + 7*a^54 +
+            (8*a^22 + 10*a^42 + 4*a^44 + 2*a^46 + 9*a^48 + 8*a^50 + a^52 + 7*a^54 +
             7*a^56 + 5*a^58 + 9*a^62 + 5*a^64 + a^66 + 6*a^68 + a^70 + 6*a^74 +
             2*a^76 + 2*a^78 + 4*a^82 + 5*a^84 + 2*a^86 + 7*a^88 + a^90 + 6*a^92 +
             a^96 + 5*a^98 + 2*a^102 + 2*a^106 + 6*a^108 + 8*a^110 + 3*a^112 +
@@ -1040,7 +1041,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             4*a^65 + 10*a^69 + 3*a^71 + 2*a^73 + 9*a^75 + 10*a^77 + 6*a^79 +
             10*a^81 + 7*a^85 + a^87 + 4*a^89 + 8*a^91 + a^93 + 8*a^95 + 2*a^97 +
             7*a^99 + a^101 + 3*a^103 + 6*a^105 + 7*a^107 + 4*a^109 + O(a^111) :
-            1 + O(a^100)]
+            1 + O(a^100))
 
         AUTHORS:
 
@@ -1211,7 +1212,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: HJ  = H.change_ring(J)
             sage: S = HK.get_boundary_point(HJ,P)
             sage: S
-            [1 + 2*a^2 + 2*a^6 + 2*a^18 + a^32 + a^34 + a^36 + 2*a^38 + 2*a^40 + a^42 + 2*a^44 + a^48 + 2*a^50 + 2*a^52 + a^54 + a^56 + 2*a^60 + 2*a^62 + a^70 + 2*a^72 + a^76 + 2*a^78 + a^82 + a^88 + a^96 + 2*a^98 + 2*a^102 + a^104 + 2*a^106 + a^108 + 2*a^110 + a^112 + 2*a^116 + a^126 + 2*a^130 + 2*a^132 + a^144 + 2*a^148 + 2*a^150 + a^152 + 2*a^154 + a^162 + a^164 + a^166 + a^168 + a^170 + a^176 + a^178 + O(a^180) : a + O(a^180) : 1 + O(a^180)]
+            (1 + 2*a^2 + 2*a^6 + 2*a^18 + a^32 + a^34 + a^36 + 2*a^38 + 2*a^40 + a^42 + 2*a^44 + a^48 + 2*a^50 + 2*a^52 + a^54 + a^56 + 2*a^60 + 2*a^62 + a^70 + 2*a^72 + a^76 + 2*a^78 + a^82 + a^88 + a^96 + 2*a^98 + 2*a^102 + a^104 + 2*a^106 + a^108 + 2*a^110 + a^112 + 2*a^116 + a^126 + 2*a^130 + 2*a^132 + a^144 + 2*a^148 + 2*a^150 + a^152 + 2*a^154 + a^162 + a^164 + a^166 + a^168 + a^170 + a^176 + a^178 + O(a^180) : a + O(a^180) : 1 + O(a^180))
 
         AUTHOR:
 

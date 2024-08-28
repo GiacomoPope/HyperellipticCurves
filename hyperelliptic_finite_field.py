@@ -36,9 +36,9 @@ class HyperellipticCurveSmoothModel_finite_field(
             sage: x = polygen(GF(7))
             sage: C = HyperellipticCurveSmoothModel(x^7 - x^2 - 1)
             sage: C.random_point() # random
-            [4 : 1 : 1]
+            (4 : 1 : 1)
             sage: type(C.random_point())
-            <class 'sage.schemes.toric.morphism.SchemeMorphism_point_toric_field'>
+            <class 'weighted_projective_point.SchemeMorphism_point_weighted_projective_ring'>
         """
         k = self.base_ring()
         n = 2 * k.order() + 1
@@ -65,8 +65,8 @@ class HyperellipticCurveSmoothModel_finite_field(
             sage: x = polygen(GF(7))
             sage: C = HyperellipticCurveSmoothModel(x^7 - x^2 - 1)
             sage: list(C.rational_points_iterator())
-            [[1 : 0 : 0], [2 : 2 : 1], [2 : 5 : 1], [3 : 0 : 1], [4 : 1 : 1],
-             [4 : 6 : 1], [5 : 0 : 1], [6 : 2 : 1], [6 : 5 : 1]]
+            [(1 : 0 : 0), (2 : 2 : 1), (2 : 5 : 1), (3 : 0 : 1), (4 : 1 : 1),
+             (4 : 6 : 1), (5 : 0 : 1), (6 : 2 : 1), (6 : 5 : 1)]
             sage: _ == C.points()
             True
 
@@ -88,8 +88,8 @@ class HyperellipticCurveSmoothModel_finite_field(
             sage: x = polygen(GF(7))
             sage: C = HyperellipticCurveSmoothModel(x^7 - x^2 - 1)
             sage: C.points()
-            [[1 : 0 : 0], [2 : 2 : 1], [2 : 5 : 1], [3 : 0 : 1], [4 : 1 : 1],
-             [4 : 6 : 1], [5 : 0 : 1], [6 : 2 : 1], [6 : 5 : 1]]
+            [(1 : 0 : 0), (2 : 2 : 1), (2 : 5 : 1), (3 : 0 : 1), (4 : 1 : 1),
+             (4 : 6 : 1), (5 : 0 : 1), (6 : 2 : 1), (6 : 5 : 1)]
 
         ::
 
@@ -104,8 +104,8 @@ class HyperellipticCurveSmoothModel_finite_field(
             sage: x = polygen(GF(7))
             sage: C = HyperellipticCurveSmoothModel(x^6 - 1)
             sage: C.points()
-            [[1 : 1 : 0], [1 : 6 : 0], [1 : 0 : 1], [2 : 0 : 1], [3 : 0 : 1],
-             [4 : 0 : 1], [5 : 0 : 1], [6 : 0 : 1]]
+            [(1 : 1 : 0), (1 : 6 : 0), (1 : 0 : 1), (2 : 0 : 1), (3 : 0 : 1),
+             (4 : 0 : 1), (5 : 0 : 1), (6 : 0 : 1)]
 
         Conics are allowed (the issue reported at :issue:`11800`
         has been resolved)::
@@ -113,8 +113,8 @@ class HyperellipticCurveSmoothModel_finite_field(
             sage: R.<x> = GF(7)[]
             sage: H = HyperellipticCurveSmoothModel(3*x^2 + 5*x + 1)
             sage: H.points()
-            [[0 : 1 : 1], [0 : 6 : 1], [1 : 3 : 1], [1 : 4 : 1], [2 : 3 : 1],
-             [2 : 4 : 1], [3 : 1 : 1], [3 : 6 : 1]]
+            [(0 : 1 : 1), (0 : 6 : 1), (1 : 3 : 1), (1 : 4 : 1), (2 : 3 : 1),
+             (2 : 4 : 1), (3 : 1 : 1), (3 : 6 : 1)]
 
         .. SEEALSO:: :meth:`rational_points_iterator`
         """

@@ -2615,11 +2615,6 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
         r"""
         Return the analog of ``self`` over the ring ``R``.
 
-        WARNING::
-
-            Currently we only support hyperelliptic curves using the smooth
-            model over fields, due to limitations in the toric variety class
-
         EXAMPLES::
 
             sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
@@ -2627,9 +2622,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: x.parent().change_ring(ZZ)
-            Traceback (most recent call last):
-            ...
-            TypeError: need a field to construct a toric variety; got Integer Ring
+            SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 3*x + 1) over Integer Ring
         """
         return SpecialHyperellipticQuotientRing(
             self._Q.change_ring(R),

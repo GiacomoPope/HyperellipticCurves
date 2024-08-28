@@ -1,4 +1,3 @@
-from types import NotImplementedType
 from sage.misc.latex import latex
 from sage.misc.prandom import shuffle
 from sage.rings.integer import Integer
@@ -11,11 +10,13 @@ from sage.schemes.projective.projective_space import ProjectiveSpace, _CommRings
 from sage.structure.all import UniqueRepresentation
 from sage.structure.category_object import normalize_names
 
+from weighted_projective_homset import SchemeHomset_points_weighted_projective_ring
+
 try:
     # TODO: Remove this
     from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 except ImportError:
-    print("Please merge #38207 to your local Sage installation.")
+    # print("Please merge #38207 to your local Sage installation.")
     from sage.rings.polynomial.polynomial_ring import (
         PolynomialRing_general as PolynomialRing_generic,
     )
@@ -27,7 +28,7 @@ def WeightedProjectiveSpace(weights, R=None, names=None):
 
     EXAMPLES::
 
-        sage: # TODO: add example of point on this space (it doens't work right now)
+        sage: # TODO: add example of point on this space (it doesn't work right now)
         sage: WP = WeightedProjectiveSpace([1, 3, 1]); WP
         Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Integer Ring
     """
@@ -290,8 +291,8 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         For internal use only. See :mod:`morphism` for details.
         """
-        from weighted_projective_homset import SchemeHomset_points_weighted_projective_field
-        return SchemeHomset_points_weighted_projective_field(*args, **kwds)
+        # raise NotImplementedError("_point_homset not implemented for weighted projective space")
+        return SchemeHomset_points_weighted_projective_ring(*args, **kwds)
 
     def point(self, v, check=True):
         """
