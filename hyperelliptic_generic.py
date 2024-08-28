@@ -1,3 +1,4 @@
+from sage.structure.richcmp import richcmp
 from sage.categories.fields import Fields
 from sage.functions.all import log
 from sage.misc.cachefunc import cached_method
@@ -33,7 +34,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         self._distinguished_point = None
 
         # TODO: is this simply genus + 1
-        self._d = max(h.degree(), (f.degree() / Integer(2)).ceil())
+        self._d = max(h.degree(), (f.degree() + 1) // 2)
 
         # Initalise the underlying curve
         A = self._projective_model.ambient_space()
@@ -41,27 +42,28 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         WeightedProjectiveCurve.__init__(self, A, X)
 
     # TODO: _richcmp_ instead?
-    def __richcmp__(self, other, op):
-        return self._projective_model.__richcmp__(other._projective_model, op)
+    def _richcmp_(self, other, op):
+        return richcmp(self._projective_model, other._projective_model, op)
 
     def _repr_(self):
+        old_gen = str(self._polynomial_ring.gen())
         f, h = self._hyperelliptic_polynomials
-
-        if h:
-            if h.is_one():
-                curve = f"y^2 + y = {f}"
-            else:
-                curve = f"y^2 + ({h})*y = {f}"
-        else:
-            curve = f"y^2 = {f}"
 
         # TODO:
         # The old class has these weird internal gens and then
         # printing polynomial rings to change output. This seems
         # dumb??
         # Will do something hacky here and we can talk about it.
-        old_gen = str(self._polynomial_ring.gen())
-        curve = curve.replace(old_gen, "x")
+        f_str, h_str = repr(f).replace(old_gen, "x"), repr(h).replace(old_gen, "x")
+
+        if h:
+            if h.is_one():
+                curve = f"y^2 + y = {f_str}"
+            else:
+                curve = f"y^2 + ({h_str})*y = {f_str}"
+        else:
+            curve = f"y^2 = {f_str}"
+
         return f"Hyperelliptic Curve over {self.base_ring()} defined by {curve}"
 
     def genus(self):
