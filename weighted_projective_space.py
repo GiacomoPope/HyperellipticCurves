@@ -16,7 +16,7 @@ try:
     # TODO: Remove this
     from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 except ImportError:
-    print("Please merge #38207 to your local Sage installation.")
+    # print("Please merge #38207 to your local Sage installation.")
     from sage.rings.polynomial.polynomial_ring import (
         PolynomialRing_general as PolynomialRing_generic,
     )
