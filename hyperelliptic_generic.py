@@ -10,11 +10,13 @@ from sage.rings.real_mpfr import RR
 
 from weighted_projective_curve import WeightedProjectiveCurve
 
+
 def is_HyperellipticCurveSmoothModel(C):
     """
     TODO
     """
     return isinstance(C, HyperellipticCurveSmoothModel_generic)
+
 
 class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
     def __init__(self, projective_model, f, h, genus):
@@ -135,6 +137,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             ValueError: not a hyperelliptic curve: singularity in the provided affine patch
         """
         from hyperelliptic_constructor import HyperellipticCurveSmoothModel
+
         f, h = self._hyperelliptic_polynomials
         fR = f.change_ring(R)
         hR = h.change_ring(R)
@@ -451,7 +454,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         try:
             x = K(x)
         except (ValueError, TypeError):
-            raise TypeError('x must be coercible into the base ring of the curve')
+            raise TypeError("x must be coercible into the base ring of the curve")
 
         # When h is zero then x is a valid coordinate if y2 is square
         if not h:
@@ -466,7 +469,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             F = R([-a, b, 1])
             return bool(F.roots())
         # Otherwise x is a point on the curve if the discriminant is a square
-        D = b*b + 4*a
+        D = b * b + 4 * a
         return D.is_square()
 
     def lift_x(self, x, all=False):
@@ -587,6 +590,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             [[z4^3 + z4^2 + z4 : z4^2 + z4 + 1 : 1], [z4^3 + z4^2 + z4 : z4^3 : 1]]
         """
         from sage.structure.element import get_coercion_model
+
         cm = get_coercion_model()
 
         f, h = self.hyperelliptic_polynomials()
@@ -598,7 +602,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             L = cm.common_parent(x.parent(), K)
             x = L(x)
         except (TypeError, ValueError):
-            raise ValueError('x must have a common parent with the base ring')
+            raise ValueError("x must have a common parent with the base ring")
 
         # First we compute the y-coordinates the given x-coordinate
         ys = []
@@ -619,9 +623,9 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
                 F = R([-a, b, 1])
                 ys = F.roots(L, multiplicities=False)
             else:
-                D = b*b + 4*a
+                D = b * b + 4 * a
                 # When D is not a square, ys will be an empty list
-                ys = [(-b+d)/2 for d in D.sqrt(all=True, extend=False)]
+                ys = [(-b + d) / 2 for d in D.sqrt(all=True, extend=False)]
 
         if ys:
             ys.sort()  # Make lifting deterministic
@@ -657,7 +661,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             raise ValueError(f"The point {P} is not an affine point of {self}")
 
         g = self.genus()
-        return P[0]/P[2], P[1]/P[2]**(g+1)
+        return P[0] / P[2], P[1] / P[2] ** (g + 1)
 
     def is_weierstrass_point(self, P):
         """
@@ -721,8 +725,8 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         if P[2] == 0:
             return self.is_ramified()
         else:
-            x,y = self.affine_coordinates(P)
-            return y == - y - h(x)
+            x, y = self.affine_coordinates(P)
+            return y == -y - h(x)
 
     def rational_weierstrass_points(self):
         """
@@ -754,14 +758,15 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
         f, h = self.hyperelliptic_polynomials()
 
-        F = h**2 + 4*f
-        affine_weierstrass_points = [self(r,-h(r)/2) for r in F.roots(multiplicities=False)]
+        F = h**2 + 4 * f
+        affine_weierstrass_points = [
+            self(r, -h(r) / 2) for r in F.roots(multiplicities=False)
+        ]
 
-        if self.is_ramified(): #the point at infinity is Weierstrass
+        if self.is_ramified():  # the point at infinity is Weierstrass
             return self.points_at_infinity() + affine_weierstrass_points
         else:
             return affine_weierstrass_points
-
 
     def hyperelliptic_involution(self, P):
         """
@@ -783,8 +788,8 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: H.hyperelliptic_involution(Q) == Q
             True
         """
-        [X,Y,Z] = P._coords
-        f,h = self.hyperelliptic_polynomials()
+        [X, Y, Z] = P._coords
+        f, h = self.hyperelliptic_polynomials()
         if Z == 0:
             if self.is_ramified():
                 return P
@@ -795,7 +800,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
                 else:
                     return points[0]
         elif Z == 1:
-            Y_inv = - Y - h(X)
+            Y_inv = -Y - h(X)
             return self.point([X, Y_inv])
         else:
             raise ValueError("the point P has to be normalized")
@@ -829,8 +834,8 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
         try:
             P0 = self.point(P0)
-        except (ValueError):
-            raise TypeError('P0 must be a point on the hyperelliptic curve')
+        except ValueError:
+            raise TypeError("P0 must be a point on the hyperelliptic curve")
         self._distinguished_point = P0
 
     def __call__(self, *args):
@@ -839,6 +844,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
     @cached_method
     def jacobian(self):
         from jacobian_generic import HyperellipticJacobian_generic
+
         return HyperellipticJacobian_generic(self)
 
     @cached_method
@@ -885,6 +891,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             [(0 : 1 : 0)]
         """
         from sage.schemes.curves.constructor import Curve
+
         f, h = self._hyperelliptic_polynomials
         R, (_, y, z) = PolynomialRing(self.base_ring(), 3, "x, y, z").objgens()
         return Curve(R(y**2 + h * y - f).homogenize(z))
@@ -956,8 +963,6 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
         proj_pts = self.projective_curve().rational_points(**kwds)
         return self.points_at_infinity() + [self(*P) for P in proj_pts if P[2] != 0]
-
-
 
     # -------------------------------------------
     # Hacky things
@@ -1068,9 +1073,11 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         f, h = self._hyperelliptic_polynomials
         if f.base_ring().characteristic() == 2:
-            raise ValueError("There are no odd degree models over a field with characteristic 2.")
+            raise ValueError(
+                "There are no odd degree models over a field with characteristic 2."
+            )
         if h:
-            f = 4*f + h**2 # move h to the right side of the equation
+            f = 4 * f + h**2  # move h to the right side of the equation
         if f.degree() % 2:
             # already odd
             return HyperellipticCurveSmoothModel(f, 0)
@@ -1134,7 +1141,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             defined by y^2 + x^10*y = x^3 + x + 2
         """
         f, h = self._hyperelliptic_polynomials
-        return f'HyperellipticCurve({f._magma_init_(magma)}, {h._magma_init_(magma)})'
+        return f"HyperellipticCurve({f._magma_init_(magma)}, {h._magma_init_(magma)})"
 
     # -------------------------------------------
     # monsky washnitzer things... TODO
@@ -1142,6 +1149,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def monsky_washnitzer_gens(self):
         import monsky_washnitzer
+
         S = monsky_washnitzer.SpecialHyperellipticQuotientRing(self)
         return S.gens()
 
@@ -1159,7 +1167,8 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             1 dx/2y
 
         """
-        import monsky_washnitzer as m_w # TODO global import
+        import monsky_washnitzer as m_w  # TODO global import
+
         S = m_w.SpecialHyperellipticQuotientRing(self)
         MW = m_w.MonskyWashnitzerDifferentialRing(S)
         return MW.invariant_differential()
@@ -1168,7 +1177,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
     # Local coordinates
     # -------------------------------------------
 
-    def local_coordinates_at_nonweierstrass(self, P, prec=20, name='t'):
+    def local_coordinates_at_nonweierstrass(self, P, prec=20, name="t"):
         """
         For a non-Weierstrass point `P = (a,b)` on the hyperelliptic
         curve `y^2 + y*h(x) = f(x)`, return `(x(t), y(t))` such that `(y(t))^2 = f(x(t))`,
@@ -1223,26 +1232,32 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         """
         if P[2] == 0:
-            raise TypeError("P = %s is a point at infinity. Use local_coordinates_at_infinity instead!" % P)
+            raise TypeError(
+                "P = %s is a point at infinity. Use local_coordinates_at_infinity instead!"
+                % P
+            )
         if self.is_weierstrass_point(P):
-            raise TypeError("P = %s is a Weierstrass point. Use local_coordinates_at_weierstrass instead!" % P)
-        f,h = self.hyperelliptic_polynomials()
-        #pol = self.hyperelliptic_polynomials()[0]
-        a,b = self.affine_coordinates(P)
+            raise TypeError(
+                "P = %s is a Weierstrass point. Use local_coordinates_at_weierstrass instead!"
+                % P
+            )
+        f, h = self.hyperelliptic_polynomials()
+        # pol = self.hyperelliptic_polynomials()[0]
+        a, b = self.affine_coordinates(P)
 
         L = PowerSeriesRing(self.base_ring(), name, default_prec=prec)
         t = L.gen()
-        K = PowerSeriesRing(L, 'x')
+        K = PowerSeriesRing(L, "x")
         f = K(f)
         h = K(h)
 
-        ft = f(t+a)
-        ht = h(t+a)
-        for _ in range((RR(log(prec,2))).ceil()):
-            b = b - (b**2 + b*ht -ft)/(2*b+ht)
-        return t+a+O(t**(prec)), b + O(t**(prec))
+        ft = f(t + a)
+        ht = h(t + a)
+        for _ in range((RR(log(prec, 2))).ceil()):
+            b = b - (b**2 + b * ht - ft) / (2 * b + ht)
+        return t + a + O(t ** (prec)), b + O(t ** (prec))
 
-    def local_coordinates_at_weierstrass(self, P, prec=20, name='t'):
+    def local_coordinates_at_weierstrass(self, P, prec=20, name="t"):
         """
         For a finite Weierstrass point P = (a,b) on the hyperelliptic
         curve `y^2 + h(x)*y = f(x)`, returns `(x(t), y(t))` such that
@@ -1298,24 +1313,30 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         """
         if P[2] == 0:
-            raise TypeError("P = %s is a point at infinity. Use local_coordinates_at_infinity instead!" % P)
+            raise TypeError(
+                "P = %s is a point at infinity. Use local_coordinates_at_infinity instead!"
+                % P
+            )
         if not self.is_weierstrass_point(P):
-            raise TypeError("P = %s is not a Weierstrass point. Use local_coordinates_at_nonweierstrass instead!" % P)
+            raise TypeError(
+                "P = %s is not a Weierstrass point. Use local_coordinates_at_nonweierstrass instead!"
+                % P
+            )
 
         L = PowerSeriesRing(self.base_ring(), name, default_prec=prec)
         t = L.gen()
-        f,h = self.hyperelliptic_polynomials()
+        f, h = self.hyperelliptic_polynomials()
         f_prime = f.derivative()
         h_prime = h.derivative()
 
-        a,b = self.affine_coordinates(P)
-        yt = (t+b).add_bigoh(prec)
+        a, b = self.affine_coordinates(P)
+        yt = (t + b).add_bigoh(prec)
         yt2 = yt**2
         for _ in range(int(log(prec, 2))):
-            a = a - (yt2 + yt*h(a) - f(a))/(yt*h_prime(a) - f_prime(a))
+            a = a - (yt2 + yt * h(a) - f(a)) / (yt * h_prime(a) - f_prime(a))
         return (a, yt)
 
-    def local_coordinates_at_infinity_ramified(self, prec=20, name='t'):
+    def local_coordinates_at_infinity_ramified(self, prec=20, name="t"):
         """
         For a hyperelliptic curve with ramified model `y^2 + h(x)*y = f(x)`,
         return `(x(t), y(t))` such that `(y(t))^2 = f(x(t))`, where
@@ -1377,28 +1398,32 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
 
         if not self.is_ramified():
-            raise TypeError("The point at infinity is not a Weierstrass point. Use local_coordinates_at_infinity_split instead!")
+            raise TypeError(
+                "The point at infinity is not a Weierstrass point. Use local_coordinates_at_infinity_split instead!"
+            )
 
         g = self.genus()
         f, h = self.hyperelliptic_polynomials()
-        #if h:
+        # if h:
         #    raise NotImplementedError("h = %s is nonzero" % h)
-        K = LaurentSeriesRing(self.base_ring(), name, default_prec=prec+2)
+        K = LaurentSeriesRing(self.base_ring(), name, default_prec=prec + 2)
         t = K.gen()
-        L = PolynomialRing(K,'x')
+        L = PolynomialRing(K, "x")
         x = L.gen()
 
         # note that P = H(1,0,0)
-        yt = x**(g+1)*t
-        w = yt**2 + h*yt - f
+        yt = x ** (g + 1) * t
+        w = yt**2 + h * yt - f
         wprime = w.derivative(x)
         xt = t**-2
-        for _ in range((RR(log(prec+2)/log(2))).ceil()):
-            xt = xt - w(xt)/wprime(xt)
-        yt = xt**(g+1)*t
-        return xt+O(t**(prec+2)) , yt+O(t**(prec+2)) #Todo: Why the prec+2 ? Not sure if this is adapted in the correct way.
+        for _ in range((RR(log(prec + 2) / log(2))).ceil()):
+            xt = xt - w(xt) / wprime(xt)
+        yt = xt ** (g + 1) * t
+        return xt + O(t ** (prec + 2)), yt + O(
+            t ** (prec + 2)
+        )  # Todo: Why the prec+2 ? Not sure if this is adapted in the correct way.
 
-    def local_coordinates_at_infinity_split(self, P, prec=20, name='t'):
+    def local_coordinates_at_infinity_split(self, P, prec=20, name="t"):
         """
         For a point at infinity P = (a:b:0) on a hyperelliptic curve with
         split model `y^2 + h(x)*y = f(x)`,
@@ -1453,32 +1478,29 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
 
         if not self.is_split():
-            raise TypeError("The point at infinity is a Weierstrass point. Use local_coordinates_at_infinity_ramified instead!")
+            raise TypeError(
+                "The point at infinity is a Weierstrass point. Use local_coordinates_at_infinity_ramified instead!"
+            )
         if not P[2] == 0:
-            raise TypeError("P = %s is not a point at infinity. Use local_coordinates_at_nonweierstrass or  local_coordinates_at_weierstrass instead!" % P)
+            raise TypeError(
+                "P = %s is not a point at infinity. Use local_coordinates_at_nonweierstrass or  local_coordinates_at_weierstrass instead!"
+                % P
+            )
 
-        g = self.genus()
-        f, h = self.hyperelliptic_polynomials()
-        fprime = f.derivative()
-        hprime = h.derivative()
-        K = LaurentSeriesRing(self.base_ring(), name, default_prec=prec+2)
+        K = LaurentSeriesRing(self.base_ring(), name, default_prec=prec + 2)
         t = K.gen()
-        L = PolynomialRing(K,'x')
-        x = L.gen()
 
         # note that P = H(a,b,0)
-        xt = P[0]/t
+        xt = P[0] / t
+        f, h = self.hyperelliptic_polynomials()
         ft = f(xt)
         ht = h(xt)
-        fpt = fprime(xt)
-        hpt = hprime(xt)
-        yt = P[1]/t**3
-        for _ in range((RR(log(prec+2)/log(2))).ceil()):
-            yt = yt - (yt**2 + ht*yt -ft)/(2*yt + ht)
-        return xt+O(t**(prec+2)) , yt+O(t**(prec+2))
+        yt = P[1] / t**3
+        for _ in range((RR(log(prec + 2) / log(2))).ceil()):
+            yt = yt - (yt**2 + ht * yt - ft) / (2 * yt + ht)
+        return xt + O(t ** (prec + 2)), yt + O(t ** (prec + 2))
 
-
-    def local_coord(self, P, prec=20, name='t'):
+    def local_coord(self, P, prec=20, name="t"):
         """
         For point `P = (a,b)` on the hyperelliptic curve
         `y^2 + y*h(x) = f(x)`, return `(x(t), y(t))` such that
