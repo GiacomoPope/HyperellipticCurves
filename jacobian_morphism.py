@@ -6,11 +6,13 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.integer import Integer
 from sage.structure.richcmp import richcmp
 
+
 class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
     r"""
     An element of a Jacobian defined over a field, i.e. in
     `J(K) = \mathrm{Pic}^0_K(C)`.
     """
+
     def __init__(self, parent, u, v, check=True):
         SchemeMorphism.__init__(self, parent)
 
@@ -227,7 +229,6 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         return R
 
     __rmul__ = __mul__
-
 
 
 # =======================================================================

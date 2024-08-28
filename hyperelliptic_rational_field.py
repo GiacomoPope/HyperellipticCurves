@@ -3,6 +3,7 @@ import hyperelliptic_generic
 import sage.rings.abc
 from sage.rings.padics.factory import Qp as pAdicField
 
+
 class HyperellipticCurveSmoothModel_rational_field(
     hyperelliptic_generic.HyperellipticCurveSmoothModel_generic
 ):
@@ -47,12 +48,15 @@ class HyperellipticCurveSmoothModel_rational_field(
             [  2*3 + O(3^2)         O(3^2)         O(3^2)    3^-1 + O(3)]
             [        O(3^2)         O(3^2)     3 + O(3^2)         O(3^2)]
         """
-        import monsky_washnitzer # TODO fix this
+        import monsky_washnitzer  # TODO fix this
+
         if isinstance(p, (sage.rings.abc.pAdicField, sage.rings.abc.pAdicRing)):
             K = p
         else:
             K = pAdicField(p, prec)
-        frob_p, _ = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self.change_ring(K))
+        frob_p, _ = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(
+            self.change_ring(K)
+        )
         return frob_p
 
     def lseries(self, prec=53):
@@ -69,9 +73,11 @@ class HyperellipticCurveSmoothModel_rational_field(
             over Rational Field defined by y^2 + (x^3 + x^2 + 1)*y = x^2 + x
         """
         from sage.lfunctions.pari import LFunction
+
         L = LFunction(lfun_genus2(self), prec=prec)
-        L.rename('PARI L-function associated to %s' % self)
+        L.rename("PARI L-function associated to %s" % self)
         return L
+
 
 #
 #
@@ -79,6 +85,7 @@ class HyperellipticCurveSmoothModel_rational_field(
 # so I have copy-pasted it here for now with the new curve...
 #
 #
+
 
 def lfun_genus2(C):
     """
@@ -119,7 +126,8 @@ def lfun_genus2(C):
     """
     from sage.libs.pari import pari
     import hyperelliptic_g2
+
     if not isinstance(C, hyperelliptic_g2.HyperellipticCurveSmoothModel_g2):
-        raise ValueError('curve must be hyperelliptic of genus 2')
+        raise ValueError("curve must be hyperelliptic of genus 2")
     P, Q = C.hyperelliptic_polynomials()
     return pari.lfungenus2(P) if not Q else pari.lfungenus2([P, Q])
