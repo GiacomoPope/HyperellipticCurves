@@ -1,0 +1,1589 @@
+Running doctests with ID 2024-08-28-13-54-39-78a79760.
+Running with SAGE_LOCAL='/home/grhkm/miniforge3/envs/sage-dev' and SAGE_VENV='/home/grhkm/miniforge3/envs/sage-dev'
+Using --optional=pip,sage
+Features to be detected: 4ti2,SAGE_SRC,benzene,bliss,buckygen,conway_polynomials,coxeter3,csdp,cvxopt,cvxopt,database_cremona_ellcurve,database_cremona_mini_ellcurve,database_cubic_hecke,database_ellcurves,database_graphs,database_jones_numfield,database_knotinfo,dvipng,ecm,fpylll,fricas,gap_package_atlasrep,gap_package_design,gap_package_grape,gap_package_guava,gap_package_hap,gap_package_polycyclic,gap_package_qpa,gap_package_quagroup,gfan,glucose,graphviz,imagemagick,ipython,jmol,jupymake,kenzo,kissat,latte_int,lrcalc_python,lrslib,mathics,matroid_database,mcqd,meataxe,mpmath,msolve,nauty,networkx,numpy,palp,pandoc,pdf2svg,pdftocairo,pexpect,phitigra,pillow,plantri,polytopes_db,polytopes_db_4d,pplpy,primecountpy,ptyprocess,pycosat,pycryptosat,pynormaliz,pyparsing,python_igraph,requests,rpy2,rubiks,sage.combinat,sage.geometry.polyhedron,sage.graphs,sage.groups,sage.libs.braiding,sage.libs.ecl,sage.libs.flint,sage.libs.gap,sage.libs.homfly,sage.libs.linbox,sage.libs.m4ri,sage.libs.ntl,sage.libs.pari,sage.libs.singular,sage.misc.cython,sage.modular,sage.modules,sage.numerical.mip,sage.plot,sage.rings.complex_double,sage.rings.finite_rings,sage.rings.function_field,sage.rings.number_field,sage.rings.padics,sage.rings.polynomial.pbori,sage.rings.real_double,sage.rings.real_mpfr,sage.sat,sage.schemes,sage.symbolic,sage_numerical_backends_coin,sagemath_doc_html,scipy,singular,sirocco,sphinx,symengine_py,sympy,tdlib,threejs,topcom
+Doctesting 6 files.
+sage -t --random-seed=295062414973155408961800453033740276954 hyperelliptic_constructor.py
+    [0 tests, 0.00 s]
+sage -t --random-seed=295062414973155408961800453033740276954 hyperelliptic_finite_field.py
+    [376 tests, 8.15 s]
+sage -t --random-seed=295062414973155408961800453033740276954 hyperelliptic_g2.py
+    [27 tests, 0.27 s]
+sage -t --random-seed=295062414973155408961800453033740276954 hyperelliptic_generic.py
+**********************************************************************
+File "hyperelliptic_generic.py", line 1158, in hyperelliptic_generic.HyperellipticCurveSmoothModel_generic.invariant_differential
+Failed example:
+    C.invariant_differential()
+Expected:
+    1 dx/2y
+Got:
+    doctest:warning
+      File "<doctest hyperelliptic_generic.HyperellipticCurveSmoothModel_generic.invariant_differential[3]>", line 1, in <module>
+        C.invariant_differential()
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_generic.py", line 1163, in invariant_differential
+        S = m_w.SpecialHyperellipticQuotientRing(self)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2408, in __init__
+        if is_EllipticCurve(Q):
+      File "/home/grhkm/git/sage/src/sage/schemes/elliptic_curves/ell_generic.py", line 109, in is_EllipticCurve
+        deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+    See https://github.com/sagemath/sage/issues/38022 for details.
+    doctest:warning
+      File "<doctest hyperelliptic_generic.HyperellipticCurveSmoothModel_generic.invariant_differential[3]>", line 1, in <module>
+        C.invariant_differential()
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_generic.py", line 1163, in invariant_differential
+        S = m_w.SpecialHyperellipticQuotientRing(self)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2453, in __init__
+        self._dQ = Q.derivative().change_ring(self)(self._x)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2075, in _mul_
+        return P.element_class(P, v[0:n])
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1890, in __init__
+        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 138, in deprecation_cython
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_FreeModuleElement is deprecated; use 'isinstance(..., FreeModuleElement)' instead.
+    See https://github.com/sagemath/sage/issues/38184 for details.
+    1 dx/2y
+**********************************************************************
+1 item had failures:
+   1 of   5 in hyperelliptic_generic.HyperellipticCurveSmoothModel_generic.invariant_differential
+    [307 tests, 1 failure, 2.64 s]
+sage -t --random-seed=295062414973155408961800453033740276954 hyperelliptic_padic_field.py
+**********************************************************************
+File "hyperelliptic_padic_field.py", line 571, in hyperelliptic_padic_field.coleman_integrals_on_basis
+Failed example:
+    C.coleman_integrals_on_basis(P, Q)
+Expected:
+    (9*11^2 + 7*11^3 + 5*11^4 + O(11^5), 11 + 3*11^2 + 7*11^3 + 11^4 + O(11^5), 10*11 + 11^2 + 5*11^3 + 5*11^4 + O(11^5), 3 + 9*11^2 + 6*11^3 + 11^4 + O(11^5))
+Got:
+    doctest:warning
+      File "<doctest hyperelliptic_padic_field.coleman_integrals_on_basis[6]>", line 1, in <module>
+        C.coleman_integrals_on_basis(P, Q)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_padic_field.py", line 714, in coleman_integrals_on_basis
+        M_frob, forms = self._frob_calc = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1818, in matrix_of_frobenius_hyperelliptic
+        S = SpecialHyperellipticQuotientRing(Q, extra_prec_ring, True)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2408, in __init__
+        if is_EllipticCurve(Q):
+      File "/home/grhkm/git/sage/src/sage/schemes/elliptic_curves/ell_generic.py", line 109, in is_EllipticCurve
+        deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+    See https://github.com/sagemath/sage/issues/38022 for details.
+    doctest:warning
+      File "<doctest hyperelliptic_padic_field.coleman_integrals_on_basis[6]>", line 1, in <module>
+        C.coleman_integrals_on_basis(P, Q)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_padic_field.py", line 714, in coleman_integrals_on_basis
+        M_frob, forms = self._frob_calc = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1818, in matrix_of_frobenius_hyperelliptic
+        S = SpecialHyperellipticQuotientRing(Q, extra_prec_ring, True)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2453, in __init__
+        self._dQ = Q.derivative().change_ring(self)(self._x)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2075, in _mul_
+        return P.element_class(P, v[0:n])
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1890, in __init__
+        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 138, in deprecation_cython
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_FreeModuleElement is deprecated; use 'isinstance(..., FreeModuleElement)' instead.
+    See https://github.com/sagemath/sage/issues/38184 for details.
+    doctest:warning
+      File "<doctest hyperelliptic_padic_field.coleman_integrals_on_basis[6]>", line 1, in <module>
+        C.coleman_integrals_on_basis(P, Q)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_padic_field.py", line 714, in coleman_integrals_on_basis
+        M_frob, forms = self._frob_calc = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1825, in matrix_of_frobenius_hyperelliptic
+        rational_S = S.change_ring(QQ)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2513, in change_ring
+        is_LaurentSeriesRing(self._series_ring))
+      File "/home/grhkm/git/sage/src/sage/rings/laurent_series_ring.py", line 81, in is_LaurentSeriesRing
+        deprecation(38290,
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_LaurentSeriesRing is deprecated; use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
+    See https://github.com/sagemath/sage/issues/38290 for details.
+    (9*11^2 + 7*11^3 + 5*11^4 + O(11^5), 11 + 3*11^2 + 7*11^3 + 11^4 + O(11^5), 10*11 + 11^2 + 5*11^3 + 5*11^4 + O(11^5), 3 + 9*11^2 + 6*11^3 + 11^4 + O(11^5))
+**********************************************************************
+1 item had failures:
+   1 of  33 in hyperelliptic_padic_field.coleman_integrals_on_basis
+    [364 tests, 1 failure, 9.81 s]
+sage -t --random-seed=295062414973155408961800453033740276954 hyperelliptic_rational_field.py
+**********************************************************************
+File "hyperelliptic_rational_field.py", line 35, in hyperelliptic_rational_field.matrix_of_frobenius
+Failed example:
+    H.matrix_of_frobenius(K)
+Expected:
+    [            4*5 + O(5^3)       5 + 2*5^2 + O(5^3) 2 + 3*5 + 2*5^2 + O(5^3)     2 + 5 + 5^2 + O(5^3)]
+    [      3*5 + 5^2 + O(5^3)             3*5 + O(5^3)             4*5 + O(5^3)         2 + 5^2 + O(5^3)]
+    [    4*5 + 4*5^2 + O(5^3)     3*5 + 2*5^2 + O(5^3)       5 + 3*5^2 + O(5^3)     2*5 + 2*5^2 + O(5^3)]
+    [            5^2 + O(5^3)       5 + 4*5^2 + O(5^3)     4*5 + 3*5^2 + O(5^3)             2*5 + O(5^3)]
+Got:
+    doctest:warning
+      File "<doctest hyperelliptic_rational_field.matrix_of_frobenius[4]>", line 1, in <module>
+        H.matrix_of_frobenius(K)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_rational_field.py", line 55, in matrix_of_frobenius
+        frob_p, _ = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self.change_ring(K))
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1818, in matrix_of_frobenius_hyperelliptic
+        S = SpecialHyperellipticQuotientRing(Q, extra_prec_ring, True)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2408, in __init__
+        if is_EllipticCurve(Q):
+      File "/home/grhkm/git/sage/src/sage/schemes/elliptic_curves/ell_generic.py", line 109, in is_EllipticCurve
+        deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+    See https://github.com/sagemath/sage/issues/38022 for details.
+    doctest:warning
+      File "<doctest hyperelliptic_rational_field.matrix_of_frobenius[4]>", line 1, in <module>
+        H.matrix_of_frobenius(K)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_rational_field.py", line 55, in matrix_of_frobenius
+        frob_p, _ = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self.change_ring(K))
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1818, in matrix_of_frobenius_hyperelliptic
+        S = SpecialHyperellipticQuotientRing(Q, extra_prec_ring, True)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2453, in __init__
+        self._dQ = Q.derivative().change_ring(self)(self._x)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2075, in _mul_
+        return P.element_class(P, v[0:n])
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1890, in __init__
+        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 138, in deprecation_cython
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_FreeModuleElement is deprecated; use 'isinstance(..., FreeModuleElement)' instead.
+    See https://github.com/sagemath/sage/issues/38184 for details.
+    doctest:warning
+      File "<doctest hyperelliptic_rational_field.matrix_of_frobenius[4]>", line 1, in <module>
+        H.matrix_of_frobenius(K)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_rational_field.py", line 55, in matrix_of_frobenius
+        frob_p, _ = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self.change_ring(K))
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1825, in matrix_of_frobenius_hyperelliptic
+        rational_S = S.change_ring(QQ)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2513, in change_ring
+        is_LaurentSeriesRing(self._series_ring))
+      File "/home/grhkm/git/sage/src/sage/rings/laurent_series_ring.py", line 81, in is_LaurentSeriesRing
+        deprecation(38290,
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_LaurentSeriesRing is deprecated; use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
+    See https://github.com/sagemath/sage/issues/38290 for details.
+    [            4*5 + O(5^3)       5 + 2*5^2 + O(5^3) 2 + 3*5 + 2*5^2 + O(5^3)     2 + 5 + 5^2 + O(5^3)]
+    [      3*5 + 5^2 + O(5^3)             3*5 + O(5^3)             4*5 + O(5^3)         2 + 5^2 + O(5^3)]
+    [    4*5 + 4*5^2 + O(5^3)     3*5 + 2*5^2 + O(5^3)       5 + 3*5^2 + O(5^3)     2*5 + 2*5^2 + O(5^3)]
+    [            5^2 + O(5^3)       5 + 4*5^2 + O(5^3)     4*5 + 3*5^2 + O(5^3)             2*5 + O(5^3)]
+**********************************************************************
+1 item had failures:
+   1 of   7 in hyperelliptic_rational_field.matrix_of_frobenius
+    [22 tests, 1 failure, 0.37 s]
+----------------------------------------------------------------------
+sage -t --random-seed=295062414973155408961800453033740276954 hyperelliptic_generic.py  # 1 doctest failed
+sage -t --random-seed=295062414973155408961800453033740276954 hyperelliptic_padic_field.py  # 1 doctest failed
+sage -t --random-seed=295062414973155408961800453033740276954 hyperelliptic_rational_field.py  # 1 doctest failed
+----------------------------------------------------------------------
+Total time for all tests: 21.5 seconds
+    cpu time: 20.5 seconds
+    cumulative wall time: 21.2 seconds
+Features detected for doctesting: sage.rings.finite_rings,sage.rings.number_field,sage.rings.padics
+Running doctests with ID 2024-08-28-13-56-51-6d350c18.
+Running with SAGE_LOCAL='/home/grhkm/miniforge3/envs/sage-dev' and SAGE_VENV='/home/grhkm/miniforge3/envs/sage-dev'
+Using --optional=pip,sage
+Features to be detected: 4ti2,SAGE_SRC,benzene,bliss,buckygen,conway_polynomials,coxeter3,csdp,cvxopt,cvxopt,database_cremona_ellcurve,database_cremona_mini_ellcurve,database_cubic_hecke,database_ellcurves,database_graphs,database_jones_numfield,database_knotinfo,dvipng,ecm,fpylll,fricas,gap_package_atlasrep,gap_package_design,gap_package_grape,gap_package_guava,gap_package_hap,gap_package_polycyclic,gap_package_qpa,gap_package_quagroup,gfan,glucose,graphviz,imagemagick,ipython,jmol,jupymake,kenzo,kissat,latte_int,lrcalc_python,lrslib,mathics,matroid_database,mcqd,meataxe,mpmath,msolve,nauty,networkx,numpy,palp,pandoc,pdf2svg,pdftocairo,pexpect,phitigra,pillow,plantri,polytopes_db,polytopes_db_4d,pplpy,primecountpy,ptyprocess,pycosat,pycryptosat,pynormaliz,pyparsing,python_igraph,requests,rpy2,rubiks,sage.combinat,sage.geometry.polyhedron,sage.graphs,sage.groups,sage.libs.braiding,sage.libs.ecl,sage.libs.flint,sage.libs.gap,sage.libs.homfly,sage.libs.linbox,sage.libs.m4ri,sage.libs.ntl,sage.libs.pari,sage.libs.singular,sage.misc.cython,sage.modular,sage.modules,sage.numerical.mip,sage.plot,sage.rings.complex_double,sage.rings.finite_rings,sage.rings.function_field,sage.rings.number_field,sage.rings.padics,sage.rings.polynomial.pbori,sage.rings.real_double,sage.rings.real_mpfr,sage.sat,sage.schemes,sage.symbolic,sage_numerical_backends_coin,sagemath_doc_html,scipy,singular,sirocco,sphinx,symengine_py,sympy,tdlib,threejs,topcom
+Doctesting 19 files.
+sage -t --random-seed=309425862888178564065200512328699977999 hyperelliptic_constructor.py
+    [0 tests, 0.00 s]
+sage -t --random-seed=309425862888178564065200512328699977999 hyperelliptic_finite_field.py
+    [376 tests, 6.89 s]
+sage -t --random-seed=309425862888178564065200512328699977999 hyperelliptic_g2.py
+    [27 tests, 0.22 s]
+sage -t --random-seed=309425862888178564065200512328699977999 hyperelliptic_generic.py
+**********************************************************************
+File "hyperelliptic_generic.py", line 1158, in hyperelliptic_generic.HyperellipticCurveSmoothModel_generic.invariant_differential
+Failed example:
+    C.invariant_differential()
+Expected:
+    1 dx/2y
+Got:
+    doctest:warning
+      File "<doctest hyperelliptic_generic.HyperellipticCurveSmoothModel_generic.invariant_differential[3]>", line 1, in <module>
+        C.invariant_differential()
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_generic.py", line 1163, in invariant_differential
+        S = m_w.SpecialHyperellipticQuotientRing(self)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2408, in __init__
+        if is_EllipticCurve(Q):
+      File "/home/grhkm/git/sage/src/sage/schemes/elliptic_curves/ell_generic.py", line 109, in is_EllipticCurve
+        deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+    See https://github.com/sagemath/sage/issues/38022 for details.
+    doctest:warning
+      File "<doctest hyperelliptic_generic.HyperellipticCurveSmoothModel_generic.invariant_differential[3]>", line 1, in <module>
+        C.invariant_differential()
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_generic.py", line 1163, in invariant_differential
+        S = m_w.SpecialHyperellipticQuotientRing(self)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2453, in __init__
+        self._dQ = Q.derivative().change_ring(self)(self._x)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2075, in _mul_
+        return P.element_class(P, v[0:n])
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1890, in __init__
+        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 138, in deprecation_cython
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_FreeModuleElement is deprecated; use 'isinstance(..., FreeModuleElement)' instead.
+    See https://github.com/sagemath/sage/issues/38184 for details.
+    1 dx/2y
+**********************************************************************
+1 item had failures:
+   1 of   5 in hyperelliptic_generic.HyperellipticCurveSmoothModel_generic.invariant_differential
+    [307 tests, 1 failure, 2.29 s]
+sage -t --random-seed=309425862888178564065200512328699977999 hyperelliptic_padic_field.py
+**********************************************************************
+File "hyperelliptic_padic_field.py", line 571, in hyperelliptic_padic_field.coleman_integrals_on_basis
+Failed example:
+    C.coleman_integrals_on_basis(P, Q)
+Expected:
+    (9*11^2 + 7*11^3 + 5*11^4 + O(11^5), 11 + 3*11^2 + 7*11^3 + 11^4 + O(11^5), 10*11 + 11^2 + 5*11^3 + 5*11^4 + O(11^5), 3 + 9*11^2 + 6*11^3 + 11^4 + O(11^5))
+Got:
+    doctest:warning
+      File "<doctest hyperelliptic_padic_field.coleman_integrals_on_basis[6]>", line 1, in <module>
+        C.coleman_integrals_on_basis(P, Q)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_padic_field.py", line 714, in coleman_integrals_on_basis
+        M_frob, forms = self._frob_calc = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1818, in matrix_of_frobenius_hyperelliptic
+        S = SpecialHyperellipticQuotientRing(Q, extra_prec_ring, True)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2408, in __init__
+        if is_EllipticCurve(Q):
+      File "/home/grhkm/git/sage/src/sage/schemes/elliptic_curves/ell_generic.py", line 109, in is_EllipticCurve
+        deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+    See https://github.com/sagemath/sage/issues/38022 for details.
+    doctest:warning
+      File "<doctest hyperelliptic_padic_field.coleman_integrals_on_basis[6]>", line 1, in <module>
+        C.coleman_integrals_on_basis(P, Q)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_padic_field.py", line 714, in coleman_integrals_on_basis
+        M_frob, forms = self._frob_calc = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1818, in matrix_of_frobenius_hyperelliptic
+        S = SpecialHyperellipticQuotientRing(Q, extra_prec_ring, True)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2453, in __init__
+        self._dQ = Q.derivative().change_ring(self)(self._x)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2075, in _mul_
+        return P.element_class(P, v[0:n])
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1890, in __init__
+        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 138, in deprecation_cython
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_FreeModuleElement is deprecated; use 'isinstance(..., FreeModuleElement)' instead.
+    See https://github.com/sagemath/sage/issues/38184 for details.
+    doctest:warning
+      File "<doctest hyperelliptic_padic_field.coleman_integrals_on_basis[6]>", line 1, in <module>
+        C.coleman_integrals_on_basis(P, Q)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_padic_field.py", line 714, in coleman_integrals_on_basis
+        M_frob, forms = self._frob_calc = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1825, in matrix_of_frobenius_hyperelliptic
+        rational_S = S.change_ring(QQ)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2513, in change_ring
+        is_LaurentSeriesRing(self._series_ring))
+      File "/home/grhkm/git/sage/src/sage/rings/laurent_series_ring.py", line 81, in is_LaurentSeriesRing
+        deprecation(38290,
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_LaurentSeriesRing is deprecated; use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
+    See https://github.com/sagemath/sage/issues/38290 for details.
+    (9*11^2 + 7*11^3 + 5*11^4 + O(11^5), 11 + 3*11^2 + 7*11^3 + 11^4 + O(11^5), 10*11 + 11^2 + 5*11^3 + 5*11^4 + O(11^5), 3 + 9*11^2 + 6*11^3 + 11^4 + O(11^5))
+**********************************************************************
+1 item had failures:
+   1 of  33 in hyperelliptic_padic_field.coleman_integrals_on_basis
+    [364 tests, 1 failure, 9.55 s]
+sage -t --random-seed=309425862888178564065200512328699977999 hyperelliptic_rational_field.py
+**********************************************************************
+File "hyperelliptic_rational_field.py", line 35, in hyperelliptic_rational_field.matrix_of_frobenius
+Failed example:
+    H.matrix_of_frobenius(K)
+Expected:
+    [            4*5 + O(5^3)       5 + 2*5^2 + O(5^3) 2 + 3*5 + 2*5^2 + O(5^3)     2 + 5 + 5^2 + O(5^3)]
+    [      3*5 + 5^2 + O(5^3)             3*5 + O(5^3)             4*5 + O(5^3)         2 + 5^2 + O(5^3)]
+    [    4*5 + 4*5^2 + O(5^3)     3*5 + 2*5^2 + O(5^3)       5 + 3*5^2 + O(5^3)     2*5 + 2*5^2 + O(5^3)]
+    [            5^2 + O(5^3)       5 + 4*5^2 + O(5^3)     4*5 + 3*5^2 + O(5^3)             2*5 + O(5^3)]
+Got:
+    doctest:warning
+      File "<doctest hyperelliptic_rational_field.matrix_of_frobenius[4]>", line 1, in <module>
+        H.matrix_of_frobenius(K)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_rational_field.py", line 55, in matrix_of_frobenius
+        frob_p, _ = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self.change_ring(K))
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1818, in matrix_of_frobenius_hyperelliptic
+        S = SpecialHyperellipticQuotientRing(Q, extra_prec_ring, True)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2408, in __init__
+        if is_EllipticCurve(Q):
+      File "/home/grhkm/git/sage/src/sage/schemes/elliptic_curves/ell_generic.py", line 109, in is_EllipticCurve
+        deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+    See https://github.com/sagemath/sage/issues/38022 for details.
+    doctest:warning
+      File "<doctest hyperelliptic_rational_field.matrix_of_frobenius[4]>", line 1, in <module>
+        H.matrix_of_frobenius(K)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_rational_field.py", line 55, in matrix_of_frobenius
+        frob_p, _ = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self.change_ring(K))
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1818, in matrix_of_frobenius_hyperelliptic
+        S = SpecialHyperellipticQuotientRing(Q, extra_prec_ring, True)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2453, in __init__
+        self._dQ = Q.derivative().change_ring(self)(self._x)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2075, in _mul_
+        return P.element_class(P, v[0:n])
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1890, in __init__
+        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 138, in deprecation_cython
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_FreeModuleElement is deprecated; use 'isinstance(..., FreeModuleElement)' instead.
+    See https://github.com/sagemath/sage/issues/38184 for details.
+    doctest:warning
+      File "<doctest hyperelliptic_rational_field.matrix_of_frobenius[4]>", line 1, in <module>
+        H.matrix_of_frobenius(K)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_rational_field.py", line 55, in matrix_of_frobenius
+        frob_p, _ = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self.change_ring(K))
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1825, in matrix_of_frobenius_hyperelliptic
+        rational_S = S.change_ring(QQ)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2513, in change_ring
+        is_LaurentSeriesRing(self._series_ring))
+      File "/home/grhkm/git/sage/src/sage/rings/laurent_series_ring.py", line 81, in is_LaurentSeriesRing
+        deprecation(38290,
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_LaurentSeriesRing is deprecated; use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
+    See https://github.com/sagemath/sage/issues/38290 for details.
+    [            4*5 + O(5^3)       5 + 2*5^2 + O(5^3) 2 + 3*5 + 2*5^2 + O(5^3)     2 + 5 + 5^2 + O(5^3)]
+    [      3*5 + 5^2 + O(5^3)             3*5 + O(5^3)             4*5 + O(5^3)         2 + 5^2 + O(5^3)]
+    [    4*5 + 4*5^2 + O(5^3)     3*5 + 2*5^2 + O(5^3)       5 + 3*5^2 + O(5^3)     2*5 + 2*5^2 + O(5^3)]
+    [            5^2 + O(5^3)       5 + 4*5^2 + O(5^3)     4*5 + 3*5^2 + O(5^3)             2*5 + O(5^3)]
+**********************************************************************
+1 item had failures:
+   1 of   7 in hyperelliptic_rational_field.matrix_of_frobenius
+    [22 tests, 1 failure, 0.36 s]
+sage -t --random-seed=309425862888178564065200512328699977999 jacobian_g2_generic.py
+    [0 tests, 0.00 s]
+sage -t --random-seed=309425862888178564065200512328699977999 jacobian_g2_homset_inert.py
+    [0 tests, 0.00 s]
+sage -t --random-seed=309425862888178564065200512328699977999 jacobian_g2_homset_ramified.py
+    [0 tests, 0.00 s]
+sage -t --random-seed=309425862888178564065200512328699977999 jacobian_g2_homset_split.py
+    [0 tests, 0.00 s]
+sage -t --random-seed=309425862888178564065200512328699977999 jacobian_generic.py
+    [0 tests, 0.00 s]
+sage -t --random-seed=309425862888178564065200512328699977999 jacobian_homset_generic.py
+**********************************************************************
+File "jacobian_homset_generic.py", line 79, in jacobian_homset_generic.HyperellipticJacobianHomset.cardinality
+Failed example:
+    J2 = H(GF((5, 2)))
+Exception raised:
+    Traceback (most recent call last):
+      File "sage/misc/cachefunc.pyx", line 1953, in sage.misc.cachefunc.CachedMethodCaller.__call__
+        return cache[k]
+    KeyError: ((Finite Field in z2 of size 5^2,), ())
+
+    During handling of the above exception, another exception occurred:
+
+    Traceback (most recent call last):
+      File "/home/grhkm/git/sage/src/sage/doctest/forker.py", line 715, in _run
+        self.compile_and_execute(example, compiler, test.globs)
+      File "/home/grhkm/git/sage/src/sage/doctest/forker.py", line 1145, in compile_and_execute
+        exec(compiled, globs)
+      File "<doctest jacobian_homset_generic.HyperellipticJacobianHomset.cardinality[5]>", line 1, in <module>
+        J2 = H(GF((Integer(5), Integer(2))))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_generic.py", line 837, in __call__
+        return self.point(args)
+               ^^^^^^^^^^^^^^^^
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_generic.py", line 206, in point
+        return self.point_homset(coords[0])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "sage/misc/cachefunc.pyx", line 1958, in sage.misc.cachefunc.CachedMethodCaller.__call__
+        w = self._instance_call(*args, **kwds)
+      File "sage/misc/cachefunc.pyx", line 1834, in sage.misc.cachefunc.CachedMethodCaller._instance_call
+        return self.f(self._instance, *args, **kwds)
+      File "/home/grhkm/git/sage/src/sage/schemes/generic/scheme.py", line 306, in point_homset
+        return SchemeHomset(SpecS, self, as_point_homset=True)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "sage/structure/factory.pyx", line 373, in sage.structure.factory.UniqueFactory.__call__
+        return self.get_object(version, key, kwds)
+      File "sage/structure/factory.pyx", line 416, in sage.structure.factory.UniqueFactory.get_object
+        obj = self.create_object(version, key, **extra_args)
+      File "/home/grhkm/git/sage/src/sage/schemes/generic/homset.py", line 218, in create_object
+        return Y._point_homset(X, Y, category=category, base=base_ring, **extra_args)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_generic.py", line 151, in _point_homset
+        raise NotImplementedError
+    NotImplementedError
+**********************************************************************
+File "jacobian_homset_generic.py", line 80, in jacobian_homset_generic.HyperellipticJacobianHomset.cardinality
+Failed example:
+    J2.count_points(5) == J.count_points(10)[1::2]
+Exception raised:
+    Traceback (most recent call last):
+      File "/home/grhkm/git/sage/src/sage/doctest/forker.py", line 715, in _run
+        self.compile_and_execute(example, compiler, test.globs)
+      File "/home/grhkm/git/sage/src/sage/doctest/forker.py", line 1145, in compile_and_execute
+        exec(compiled, globs)
+      File "<doctest jacobian_homset_generic.HyperellipticJacobianHomset.cardinality[6]>", line 1, in <module>
+        J2.count_points(Integer(5)) == J.count_points(Integer(10))[Integer(1)::Integer(2)]
+        ^^
+    NameError: name 'J2' is not defined
+**********************************************************************
+1 item had failures:
+   2 of   8 in jacobian_homset_generic.HyperellipticJacobianHomset.cardinality
+    [62 tests, 2 failures, 1.45 s]
+sage -t --random-seed=309425862888178564065200512328699977999 jacobian_homset_inert.py
+    [0 tests, 0.00 s]
+sage -t --random-seed=309425862888178564065200512328699977999 jacobian_homset_ramified.py
+    [0 tests, 0.00 s]
+sage -t --random-seed=309425862888178564065200512328699977999 jacobian_homset_split.py
+    [23 tests, 0.11 s]
+sage -t --random-seed=309425862888178564065200512328699977999 jacobian_morphism.py
+**********************************************************************
+File "jacobian_morphism.py", line 84, in jacobian_morphism.MumfordDivisorClassField.is_zero
+Failed example:
+    J = H.jacobian(); J
+Expected nothing
+Got:
+    Jacobian of Hyperelliptic Curve over Finite Field of size 5 defined by y^2 = x^5 + 3*x + 1
+**********************************************************************
+File "jacobian_morphism.py", line 115, in jacobian_morphism.MumfordDivisorClassField.bool
+Failed example:
+    J = H.jacobian(); J
+Expected nothing
+Got:
+    Jacobian of Hyperelliptic Curve over Finite Field of size 23 defined by y^2 = x^7 + x + 1
+**********************************************************************
+2 items had failures:
+   1 of  11 in jacobian_morphism.MumfordDivisorClassField.bool
+   1 of   5 in jacobian_morphism.MumfordDivisorClassField.is_zero
+    [39 tests, 2 failures, 0.21 s]
+sage -t --random-seed=309425862888178564065200512328699977999 mestre.py
+    [23 tests, 0.33 s]
+sage -t --random-seed=309425862888178564065200512328699977999 monsky_washnitzer.py
+**********************************************************************
+File "monsky_washnitzer.py", line 110, in monsky_washnitzer.SpecialCubicQuotientRingElement.__init__
+Failed example:
+    SpecialCubicQuotientRingElement(R, 2, 3, 4)
+Exception raised:
+    Traceback (most recent call last):
+      File "/home/grhkm/git/sage/src/sage/doctest/forker.py", line 715, in _run
+        self.compile_and_execute(example, compiler, test.globs)
+      File "/home/grhkm/git/sage/src/sage/doctest/forker.py", line 1145, in compile_and_execute
+        exec(compiled, globs)
+      File "<doctest monsky_washnitzer.SpecialCubicQuotientRingElement.__init__[3]>", line 1, in <module>
+        SpecialCubicQuotientRingElement(R, Integer(2), Integer(3), Integer(4))
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 123, in __init__
+        raise TypeError(f"parent (={parent}) must be a SpecialCubicQuotientRing")
+    TypeError: parent (=SpecialCubicQuotientRing over Ring of integers modulo 125 with polynomial T = x^3 + 124*x + 94) must be a SpecialCubicQuotientRing
+**********************************************************************
+File "monsky_washnitzer.py", line 1861, in monsky_washnitzer.SpecialHyperellipticQuotientElement
+Failed example:
+    x,y = E.monsky_washnitzer_gens()
+Expected nothing
+Got:
+    doctest:warning
+      File "<doctest monsky_washnitzer.SpecialHyperellipticQuotientElement[3]>", line 1, in <module>
+        x,y = E.monsky_washnitzer_gens()
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_generic.py", line 1145, in monsky_washnitzer_gens
+        S = monsky_washnitzer.SpecialHyperellipticQuotientRing(self)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2408, in __init__
+        if is_EllipticCurve(Q):
+      File "/home/grhkm/git/sage/src/sage/schemes/elliptic_curves/ell_generic.py", line 109, in is_EllipticCurve
+        deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+    See https://github.com/sagemath/sage/issues/38022 for details.
+    doctest:warning
+      File "<doctest monsky_washnitzer.SpecialHyperellipticQuotientElement[3]>", line 1, in <module>
+        x,y = E.monsky_washnitzer_gens()
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_generic.py", line 1145, in monsky_washnitzer_gens
+        S = monsky_washnitzer.SpecialHyperellipticQuotientRing(self)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2453, in __init__
+        self._dQ = Q.derivative().change_ring(self)(self._x)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2075, in _mul_
+        return P.element_class(P, v[0:n])
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1890, in __init__
+        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 138, in deprecation_cython
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_FreeModuleElement is deprecated; use 'isinstance(..., FreeModuleElement)' instead.
+    See https://github.com/sagemath/sage/issues/38184 for details.
+**********************************************************************
+File "monsky_washnitzer.py", line 1924, in monsky_washnitzer.SpecialHyperellipticQuotientElement.change_ring
+Failed example:
+    z = MW(x + x**2 + y - 77)
+Expected nothing
+Got:
+    doctest:warning
+      File "<doctest monsky_washnitzer.SpecialHyperellipticQuotientElement.change_ring[5]>", line 1, in <module>
+        z = MW(x + x**Integer(2) + y - Integer(77))
+      File "/home/grhkm/git/sage/src/sage/categories/monoids.py", line 307, in _pow_int
+        return generic_power(self, n)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2075, in _mul_
+        return P.element_class(P, v[0:n])
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1890, in __init__
+        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 138, in deprecation_cython
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_FreeModuleElement is deprecated; use 'isinstance(..., FreeModuleElement)' instead.
+    See https://github.com/sagemath/sage/issues/38184 for details.
+**********************************************************************
+File "monsky_washnitzer.py", line 1925, in monsky_washnitzer.SpecialHyperellipticQuotientElement.change_ring
+Failed example:
+    z.change_ring(AA).parent()                                            # needs sage.rings.number_field
+Expected:
+    SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 36*x + 1)
+    over Algebraic Real Field
+Got:
+    doctest:warning
+      File "<doctest monsky_washnitzer.SpecialHyperellipticQuotientElement.change_ring[6]>", line 1, in <module>
+        z.change_ring(AA).parent()                                            # needs sage.rings.number_field
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1929, in change_ring
+        return self.parent().change_ring(R)(self)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2513, in change_ring
+        is_LaurentSeriesRing(self._series_ring))
+      File "/home/grhkm/git/sage/src/sage/rings/laurent_series_ring.py", line 81, in is_LaurentSeriesRing
+        deprecation(38290,
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_LaurentSeriesRing is deprecated; use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
+    See https://github.com/sagemath/sage/issues/38290 for details.
+    doctest:warning
+      File "<doctest monsky_washnitzer.SpecialHyperellipticQuotientElement.change_ring[6]>", line 1, in <module>
+        z.change_ring(AA).parent()                                            # needs sage.rings.number_field
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1929, in change_ring
+        return self.parent().change_ring(R)(self)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2512, in change_ring
+        return SpecialHyperellipticQuotientRing(self._Q.change_ring(R), R,
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2408, in __init__
+        if is_EllipticCurve(Q):
+      File "/home/grhkm/git/sage/src/sage/schemes/elliptic_curves/ell_generic.py", line 109, in is_EllipticCurve
+        deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+    See https://github.com/sagemath/sage/issues/38022 for details.
+    doctest:warning
+      File "<doctest monsky_washnitzer.SpecialHyperellipticQuotientElement.change_ring[6]>", line 1, in <module>
+        z.change_ring(AA).parent()                                            # needs sage.rings.number_field
+      File "/home/grhkm/git/sage/src/sage/repl/rich_output/display_manager.py", line 799, in displayhook
+        plain_text, rich_output = self._rich_output_formatter(obj, dict())
+      File "/home/grhkm/git/sage/src/sage/repl/rich_output/display_manager.py", line 628, in _rich_output_formatter
+        plain_text = self._backend.plain_text_formatter(obj, **rich_repr_kwds)
+      File "/home/grhkm/git/sage/src/sage/repl/rich_output/backend_base.py", line 318, in plain_text_formatter
+        plain_text = self._apply_pretty_printer(SagePrettyPrinter, obj)
+      File "/home/grhkm/git/sage/src/sage/repl/rich_output/backend_base.py", line 263, in _apply_pretty_printer
+        printer.pretty(obj)
+      File "/home/grhkm/git/sage/src/sage/repl/display/pretty_print.py", line 142, in pretty
+        ok = representation(obj, self, cycle)
+      File "/home/grhkm/git/sage/src/sage/repl/display/fancy_repr.py", line 269, in __call__
+        output = repr(obj)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2472, in _repr_
+        y_inverse = ",y^-1" if is_LaurentSeriesRing(self._series_ring) else ""
+      File "/home/grhkm/git/sage/src/sage/rings/laurent_series_ring.py", line 81, in is_LaurentSeriesRing
+        deprecation(38290,
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_LaurentSeriesRing is deprecated; use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
+    See https://github.com/sagemath/sage/issues/38290 for details.
+    SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 36*x + 1) over Algebraic Real Field
+**********************************************************************
+File "monsky_washnitzer.py", line 2508, in monsky_washnitzer.SpecialHyperellipticQuotientRing.change_ring
+Failed example:
+    x.parent().change_ring(ZZ)
+Exception raised:
+    Traceback (most recent call last):
+      File "sage/misc/cachefunc.pyx", line 1002, in sage.misc.cachefunc.CachedFunction.__call__
+        return self.cache[k]
+      File "sage/misc/weak_dict.pyx", line 709, in sage.misc.weak_dict.WeakValueDictionary.__getitem__
+        raise KeyError(k)
+    KeyError: ((<class 'monsky_washnitzer.SpecialHyperellipticQuotientRing'>, x^5 - 3*x + 1, Integer Ring, True), ())
+
+    During handling of the above exception, another exception occurred:
+
+    Traceback (most recent call last):
+      File "/home/grhkm/git/sage/src/sage/doctest/forker.py", line 715, in _run
+        self.compile_and_execute(example, compiler, test.globs)
+      File "/home/grhkm/git/sage/src/sage/doctest/forker.py", line 1145, in compile_and_execute
+        exec(compiled, globs)
+      File "<doctest monsky_washnitzer.SpecialHyperellipticQuotientRing.change_ring[4]>", line 1, in <module>
+        x.parent().change_ring(ZZ)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2512, in change_ring
+        return SpecialHyperellipticQuotientRing(self._Q.change_ring(R), R,
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "sage/misc/classcall_metaclass.pyx", line 321, in sage.misc.classcall_metaclass.ClasscallMetaclass.__call__
+        return cls.classcall(cls, *args, **kwds)
+      File "sage/misc/cachefunc.pyx", line 1007, in sage.misc.cachefunc.CachedFunction.__call__
+        w = self.f(*args, **kwds)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "sage/misc/classcall_metaclass.pyx", line 472, in sage.misc.classcall_metaclass.typecall
+        return (<PyTypeObject*>type).tp_call(cls, args, kwds)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2434, in __init__
+        self._curve = HyperellipticCurveSmoothModel(self._Q, check_squarefree=R.is_field())
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_constructor.py", line 134, in HyperellipticCurveSmoothModel
+        projective_model = __projective_model(f, h, genus)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_constructor.py", line 93, in __projective_model
+        T = toric_varieties.WP(
+            ^^^^^^^^^^^^^^^^^^^
+      File "/home/grhkm/git/sage/src/sage/schemes/toric/library.py", line 1272, in WP
+        return ToricVariety(fan, coordinate_names=names, base_ring=base_ring)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/grhkm/git/sage/src/sage/schemes/toric/variety.py", line 468, in ToricVariety
+        raise TypeError("need a field to construct a toric variety; got %s"
+    TypeError: need a field to construct a toric variety; got Integer Ring
+**********************************************************************
+File "monsky_washnitzer.py", line 2901, in monsky_washnitzer.MonskyWashnitzerDifferential._add_
+Failed example:
+    x*w + w
+Expected:
+    (1 + x) dx/2y
+Got:
+    doctest:warning
+      File "<doctest monsky_washnitzer.MonskyWashnitzerDifferential._add_[6]>", line 1, in <module>
+        x*w + w
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2994, in _rmul_
+        return P.element_class(P, a * self._coeff)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2075, in _mul_
+        return P.element_class(P, v[0:n])
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1890, in __init__
+        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 138, in deprecation_cython
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_FreeModuleElement is deprecated; use 'isinstance(..., FreeModuleElement)' instead.
+    See https://github.com/sagemath/sage/issues/38184 for details.
+    (1 + x) dx/2y
+**********************************************************************
+File "monsky_washnitzer.py", line 3330, in monsky_washnitzer.MonskyWashnitzerDifferential.reduce_pos_y
+Failed example:
+    x,y = C.monsky_washnitzer_gens()
+Expected nothing
+Got:
+    doctest:warning
+      File "<doctest monsky_washnitzer.MonskyWashnitzerDifferential.reduce_pos_y[3]>", line 1, in <module>
+        x,y = C.monsky_washnitzer_gens()
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_generic.py", line 1145, in monsky_washnitzer_gens
+        S = monsky_washnitzer.SpecialHyperellipticQuotientRing(self)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2408, in __init__
+        if is_EllipticCurve(Q):
+      File "/home/grhkm/git/sage/src/sage/schemes/elliptic_curves/ell_generic.py", line 109, in is_EllipticCurve
+        deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+    See https://github.com/sagemath/sage/issues/38022 for details.
+**********************************************************************
+File "monsky_washnitzer.py", line 3624, in monsky_washnitzer.MonskyWashnitzerDifferentialRing.base_extend
+Failed example:
+    MW.base_ring()
+Expected:
+    SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 4*x + 4)
+     over Rational Field
+Got:
+    doctest:warning
+      File "<doctest monsky_washnitzer.MonskyWashnitzerDifferentialRing.base_extend[4]>", line 1, in <module>
+        MW.base_ring()
+      File "/home/grhkm/git/sage/src/sage/repl/rich_output/display_manager.py", line 799, in displayhook
+        plain_text, rich_output = self._rich_output_formatter(obj, dict())
+      File "/home/grhkm/git/sage/src/sage/repl/rich_output/display_manager.py", line 628, in _rich_output_formatter
+        plain_text = self._backend.plain_text_formatter(obj, **rich_repr_kwds)
+      File "/home/grhkm/git/sage/src/sage/repl/rich_output/backend_base.py", line 318, in plain_text_formatter
+        plain_text = self._apply_pretty_printer(SagePrettyPrinter, obj)
+      File "/home/grhkm/git/sage/src/sage/repl/rich_output/backend_base.py", line 263, in _apply_pretty_printer
+        printer.pretty(obj)
+      File "/home/grhkm/git/sage/src/sage/repl/display/pretty_print.py", line 142, in pretty
+        ok = representation(obj, self, cycle)
+      File "/home/grhkm/git/sage/src/sage/repl/display/fancy_repr.py", line 269, in __call__
+        output = repr(obj)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2472, in _repr_
+        y_inverse = ",y^-1" if is_LaurentSeriesRing(self._series_ring) else ""
+      File "/home/grhkm/git/sage/src/sage/rings/laurent_series_ring.py", line 81, in is_LaurentSeriesRing
+        deprecation(38290,
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_LaurentSeriesRing is deprecated; use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
+    See https://github.com/sagemath/sage/issues/38290 for details.
+    SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 4*x + 4) over Rational Field
+**********************************************************************
+File "monsky_washnitzer.py", line 3627, in monsky_washnitzer.MonskyWashnitzerDifferentialRing.base_extend
+Failed example:
+    MW.base_extend(Qp(5,5)).base_ring()                                   # needs sage.rings.padics
+Expected:
+    SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = (1 + O(5^5))*x^5
+                + (1 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5))*x + 4 + O(5^5))
+     over 5-adic Field with capped relative precision 5
+Got:
+    doctest:warning
+      File "<doctest monsky_washnitzer.MonskyWashnitzerDifferentialRing.base_extend[5]>", line 1, in <module>
+        MW.base_extend(Qp(Integer(5),Integer(5))).base_ring()                                   # needs sage.rings.padics
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 3632, in base_extend
+        return MonskyWashnitzerDifferentialRing(self.base_ring().base_extend(R))
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2495, in base_extend
+        return self.change_ring(R)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2513, in change_ring
+        is_LaurentSeriesRing(self._series_ring))
+      File "/home/grhkm/git/sage/src/sage/rings/laurent_series_ring.py", line 81, in is_LaurentSeriesRing
+        deprecation(38290,
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_LaurentSeriesRing is deprecated; use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
+    See https://github.com/sagemath/sage/issues/38290 for details.
+    SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = (1 + O(5^5))*x^5 + (1 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5))*x + 4 + O(5^5)) over 5-adic Field with capped relative precision 5
+**********************************************************************
+7 items had failures:
+   1 of   9 in monsky_washnitzer.MonskyWashnitzerDifferential._add_
+   1 of  11 in monsky_washnitzer.MonskyWashnitzerDifferential.reduce_pos_y
+   2 of   7 in monsky_washnitzer.MonskyWashnitzerDifferentialRing.base_extend
+   1 of  10 in monsky_washnitzer.SpecialCubicQuotientRingElement.__init__
+   1 of   7 in monsky_washnitzer.SpecialHyperellipticQuotientElement
+   2 of   8 in monsky_washnitzer.SpecialHyperellipticQuotientElement.change_ring
+   1 of   6 in monsky_washnitzer.SpecialHyperellipticQuotientRing.change_ring
+    [722 tests, 9 failures, 2.01 s]
+sage -t --random-seed=309425862888178564065200512328699977999 invariants.py
+    [75 tests, 0.08 s]
+----------------------------------------------------------------------
+sage -t --random-seed=309425862888178564065200512328699977999 hyperelliptic_generic.py  # 1 doctest failed
+sage -t --random-seed=309425862888178564065200512328699977999 hyperelliptic_padic_field.py  # 1 doctest failed
+sage -t --random-seed=309425862888178564065200512328699977999 hyperelliptic_rational_field.py  # 1 doctest failed
+sage -t --random-seed=309425862888178564065200512328699977999 jacobian_homset_generic.py  # 2 doctests failed
+sage -t --random-seed=309425862888178564065200512328699977999 jacobian_morphism.py  # 2 doctests failed
+sage -t --random-seed=309425862888178564065200512328699977999 monsky_washnitzer.py  # 9 doctests failed
+----------------------------------------------------------------------
+Total time for all tests: 24.3 seconds
+    cpu time: 22.8 seconds
+    cumulative wall time: 23.5 seconds
+Features detected for doctesting: sage.libs.gap,sage.libs.pari,sage.rings.finite_rings,sage.rings.number_field,sage.rings.padics
+Running doctests with ID 2024-08-28-14-14-44-2a7de017.
+Running with SAGE_LOCAL='/home/grhkm/miniforge3/envs/sage-dev' and SAGE_VENV='/home/grhkm/miniforge3/envs/sage-dev'
+Using --optional=pip,sage
+Features to be detected: 4ti2,SAGE_SRC,benzene,bliss,buckygen,conway_polynomials,coxeter3,csdp,cvxopt,cvxopt,database_cremona_ellcurve,database_cremona_mini_ellcurve,database_cubic_hecke,database_ellcurves,database_graphs,database_jones_numfield,database_knotinfo,dvipng,ecm,fpylll,fricas,gap_package_atlasrep,gap_package_design,gap_package_grape,gap_package_guava,gap_package_hap,gap_package_polycyclic,gap_package_qpa,gap_package_quagroup,gfan,glucose,graphviz,imagemagick,ipython,jmol,jupymake,kenzo,kissat,latte_int,lrcalc_python,lrslib,mathics,matroid_database,mcqd,meataxe,mpmath,msolve,nauty,networkx,numpy,palp,pandoc,pdf2svg,pdftocairo,pexpect,phitigra,pillow,plantri,polytopes_db,polytopes_db_4d,pplpy,primecountpy,ptyprocess,pycosat,pycryptosat,pynormaliz,pyparsing,python_igraph,requests,rpy2,rubiks,sage.combinat,sage.geometry.polyhedron,sage.graphs,sage.groups,sage.libs.braiding,sage.libs.ecl,sage.libs.flint,sage.libs.gap,sage.libs.homfly,sage.libs.linbox,sage.libs.m4ri,sage.libs.ntl,sage.libs.pari,sage.libs.singular,sage.misc.cython,sage.modular,sage.modules,sage.numerical.mip,sage.plot,sage.rings.complex_double,sage.rings.finite_rings,sage.rings.function_field,sage.rings.number_field,sage.rings.padics,sage.rings.polynomial.pbori,sage.rings.real_double,sage.rings.real_mpfr,sage.sat,sage.schemes,sage.symbolic,sage_numerical_backends_coin,sagemath_doc_html,scipy,singular,sirocco,sphinx,symengine_py,sympy,tdlib,threejs,topcom
+Doctesting 19 files.
+sage -t --random-seed=85469779758262148061728338371501907435 hyperelliptic_constructor.py
+    [0 tests, 0.00 s]
+sage -t --random-seed=85469779758262148061728338371501907435 hyperelliptic_finite_field.py
+    [376 tests, 6.92 s]
+sage -t --random-seed=85469779758262148061728338371501907435 hyperelliptic_g2.py
+    [27 tests, 0.22 s]
+sage -t --random-seed=85469779758262148061728338371501907435 hyperelliptic_generic.py
+**********************************************************************
+File "hyperelliptic_generic.py", line 1158, in hyperelliptic_generic.HyperellipticCurveSmoothModel_generic.invariant_differential
+Failed example:
+    C.invariant_differential()
+Expected:
+    1 dx/2y
+Got:
+    doctest:warning
+      File "<doctest hyperelliptic_generic.HyperellipticCurveSmoothModel_generic.invariant_differential[3]>", line 1, in <module>
+        C.invariant_differential()
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_generic.py", line 1163, in invariant_differential
+        S = m_w.SpecialHyperellipticQuotientRing(self)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2408, in __init__
+        if is_EllipticCurve(Q):
+      File "/home/grhkm/git/sage/src/sage/schemes/elliptic_curves/ell_generic.py", line 109, in is_EllipticCurve
+        deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+    See https://github.com/sagemath/sage/issues/38022 for details.
+    doctest:warning
+      File "<doctest hyperelliptic_generic.HyperellipticCurveSmoothModel_generic.invariant_differential[3]>", line 1, in <module>
+        C.invariant_differential()
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_generic.py", line 1163, in invariant_differential
+        S = m_w.SpecialHyperellipticQuotientRing(self)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2453, in __init__
+        self._dQ = Q.derivative().change_ring(self)(self._x)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2075, in _mul_
+        return P.element_class(P, v[0:n])
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1890, in __init__
+        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 138, in deprecation_cython
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_FreeModuleElement is deprecated; use 'isinstance(..., FreeModuleElement)' instead.
+    See https://github.com/sagemath/sage/issues/38184 for details.
+    1 dx/2y
+**********************************************************************
+1 item had failures:
+   1 of   5 in hyperelliptic_generic.HyperellipticCurveSmoothModel_generic.invariant_differential
+    [307 tests, 1 failure, 2.33 s]
+sage -t --random-seed=85469779758262148061728338371501907435 hyperelliptic_padic_field.py
+**********************************************************************
+File "hyperelliptic_padic_field.py", line 571, in hyperelliptic_padic_field.coleman_integrals_on_basis
+Failed example:
+    C.coleman_integrals_on_basis(P, Q)
+Expected:
+    (9*11^2 + 7*11^3 + 5*11^4 + O(11^5), 11 + 3*11^2 + 7*11^3 + 11^4 + O(11^5), 10*11 + 11^2 + 5*11^3 + 5*11^4 + O(11^5), 3 + 9*11^2 + 6*11^3 + 11^4 + O(11^5))
+Got:
+    doctest:warning
+      File "<doctest hyperelliptic_padic_field.coleman_integrals_on_basis[6]>", line 1, in <module>
+        C.coleman_integrals_on_basis(P, Q)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_padic_field.py", line 714, in coleman_integrals_on_basis
+        M_frob, forms = self._frob_calc = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1818, in matrix_of_frobenius_hyperelliptic
+        S = SpecialHyperellipticQuotientRing(Q, extra_prec_ring, True)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2408, in __init__
+        if is_EllipticCurve(Q):
+      File "/home/grhkm/git/sage/src/sage/schemes/elliptic_curves/ell_generic.py", line 109, in is_EllipticCurve
+        deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+    See https://github.com/sagemath/sage/issues/38022 for details.
+    doctest:warning
+      File "<doctest hyperelliptic_padic_field.coleman_integrals_on_basis[6]>", line 1, in <module>
+        C.coleman_integrals_on_basis(P, Q)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_padic_field.py", line 714, in coleman_integrals_on_basis
+        M_frob, forms = self._frob_calc = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1818, in matrix_of_frobenius_hyperelliptic
+        S = SpecialHyperellipticQuotientRing(Q, extra_prec_ring, True)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2453, in __init__
+        self._dQ = Q.derivative().change_ring(self)(self._x)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2075, in _mul_
+        return P.element_class(P, v[0:n])
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1890, in __init__
+        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 138, in deprecation_cython
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_FreeModuleElement is deprecated; use 'isinstance(..., FreeModuleElement)' instead.
+    See https://github.com/sagemath/sage/issues/38184 for details.
+    doctest:warning
+      File "<doctest hyperelliptic_padic_field.coleman_integrals_on_basis[6]>", line 1, in <module>
+        C.coleman_integrals_on_basis(P, Q)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_padic_field.py", line 714, in coleman_integrals_on_basis
+        M_frob, forms = self._frob_calc = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1825, in matrix_of_frobenius_hyperelliptic
+        rational_S = S.change_ring(QQ)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2513, in change_ring
+        is_LaurentSeriesRing(self._series_ring))
+      File "/home/grhkm/git/sage/src/sage/rings/laurent_series_ring.py", line 81, in is_LaurentSeriesRing
+        deprecation(38290,
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_LaurentSeriesRing is deprecated; use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
+    See https://github.com/sagemath/sage/issues/38290 for details.
+    (9*11^2 + 7*11^3 + 5*11^4 + O(11^5), 11 + 3*11^2 + 7*11^3 + 11^4 + O(11^5), 10*11 + 11^2 + 5*11^3 + 5*11^4 + O(11^5), 3 + 9*11^2 + 6*11^3 + 11^4 + O(11^5))
+**********************************************************************
+1 item had failures:
+   1 of  33 in hyperelliptic_padic_field.coleman_integrals_on_basis
+    [364 tests, 1 failure, 9.62 s]
+sage -t --random-seed=85469779758262148061728338371501907435 hyperelliptic_rational_field.py
+**********************************************************************
+File "hyperelliptic_rational_field.py", line 35, in hyperelliptic_rational_field.matrix_of_frobenius
+Failed example:
+    H.matrix_of_frobenius(K)
+Expected:
+    [            4*5 + O(5^3)       5 + 2*5^2 + O(5^3) 2 + 3*5 + 2*5^2 + O(5^3)     2 + 5 + 5^2 + O(5^3)]
+    [      3*5 + 5^2 + O(5^3)             3*5 + O(5^3)             4*5 + O(5^3)         2 + 5^2 + O(5^3)]
+    [    4*5 + 4*5^2 + O(5^3)     3*5 + 2*5^2 + O(5^3)       5 + 3*5^2 + O(5^3)     2*5 + 2*5^2 + O(5^3)]
+    [            5^2 + O(5^3)       5 + 4*5^2 + O(5^3)     4*5 + 3*5^2 + O(5^3)             2*5 + O(5^3)]
+Got:
+    doctest:warning
+      File "<doctest hyperelliptic_rational_field.matrix_of_frobenius[4]>", line 1, in <module>
+        H.matrix_of_frobenius(K)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_rational_field.py", line 55, in matrix_of_frobenius
+        frob_p, _ = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self.change_ring(K))
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1818, in matrix_of_frobenius_hyperelliptic
+        S = SpecialHyperellipticQuotientRing(Q, extra_prec_ring, True)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2408, in __init__
+        if is_EllipticCurve(Q):
+      File "/home/grhkm/git/sage/src/sage/schemes/elliptic_curves/ell_generic.py", line 109, in is_EllipticCurve
+        deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+    See https://github.com/sagemath/sage/issues/38022 for details.
+    doctest:warning
+      File "<doctest hyperelliptic_rational_field.matrix_of_frobenius[4]>", line 1, in <module>
+        H.matrix_of_frobenius(K)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_rational_field.py", line 55, in matrix_of_frobenius
+        frob_p, _ = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self.change_ring(K))
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1818, in matrix_of_frobenius_hyperelliptic
+        S = SpecialHyperellipticQuotientRing(Q, extra_prec_ring, True)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2453, in __init__
+        self._dQ = Q.derivative().change_ring(self)(self._x)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2075, in _mul_
+        return P.element_class(P, v[0:n])
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1890, in __init__
+        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 138, in deprecation_cython
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_FreeModuleElement is deprecated; use 'isinstance(..., FreeModuleElement)' instead.
+    See https://github.com/sagemath/sage/issues/38184 for details.
+    doctest:warning
+      File "<doctest hyperelliptic_rational_field.matrix_of_frobenius[4]>", line 1, in <module>
+        H.matrix_of_frobenius(K)
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_rational_field.py", line 55, in matrix_of_frobenius
+        frob_p, _ = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self.change_ring(K))
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1825, in matrix_of_frobenius_hyperelliptic
+        rational_S = S.change_ring(QQ)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2513, in change_ring
+        is_LaurentSeriesRing(self._series_ring))
+      File "/home/grhkm/git/sage/src/sage/rings/laurent_series_ring.py", line 81, in is_LaurentSeriesRing
+        deprecation(38290,
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_LaurentSeriesRing is deprecated; use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
+    See https://github.com/sagemath/sage/issues/38290 for details.
+    [            4*5 + O(5^3)       5 + 2*5^2 + O(5^3) 2 + 3*5 + 2*5^2 + O(5^3)     2 + 5 + 5^2 + O(5^3)]
+    [      3*5 + 5^2 + O(5^3)             3*5 + O(5^3)             4*5 + O(5^3)         2 + 5^2 + O(5^3)]
+    [    4*5 + 4*5^2 + O(5^3)     3*5 + 2*5^2 + O(5^3)       5 + 3*5^2 + O(5^3)     2*5 + 2*5^2 + O(5^3)]
+    [            5^2 + O(5^3)       5 + 4*5^2 + O(5^3)     4*5 + 3*5^2 + O(5^3)             2*5 + O(5^3)]
+**********************************************************************
+1 item had failures:
+   1 of   7 in hyperelliptic_rational_field.matrix_of_frobenius
+    [22 tests, 1 failure, 0.36 s]
+sage -t --random-seed=85469779758262148061728338371501907435 jacobian_g2_generic.py
+    [0 tests, 0.00 s]
+sage -t --random-seed=85469779758262148061728338371501907435 jacobian_g2_homset_inert.py
+    [0 tests, 0.00 s]
+sage -t --random-seed=85469779758262148061728338371501907435 jacobian_g2_homset_ramified.py
+    [0 tests, 0.00 s]
+sage -t --random-seed=85469779758262148061728338371501907435 jacobian_g2_homset_split.py
+    [0 tests, 0.00 s]
+sage -t --random-seed=85469779758262148061728338371501907435 jacobian_generic.py
+    [0 tests, 0.00 s]
+sage -t --random-seed=85469779758262148061728338371501907435 jacobian_homset_generic.py
+    [62 tests, 1.46 s]
+sage -t --random-seed=85469779758262148061728338371501907435 jacobian_homset_inert.py
+    [0 tests, 0.00 s]
+sage -t --random-seed=85469779758262148061728338371501907435 jacobian_homset_ramified.py
+    [0 tests, 0.00 s]
+sage -t --random-seed=85469779758262148061728338371501907435 jacobian_homset_split.py
+    [23 tests, 0.11 s]
+sage -t --random-seed=85469779758262148061728338371501907435 jacobian_morphism.py
+    [49 tests, 0.24 s]
+sage -t --random-seed=85469779758262148061728338371501907435 mestre.py
+    [23 tests, 0.23 s]
+sage -t --random-seed=85469779758262148061728338371501907435 monsky_washnitzer.py
+**********************************************************************
+File "monsky_washnitzer.py", line 110, in monsky_washnitzer.SpecialCubicQuotientRingElement.__init__
+Failed example:
+    SpecialCubicQuotientRingElement(R, 2, 3, 4)
+Exception raised:
+    Traceback (most recent call last):
+      File "/home/grhkm/git/sage/src/sage/doctest/forker.py", line 715, in _run
+        self.compile_and_execute(example, compiler, test.globs)
+      File "/home/grhkm/git/sage/src/sage/doctest/forker.py", line 1145, in compile_and_execute
+        exec(compiled, globs)
+      File "<doctest monsky_washnitzer.SpecialCubicQuotientRingElement.__init__[3]>", line 1, in <module>
+        SpecialCubicQuotientRingElement(R, Integer(2), Integer(3), Integer(4))
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 123, in __init__
+        raise TypeError(f"parent (={parent}) must be a SpecialCubicQuotientRing")
+    TypeError: parent (=SpecialCubicQuotientRing over Ring of integers modulo 125 with polynomial T = x^3 + 124*x + 94) must be a SpecialCubicQuotientRing
+**********************************************************************
+File "monsky_washnitzer.py", line 1861, in monsky_washnitzer.SpecialHyperellipticQuotientElement
+Failed example:
+    x,y = E.monsky_washnitzer_gens()
+Expected nothing
+Got:
+    doctest:warning
+      File "<doctest monsky_washnitzer.SpecialHyperellipticQuotientElement[3]>", line 1, in <module>
+        x,y = E.monsky_washnitzer_gens()
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_generic.py", line 1145, in monsky_washnitzer_gens
+        S = monsky_washnitzer.SpecialHyperellipticQuotientRing(self)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2408, in __init__
+        if is_EllipticCurve(Q):
+      File "/home/grhkm/git/sage/src/sage/schemes/elliptic_curves/ell_generic.py", line 109, in is_EllipticCurve
+        deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+    See https://github.com/sagemath/sage/issues/38022 for details.
+    doctest:warning
+      File "<doctest monsky_washnitzer.SpecialHyperellipticQuotientElement[3]>", line 1, in <module>
+        x,y = E.monsky_washnitzer_gens()
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_generic.py", line 1145, in monsky_washnitzer_gens
+        S = monsky_washnitzer.SpecialHyperellipticQuotientRing(self)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2453, in __init__
+        self._dQ = Q.derivative().change_ring(self)(self._x)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2075, in _mul_
+        return P.element_class(P, v[0:n])
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1890, in __init__
+        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 138, in deprecation_cython
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_FreeModuleElement is deprecated; use 'isinstance(..., FreeModuleElement)' instead.
+    See https://github.com/sagemath/sage/issues/38184 for details.
+**********************************************************************
+File "monsky_washnitzer.py", line 1924, in monsky_washnitzer.SpecialHyperellipticQuotientElement.change_ring
+Failed example:
+    z = MW(x + x**2 + y - 77)
+Expected nothing
+Got:
+    doctest:warning
+      File "<doctest monsky_washnitzer.SpecialHyperellipticQuotientElement.change_ring[5]>", line 1, in <module>
+        z = MW(x + x**Integer(2) + y - Integer(77))
+      File "/home/grhkm/git/sage/src/sage/categories/monoids.py", line 307, in _pow_int
+        return generic_power(self, n)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2075, in _mul_
+        return P.element_class(P, v[0:n])
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1890, in __init__
+        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 138, in deprecation_cython
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_FreeModuleElement is deprecated; use 'isinstance(..., FreeModuleElement)' instead.
+    See https://github.com/sagemath/sage/issues/38184 for details.
+**********************************************************************
+File "monsky_washnitzer.py", line 1925, in monsky_washnitzer.SpecialHyperellipticQuotientElement.change_ring
+Failed example:
+    z.change_ring(AA).parent()                                            # needs sage.rings.number_field
+Expected:
+    SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 36*x + 1)
+    over Algebraic Real Field
+Got:
+    doctest:warning
+      File "<doctest monsky_washnitzer.SpecialHyperellipticQuotientElement.change_ring[6]>", line 1, in <module>
+        z.change_ring(AA).parent()                                            # needs sage.rings.number_field
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1929, in change_ring
+        return self.parent().change_ring(R)(self)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2513, in change_ring
+        is_LaurentSeriesRing(self._series_ring))
+      File "/home/grhkm/git/sage/src/sage/rings/laurent_series_ring.py", line 81, in is_LaurentSeriesRing
+        deprecation(38290,
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_LaurentSeriesRing is deprecated; use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
+    See https://github.com/sagemath/sage/issues/38290 for details.
+    doctest:warning
+      File "<doctest monsky_washnitzer.SpecialHyperellipticQuotientElement.change_ring[6]>", line 1, in <module>
+        z.change_ring(AA).parent()                                            # needs sage.rings.number_field
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1929, in change_ring
+        return self.parent().change_ring(R)(self)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2512, in change_ring
+        return SpecialHyperellipticQuotientRing(self._Q.change_ring(R), R,
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2408, in __init__
+        if is_EllipticCurve(Q):
+      File "/home/grhkm/git/sage/src/sage/schemes/elliptic_curves/ell_generic.py", line 109, in is_EllipticCurve
+        deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+    See https://github.com/sagemath/sage/issues/38022 for details.
+    doctest:warning
+      File "<doctest monsky_washnitzer.SpecialHyperellipticQuotientElement.change_ring[6]>", line 1, in <module>
+        z.change_ring(AA).parent()                                            # needs sage.rings.number_field
+      File "/home/grhkm/git/sage/src/sage/repl/rich_output/display_manager.py", line 799, in displayhook
+        plain_text, rich_output = self._rich_output_formatter(obj, dict())
+      File "/home/grhkm/git/sage/src/sage/repl/rich_output/display_manager.py", line 628, in _rich_output_formatter
+        plain_text = self._backend.plain_text_formatter(obj, **rich_repr_kwds)
+      File "/home/grhkm/git/sage/src/sage/repl/rich_output/backend_base.py", line 318, in plain_text_formatter
+        plain_text = self._apply_pretty_printer(SagePrettyPrinter, obj)
+      File "/home/grhkm/git/sage/src/sage/repl/rich_output/backend_base.py", line 263, in _apply_pretty_printer
+        printer.pretty(obj)
+      File "/home/grhkm/git/sage/src/sage/repl/display/pretty_print.py", line 142, in pretty
+        ok = representation(obj, self, cycle)
+      File "/home/grhkm/git/sage/src/sage/repl/display/fancy_repr.py", line 269, in __call__
+        output = repr(obj)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2472, in _repr_
+        y_inverse = ",y^-1" if is_LaurentSeriesRing(self._series_ring) else ""
+      File "/home/grhkm/git/sage/src/sage/rings/laurent_series_ring.py", line 81, in is_LaurentSeriesRing
+        deprecation(38290,
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_LaurentSeriesRing is deprecated; use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
+    See https://github.com/sagemath/sage/issues/38290 for details.
+    SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 36*x + 1) over Algebraic Real Field
+**********************************************************************
+File "monsky_washnitzer.py", line 2508, in monsky_washnitzer.SpecialHyperellipticQuotientRing.change_ring
+Failed example:
+    x.parent().change_ring(ZZ)
+Exception raised:
+    Traceback (most recent call last):
+      File "sage/misc/cachefunc.pyx", line 1002, in sage.misc.cachefunc.CachedFunction.__call__
+        return self.cache[k]
+      File "sage/misc/weak_dict.pyx", line 709, in sage.misc.weak_dict.WeakValueDictionary.__getitem__
+        raise KeyError(k)
+    KeyError: ((<class 'monsky_washnitzer.SpecialHyperellipticQuotientRing'>, x^5 - 3*x + 1, Integer Ring, True), ())
+
+    During handling of the above exception, another exception occurred:
+
+    Traceback (most recent call last):
+      File "/home/grhkm/git/sage/src/sage/doctest/forker.py", line 715, in _run
+        self.compile_and_execute(example, compiler, test.globs)
+      File "/home/grhkm/git/sage/src/sage/doctest/forker.py", line 1145, in compile_and_execute
+        exec(compiled, globs)
+      File "<doctest monsky_washnitzer.SpecialHyperellipticQuotientRing.change_ring[4]>", line 1, in <module>
+        x.parent().change_ring(ZZ)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2512, in change_ring
+        return SpecialHyperellipticQuotientRing(self._Q.change_ring(R), R,
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "sage/misc/classcall_metaclass.pyx", line 321, in sage.misc.classcall_metaclass.ClasscallMetaclass.__call__
+        return cls.classcall(cls, *args, **kwds)
+      File "sage/misc/cachefunc.pyx", line 1007, in sage.misc.cachefunc.CachedFunction.__call__
+        w = self.f(*args, **kwds)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "sage/misc/classcall_metaclass.pyx", line 472, in sage.misc.classcall_metaclass.typecall
+        return (<PyTypeObject*>type).tp_call(cls, args, kwds)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2434, in __init__
+        self._curve = HyperellipticCurveSmoothModel(self._Q, check_squarefree=R.is_field())
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_constructor.py", line 134, in HyperellipticCurveSmoothModel
+        projective_model = __projective_model(f, h, genus)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_constructor.py", line 93, in __projective_model
+        T = toric_varieties.WP(
+            ^^^^^^^^^^^^^^^^^^^
+      File "/home/grhkm/git/sage/src/sage/schemes/toric/library.py", line 1272, in WP
+        return ToricVariety(fan, coordinate_names=names, base_ring=base_ring)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/grhkm/git/sage/src/sage/schemes/toric/variety.py", line 468, in ToricVariety
+        raise TypeError("need a field to construct a toric variety; got %s"
+    TypeError: need a field to construct a toric variety; got Integer Ring
+**********************************************************************
+File "monsky_washnitzer.py", line 2901, in monsky_washnitzer.MonskyWashnitzerDifferential._add_
+Failed example:
+    x*w + w
+Expected:
+    (1 + x) dx/2y
+Got:
+    doctest:warning
+      File "<doctest monsky_washnitzer.MonskyWashnitzerDifferential._add_[6]>", line 1, in <module>
+        x*w + w
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2994, in _rmul_
+        return P.element_class(P, a * self._coeff)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2075, in _mul_
+        return P.element_class(P, v[0:n])
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 1890, in __init__
+        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 138, in deprecation_cython
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_FreeModuleElement is deprecated; use 'isinstance(..., FreeModuleElement)' instead.
+    See https://github.com/sagemath/sage/issues/38184 for details.
+    (1 + x) dx/2y
+**********************************************************************
+File "monsky_washnitzer.py", line 3330, in monsky_washnitzer.MonskyWashnitzerDifferential.reduce_pos_y
+Failed example:
+    x,y = C.monsky_washnitzer_gens()
+Expected nothing
+Got:
+    doctest:warning
+      File "<doctest monsky_washnitzer.MonskyWashnitzerDifferential.reduce_pos_y[3]>", line 1, in <module>
+        x,y = C.monsky_washnitzer_gens()
+      File "/home/grhkm/git/HyperellipticCurves/hyperelliptic_generic.py", line 1145, in monsky_washnitzer_gens
+        S = monsky_washnitzer.SpecialHyperellipticQuotientRing(self)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 1113, in __classcall__
+        return super().__classcall__(cls, *args, **options)
+      File "/home/grhkm/git/sage/src/sage/structure/unique_representation.py", line 597, in __classcall__
+        instance = typecall(cls, *args, **options)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2408, in __init__
+        if is_EllipticCurve(Q):
+      File "/home/grhkm/git/sage/src/sage/schemes/elliptic_curves/ell_generic.py", line 109, in is_EllipticCurve
+        deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+    See https://github.com/sagemath/sage/issues/38022 for details.
+**********************************************************************
+File "monsky_washnitzer.py", line 3624, in monsky_washnitzer.MonskyWashnitzerDifferentialRing.base_extend
+Failed example:
+    MW.base_ring()
+Expected:
+    SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 4*x + 4)
+     over Rational Field
+Got:
+    doctest:warning
+      File "<doctest monsky_washnitzer.MonskyWashnitzerDifferentialRing.base_extend[4]>", line 1, in <module>
+        MW.base_ring()
+      File "/home/grhkm/git/sage/src/sage/repl/rich_output/display_manager.py", line 799, in displayhook
+        plain_text, rich_output = self._rich_output_formatter(obj, dict())
+      File "/home/grhkm/git/sage/src/sage/repl/rich_output/display_manager.py", line 628, in _rich_output_formatter
+        plain_text = self._backend.plain_text_formatter(obj, **rich_repr_kwds)
+      File "/home/grhkm/git/sage/src/sage/repl/rich_output/backend_base.py", line 318, in plain_text_formatter
+        plain_text = self._apply_pretty_printer(SagePrettyPrinter, obj)
+      File "/home/grhkm/git/sage/src/sage/repl/rich_output/backend_base.py", line 263, in _apply_pretty_printer
+        printer.pretty(obj)
+      File "/home/grhkm/git/sage/src/sage/repl/display/pretty_print.py", line 142, in pretty
+        ok = representation(obj, self, cycle)
+      File "/home/grhkm/git/sage/src/sage/repl/display/fancy_repr.py", line 269, in __call__
+        output = repr(obj)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2472, in _repr_
+        y_inverse = ",y^-1" if is_LaurentSeriesRing(self._series_ring) else ""
+      File "/home/grhkm/git/sage/src/sage/rings/laurent_series_ring.py", line 81, in is_LaurentSeriesRing
+        deprecation(38290,
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_LaurentSeriesRing is deprecated; use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
+    See https://github.com/sagemath/sage/issues/38290 for details.
+    SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 4*x + 4) over Rational Field
+**********************************************************************
+File "monsky_washnitzer.py", line 3627, in monsky_washnitzer.MonskyWashnitzerDifferentialRing.base_extend
+Failed example:
+    MW.base_extend(Qp(5,5)).base_ring()                                   # needs sage.rings.padics
+Expected:
+    SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = (1 + O(5^5))*x^5
+                + (1 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5))*x + 4 + O(5^5))
+     over 5-adic Field with capped relative precision 5
+Got:
+    doctest:warning
+      File "<doctest monsky_washnitzer.MonskyWashnitzerDifferentialRing.base_extend[5]>", line 1, in <module>
+        MW.base_extend(Qp(Integer(5),Integer(5))).base_ring()                                   # needs sage.rings.padics
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 3632, in base_extend
+        return MonskyWashnitzerDifferentialRing(self.base_ring().base_extend(R))
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2495, in base_extend
+        return self.change_ring(R)
+      File "/home/grhkm/git/HyperellipticCurves/monsky_washnitzer.py", line 2513, in change_ring
+        is_LaurentSeriesRing(self._series_ring))
+      File "/home/grhkm/git/sage/src/sage/rings/laurent_series_ring.py", line 81, in is_LaurentSeriesRing
+        deprecation(38290,
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 99, in deprecation
+        warning(issue_number, message, DeprecationWarning, stacklevel)
+      File "/home/grhkm/git/sage/src/sage/misc/superseded.py", line 180, in warning
+        warn(message, warning_class, stacklevel)
+      File "/home/grhkm/miniforge3/envs/sage-dev/lib/python3.11/warnings.py", line 110, in _showwarnmsg
+        sw(msg.message, msg.category, msg.filename, msg.lineno,
+    :
+    DeprecationWarning: The function is_LaurentSeriesRing is deprecated; use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
+    See https://github.com/sagemath/sage/issues/38290 for details.
+    SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = (1 + O(5^5))*x^5 + (1 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5))*x + 4 + O(5^5)) over 5-adic Field with capped relative precision 5
+**********************************************************************
+7 items had failures:
+   1 of   9 in monsky_washnitzer.MonskyWashnitzerDifferential._add_
+   1 of  11 in monsky_washnitzer.MonskyWashnitzerDifferential.reduce_pos_y
+   2 of   7 in monsky_washnitzer.MonskyWashnitzerDifferentialRing.base_extend
+   1 of  10 in monsky_washnitzer.SpecialCubicQuotientRingElement.__init__
+   1 of   7 in monsky_washnitzer.SpecialHyperellipticQuotientElement
+   2 of   8 in monsky_washnitzer.SpecialHyperellipticQuotientElement.change_ring
+   1 of   6 in monsky_washnitzer.SpecialHyperellipticQuotientRing.change_ring
+    [722 tests, 9 failures, 1.92 s]
+sage -t --random-seed=85469779758262148061728338371501907435 invariants.py
+    [75 tests, 0.08 s]
+----------------------------------------------------------------------
+sage -t --random-seed=85469779758262148061728338371501907435 hyperelliptic_generic.py  # 1 doctest failed
+sage -t --random-seed=85469779758262148061728338371501907435 hyperelliptic_padic_field.py  # 1 doctest failed
+sage -t --random-seed=85469779758262148061728338371501907435 hyperelliptic_rational_field.py  # 1 doctest failed
+sage -t --random-seed=85469779758262148061728338371501907435 monsky_washnitzer.py  # 9 doctests failed
+----------------------------------------------------------------------
+Total time for all tests: 24.3 seconds
+    cpu time: 22.8 seconds
+    cumulative wall time: 23.5 seconds
+Features detected for doctesting: sage.libs.gap,sage.libs.pari,sage.rings.finite_rings,sage.rings.number_field,sage.rings.padics

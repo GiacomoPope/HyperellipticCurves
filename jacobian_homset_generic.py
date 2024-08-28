@@ -76,7 +76,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: J = H.jacobian()
             sage: J.count_points(10) == [J.change_ring(GF((5, k))).order() for k in range(1, 11)]
             True
-            sage: J2 = H(GF((5, 2)))
+            sage: J2 = J(GF((5, 2)))
             sage: J2.count_points(5) == J.count_points(10)[1::2]
             True
         """
