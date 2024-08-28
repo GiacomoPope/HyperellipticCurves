@@ -82,6 +82,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: x = polygen(GF(5))
             sage: H = HyperellipticCurveSmoothModel(x^5 + 3 * x + 1)
             sage: J = H.jacobian(); J
+            Jacobian of Hyperelliptic Curve over Finite Field of size 5 defined by y^2 = x^5 + 3*x + 1
         """
         return self._u.is_one() and self._v.is_zero()
 
@@ -113,6 +114,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: x = polygen(GF(23))
             sage: H = HyperellipticCurveSmoothModel(x^7 + x + 1)
             sage: J = H.jacobian(); J
+            Jacobian of Hyperelliptic Curve over Finite Field of size 23 defined by y^2 = x^7 + x + 1
             sage: P = J.random_element()
             sage: P == P
             True

@@ -143,7 +143,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
             cls = HyperellipticCurveSmoothModel_g2_finite_field
         else:
             cls = HyperellipticCurveSmoothModel_finite_field
-    # Special class for padic fields
+    # Special class for pAdic fields
     elif isinstance(base_ring, pAdicField):
         if genus == 2:
             cls = HyperellipticCurveSmoothModel_g2_padic_field
