@@ -6,7 +6,6 @@ from sage.rings.integer import Integer
 from sage.structure.element import parent
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import choice
-from sage.misc.misc_c import prod
 from sage.schemes.generic.homset import SchemeHomset_points
 from sage.rings.polynomial.polynomial_ring import polygen
 

@@ -1457,21 +1457,14 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         if not P[2] == 0:
             raise TypeError("P = %s is not a point at infinity. Use local_coordinates_at_nonweierstrass or  local_coordinates_at_weierstrass instead!" % P)
 
-        g = self.genus()
-        f, h = self.hyperelliptic_polynomials()
-        fprime = f.derivative()
-        hprime = h.derivative()
         K = LaurentSeriesRing(self.base_ring(), name, default_prec=prec+2)
         t = K.gen()
-        L = PolynomialRing(K,'x')
-        x = L.gen()
 
         # note that P = H(a,b,0)
         xt = P[0]/t
+        f, h = self.hyperelliptic_polynomials()
         ft = f(xt)
         ht = h(xt)
-        fpt = fprime(xt)
-        hpt = hprime(xt)
         yt = P[1]/t**3
         for _ in range((RR(log(prec+2)/log(2))).ceil()):
             yt = yt - (yt**2 + ht*yt -ft)/(2*yt + ht)

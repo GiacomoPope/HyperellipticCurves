@@ -1,4 +1,4 @@
-import sage.all
+# TODO: fix this import
 import hyperelliptic_generic
 
 from sage.rings.power_series_ring import PowerSeriesRing
@@ -688,7 +688,7 @@ class HyperellipticCurveSmoothModel_padic_field(
                 K = pAdicField(p,newprec)
                 A = PolynomialRing(RationalField(),'x')
                 f = A(self.hyperelliptic_polynomials()[0])
-                # from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
+                # TODO: replace this import for Sage
                 from hyperelliptic_constructor import HyperellipticCurveSmoothModel
                 self = HyperellipticCurveSmoothModel(f).change_ring(K)
                 xP = P[0]
@@ -1125,7 +1125,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         - Jennifer Balakrishnan
 
         """
-        # from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
+        # TODO: fix this import for sage
         from hyperelliptic_constructor import HyperellipticCurveSmoothModel
         K = self.base_ring()
         p = K.prime()

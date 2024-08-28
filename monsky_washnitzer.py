@@ -70,16 +70,16 @@ from sage.rings.rational import Rational
 from sage.rings.rational_field import QQ, RationalField as Rationals
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
-from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
-from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import HyperellipticCurve_generic
 from sage.structure.element import ModuleElement
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
+# TODO: replace this import for sage
 from hyperelliptic_constructor import HyperellipticCurveSmoothModel
 from hyperelliptic_generic import HyperellipticCurveSmoothModel_generic
 
+# TODO: why are these lazy imports used?
 lazy_import('sage.functions.log', 'log')
 lazy_import('sage.rings.lazy_series_ring', 'LazyLaurentSeriesRing')
 lazy_import('sage.rings.padics.factory', 'Qp', as_='pAdicField')
