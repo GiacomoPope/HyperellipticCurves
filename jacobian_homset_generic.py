@@ -1,6 +1,8 @@
 import itertools
-from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
 
+from weighted_projective_point import SchemeMorphism_point_weighted_projective_ring
+
+from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
 from sage.misc.functional import symbolic_prod as product
 from sage.rings.integer import Integer
 from sage.structure.element import parent
@@ -9,12 +11,7 @@ from sage.misc.prandom import choice
 from sage.schemes.generic.homset import SchemeHomset_points
 from sage.rings.polynomial.polynomial_ring import polygen
 
-# TODO should we make a hyperelliptic point class?
-# at the moment, this is the type we get from calling a point from the projective model
-from sage.schemes.toric.morphism import SchemeMorphism_point_toric_field
-
 from sage.misc.banner import SAGE_VERSION
-
 assert SAGE_VERSION.startswith("10."), "please update to Sage 10"
 assert (
     int(SAGE_VERSION.lstrip("10.").split(".")[0]) >= 4
@@ -178,7 +175,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         point::
 
             sage: P0 = H.distinguished_point(); P0
-            [0 : 1 : 1]
+            (0 : 1 : 1)
             sage: JH(P) == JH(P,P0)
             True
             sage: JH(P0)
@@ -236,7 +233,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
                 v = R.zero()
             elif isinstance(P1, self._morphism_element):
                 return P1
-            elif isinstance(P1, SchemeMorphism_point_toric_field):
+            elif isinstance(P1, SchemeMorphism_point_weighted_projective_ring):
                 args = args + (
                     self.extended_curve().distinguished_point(),
                 )  # this case will now be handled below.
@@ -248,8 +245,8 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         if len(args) == 2:
             P1 = args[0]
             P2 = args[1]
-            if isinstance(P1, SchemeMorphism_point_toric_field) and isinstance(
-                P2, SchemeMorphism_point_toric_field
+            if isinstance(P1, SchemeMorphism_point_weighted_projective_ring) and isinstance(
+                P2, SchemeMorphism_point_weighted_projective_ring
             ):
                 u1, v1 = self.point_to_mumford_coordinates(P1)
                 P2_inv = self.extended_curve().hyperelliptic_involution(P2)

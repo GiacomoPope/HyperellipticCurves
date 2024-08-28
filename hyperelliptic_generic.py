@@ -810,6 +810,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         if not self.is_inert():
             # For the the split and ramified case, a point at infinity is chosen,
             self._distinguished_point = self.points_at_infinity()[0]
+            return self._distinguished_point
         else:
             assert (
                 self.base_ring().characteristic() > 0
