@@ -503,23 +503,23 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: f = x^5 + x^3 + 1
             sage: H = HyperellipticCurveSmoothModel(f)
             sage: H.lift_x(0)
-            [0 : -1 : 1]
+            (0 : -1 : 1)
             sage: H.lift_x(4, all=True)
-            [[4 : -33 : 1], [4 : 33 : 1]]
+            [(4 : -33 : 1), (4 : 33 : 1)]
 
-        # TODO: these break in 10.2 because QQ(3, all=True) != [] but instead errors
-        # Fixed in 10.3
-        # There are no rational points with `x`-coordinate 3::
+        TODO: these break in 10.2 because QQ(3, all=True) != [] but instead errors
+        Fixed in 10.3
+        There are no rational points with `x`-coordinate 3::
 
-        #     sage: H.lift_x(3)
-        #     Traceback (most recent call last):
-        #     ...
-        #     ValueError: No point with x-coordinate 3 on Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x^3 + 1
+            sage: H.lift_x(3)
+            Traceback (most recent call last):
+            ...
+            ValueError: No point with x-coordinate 3 on Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x^3 + 1
 
-        # An empty list is returned when there are no points and ``all=True``::
+        An empty list is returned when there are no points and ``all=True``::
 
-        #     sage: H.lift_x(3, all=True)
-        #     []
+            sage: H.lift_x(3, all=True)
+            []
 
         The function also handles the case when `h(x)` is not zero::
 
@@ -528,7 +528,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: h = x + 1
             sage: H = HyperellipticCurveSmoothModel(f, h)
             sage: H.lift_x(1)
-            [1 : -3 : 1]
+            (1 : -3 : 1)
 
         We can perform these operations over finite fields too::
 
@@ -537,7 +537,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: f = x^7 + x + 1
             sage: H = HyperellipticCurveSmoothModel(f)
             sage: H.lift_x(13)
-            [13 : 41 : 1]
+            (13 : 41 : 1)
 
         Including the case of characteristic two::
 
@@ -548,14 +548,14 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: h = x + 1
             sage: H = HyperellipticCurveSmoothModel(f, h)
             sage: H.lift_x(z4^3 + z4^2 + z4, all=True)
-            [[z4^3 + z4^2 + z4 : z4^2 + z4 + 1 : 1], [z4^3 + z4^2 + z4 : z4^3 : 1]]
+            [(z4^3 + z4^2 + z4 : z4^2 + z4 + 1 : 1), (z4^3 + z4^2 + z4 : z4^3 : 1)]
 
         Points at infinity are not included, as they do not have a unique x-coordinate::
 
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurveSmoothModel(x^8 + 1)
             sage: H(1, -1, 0)
-            [1 : -1 : 0]
+            (1 : -1 : 0)
             sage: H.lift_x(1, all=True)
             []
 
@@ -581,7 +581,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: h = x + 1
             sage: H = HyperellipticCurveSmoothModel(f, h)
             sage: H.lift_x(z4^3 + z4^2 + z4, all=True)
-            [[z4^3 + z4^2 + z4 : z4^2 + z4 + 1 : 1], [z4^3 + z4^2 + z4 : z4^3 : 1]]
+            [(z4^3 + z4^2 + z4 : z4^2 + z4 + 1 : 1), (z4^3 + z4^2 + z4 : z4^3 : 1)]
         """
         from sage.structure.element import get_coercion_model
 
@@ -649,7 +649,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: H.affine_coordinates(Q)
             Traceback (most recent call last):
             ...
-            ValueError: The point [1 : 1 : 0] is not an affine point of Hyperelliptic Curve over Rational Field defined by y^2 = x^6 - 1
+            ValueError: The point (1 : 1 : 0) is not an affine point of Hyperelliptic Curve over Rational Field defined by y^2 = x^6 - 1
         """
         if P[2] == 0:
             raise ValueError(f"The point {P} is not an affine point of {self}")
@@ -709,7 +709,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: HK.is_weierstrass_point(S)
             True
             sage: T = HK.lift_x(1+3*5^2); T
-            [1 + 3*5^2 + O(5^8) : 3*5 + 4*5^2 + 5^4 + 3*5^5 + 5^6 + O(5^7) : 1 + O(5^8)]
+            (1 + 3*5^2 + O(5^8) : 3*5 + 4*5^2 + 5^4 + 3*5^5 + 5^6 + O(5^7) : 1 + O(5^8))
             sage: HK.is_weierstrass_point(T)
             False
 
@@ -736,14 +736,14 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurveSmoothModel(x^5 - x)
             sage: H.rational_weierstrass_points()
-            [[1 : 0 : 0], [1 : 0 : 1], [0 : 0 : 1], [-1 : 0 : 1]]
+            [(1 : 0 : 0), (1 : 0 : 1), (0 : 0 : 1), (-1 : 0 : 1)]
 
         The function also handles the case with `h(x)` nonzero::
 
             sage: R.<x> = FiniteField(17)[]
             sage: H = HyperellipticCurveSmoothModel(x^6 + 2, x^2 + 1)
             sage: H.rational_weierstrass_points()
-            [[15 : 6 : 1], [2 : 6 : 1]]
+            [(15 : 6 : 1), (2 : 6 : 1)]
             sage: P = H.point([15,6,1])
             sage: H.is_weierstrass_point(P)
             True
@@ -773,7 +773,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: H = HyperellipticCurveSmoothModel(x^6 + 2, x^2 + 1)
             sage: P = H.point([8,12])
             sage: P_inv = H.hyperelliptic_involution(P); P_inv
-            [8 : 8 : 1]
+            (8 : 8 : 1)
             sage: H.hyperelliptic_involution(P_inv) == P
             True
             sage: Q = H.point([15,6])
@@ -835,9 +835,6 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             raise TypeError("P0 must be a point on the hyperelliptic curve")
         self._distinguished_point = P0
 
-    def __call__(self, *args):
-        return self.point(args)
-
     @cached_method
     def jacobian(self):
         from jacobian_generic import HyperellipticJacobian_generic
@@ -883,7 +880,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         and has two points at infinity.
 
             sage: H.points_at_infinity()
-            [[1 : 1 : 0], [1 : 10 : 0]]
+            [(1 : 1 : 0), (1 : 10 : 0)]
             sage: [P for P in C.rational_points() if P[2]==0]
             [(0 : 1 : 0)]
         """
@@ -912,51 +909,28 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: R.<x> = PolynomialRing(QQ)
             sage: C = HyperellipticCurveSmoothModel(R([0, -1, 1, 0, 1, -2, 1]), R([1]))
             sage: C.rational_points(bound=8)
-            [[1 : 1 : 0],
-             [1 : -1 : 0],
-             [-1 : -3 : 1],
-             [-1 : 2 : 1],
-             [0 : -1 : 1],
-             [0 : 0 : 1],
-             [1/2 : -5/8 : 1],
-             [1/2 : -3/8 : 1],
-             [1 : -1 : 1],
-             [1 : 0 : 1]]
+            [(1 : 1 : 0), (1 : -1 : 0), (-1 : -3 : 1), (-1 : 2 : 1), (0 : -1 : 1),
+             (0 : 0 : 1), (1/2 : -5/8 : 1), (1/2 : -3/8 : 1), (1 : -1 : 1), (1 : 0 : 1)]
 
         Check that :issue:`29509` is fixed for the LMFDB genus 2 curve
         `169.a.169.1 <https://www.lmfdb.org/Genus2Curve/Q/169/a/169/1>`_::
 
             sage: C = HyperellipticCurveSmoothModel(R([0, 0, 0, 0, 1, 1]), R([1, 1, 0, 1]))
             sage: C.rational_points(bound=10)
-            [[1 : 0 : 0],
-             [1 : -1 : 0],
-             [-1 : 0 : 1],
-             [-1 : 1 : 1],
-             [0 : -1 : 1],
-             [0 : 0 : 1]]
+            [(1 : 0 : 0), (1 : -1 : 0), (-1 : 0 : 1), (-1 : 1 : 1), (0 : -1 : 1), (0 : 0 : 1)]
 
          An example over a number field::
 
             sage: R.<x> = PolynomialRing(QuadraticField(2))                             # needs sage.rings.number_field
             sage: C = HyperellipticCurveSmoothModel(R([1, 0, 0, 0, 0, 1]))              # needs sage.rings.number_field
             sage: C.rational_points(bound=2)
-            [[1 : 0 : 0],
-             [-1 : 0 : 1],
-             [0 : -1 : 1],
-             [0 : 1 : 1],
-             [1 : -a : 1],
-             [1 : a : 1]]
+            [(1 : 0 : 0), (-1 : 0 : 1), (0 : -1 : 1), (0 : 1 : 1), (1 : -a : 1), (1 : a : 1)]
 
             sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurveSmoothModel(x^8 + 33)
             sage: H.rational_points(bound=20)                                           # long time (6s)
-            [[1 : 1 : 0],
-             [1 : -1 : 0],
-             [-2 : -17 : 1],
-             [-2 : 17 : 1],
-             [2 : -17 : 1],
-             [2 : 17 : 1]]
+            [(1 : 1 : 0), (1 : -1 : 0), (-2 : -17 : 1), (-2 : 17 : 1), (2 : -17 : 1), (2 : 17 : 1)]
         """
         proj_pts = self.projective_curve().rational_points(**kwds)
         return self.points_at_infinity() + [self(*P) for P in proj_pts if P[2] != 0]

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 r"""
 Points on projective schemes
 
@@ -81,7 +80,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
             from sage.rings.ring import CommutativeRing
             d = X.codomain().ambient_space().ngens()
-            if is_SchemeMorphism(v) or isinstance(v, EllipticCurvePoint_field):
+            if isinstance(v, SchemeMorphism) or isinstance(v, EllipticCurvePoint_field):
                 v = list(v)
             else:
                 try:
@@ -118,8 +117,8 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         self._coords = tuple(v)
         self._normalized = False
 
-    # def _repr_(self):
-    #     return "({})".format(" : ".join(map(repr, self._coords)))
+    def _repr_(self):
+        return "({})".format(" : ".join(map(repr, self._coords)))
 
     def _richcmp_(self, right, op):
         """
@@ -833,7 +832,7 @@ class SchemeMorphism_point_weighted_projective_field(SchemeMorphism_point_weight
         return P.subscheme([a*g[j] - v[j]*x for j in range(n) if j != i])
 
 
-class SchemeMorphism_point_projective_finite_field(SchemeMorphism_point_projective_field):
+class SchemeMorphism_point_weighted_projective_finite_field(SchemeMorphism_point_weighted_projective_field):
 
     def __hash__(self):
         r"""
@@ -869,24 +868,3 @@ class SchemeMorphism_point_projective_finite_field(SchemeMorphism_point_projecti
         p = self.codomain().base_ring().order()
         N = self.codomain().ambient_space().dimension_relative()
         return hash(sum(hash(self[i]) * p**i for i in range(N + 1)))
-
-
-# -----------------
-# Abelian varieties
-# -----------------
-
-class SchemeMorphism_point_abelian_variety_field(AdditiveGroupElement, SchemeMorphism_point_projective_field):
-    """
-    A rational point of an abelian variety over a field.
-
-    EXAMPLES::
-
-        sage: # needs sage.schemes
-        sage: E = EllipticCurve([0,0,1,-1,0])
-        sage: origin = E(0)
-        sage: origin.domain()
-        Spectrum of Rational Field
-        sage: origin.codomain()
-        Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
-    """
-    pass
