@@ -20,7 +20,7 @@ def random_curve(use_h=True, genus=2):
             if R.base_ring().characteristic() == 2:
                 h = R.random_element(degree=(genus + 1))
             else:
-                h = R.random_element(degree=2)
+                h = R.random_element(degree=genus)
         else:
             h = 0
 
@@ -35,6 +35,22 @@ def random_curve(use_h=True, genus=2):
             continue
 
 # Test that randomly sampling gets all elements in the group
+for _ in range(1):
+    f, h, H = random_curve(genus=1)
+    J = H.jacobian()
+    o = J.order()
+
+    fast = random_sample(J)
+    slow = random_sample(J, fast=False)
+
+    print(f"{f = }")
+    print(f"{h = }")
+    print(f"Order: {o}")
+    print(f"Fast method: {fast}")
+    print(f"Slow method: {slow}")
+    print(f"")
+
+
 for _ in range(1):
     f, h, H = random_curve(genus=2)
     J = H.jacobian()
@@ -51,7 +67,7 @@ for _ in range(1):
     print(f"")
 
 # Test all points have order dividing the Jacobian order
-for g in [2, 3, 4, 5]:
+for g in [1, 2, 3, 4, 5]:
     print(f"Testing arithmetic for genus: {g}")
     for _ in range(5):
         f, h, H = random_curve(genus=g)

@@ -838,6 +838,9 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     @cached_method
     def jacobian(self):
+        """
+        Returns the Jacobian of the hyperelliptic curve.
+        """
         from jacobian_generic import HyperellipticJacobian_generic
         return HyperellipticJacobian_generic(self)
 
