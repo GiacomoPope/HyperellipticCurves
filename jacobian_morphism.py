@@ -6,11 +6,13 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.integer import Integer
 from sage.structure.richcmp import richcmp
 
+
 class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
     r"""
     An element of a Jacobian defined over a field, i.e. in
     `J(K) = \mathrm{Pic}^0_K(C)`.
     """
+
     def __init__(self, parent, u, v, check=True):
         SchemeMorphism.__init__(self, parent)
 
@@ -82,6 +84,12 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: x = polygen(GF(5))
             sage: H = HyperellipticCurveSmoothModel(x^5 + 3 * x + 1)
             sage: J = H.jacobian(); J
+            Jacobian of Hyperelliptic Curve over Finite Field of size 5 defined by y^2 = x^5 + 3*x + 1
+            sage: points = list(J)
+            sage: [P for P in points if P.is_zero()]
+            [(1, 0)]
+            sage: [P for P in points if P == 0]
+            [(1, 0)]
         """
         return self._u.is_one() and self._v.is_zero()
 
@@ -97,7 +105,8 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: J = H.jacobian(); J
             Jacobian of Hyperelliptic Curve over Finite Field of size 1993 defined by y^2 = x^7 + 3*x + 1
             sage: u, v = x^3 + 1570*x^2 + 1930*x + 81, 368*x^2 + 1478*x + 256
-            sage: P = J(u, v)
+            sage: P = J(u, v); P
+            (x^3 + 1570*x^2 + 1930*x + 81, 368*x^2 + 1478*x + 256)
             sage: P.uv() == (u, v)
             True
         """
@@ -113,6 +122,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: x = polygen(GF(23))
             sage: H = HyperellipticCurveSmoothModel(x^7 + x + 1)
             sage: J = H.jacobian(); J
+            Jacobian of Hyperelliptic Curve over Finite Field of size 23 defined by y^2 = x^7 + x + 1
             sage: P = J.random_element()
             sage: P == P
             True
@@ -130,18 +140,29 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         assert isinstance(other, MumfordDivisorClassField)
         return richcmp(tuple(self), tuple(other), op)
 
-    def __list__(self):
-        return list(tuple(self))
+    def __iter__(self):
+        """
+        TESTS:
 
-    def __tuple__(self):
-        return tuple(self._u, self._v)
+        Indirect tests::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurveSmoothModel(x^5 - x + 1)
+            sage: J = H.jacobian()
+            sage: P = J(x + 5, 12)
+            sage: list(P)
+            [x + 5, 12]
+            sage: tuple(P)
+            (x + 5, 12)
+        """
+        yield from [self._u, self._v]
 
     def __getitem__(self, n):
         return (self._u, self._v)[n]
 
     def __hash__(self):
-        data = (self._u, self._v)
-        return hash(data)
+        return hash(tuple(self))
 
     def __bool__(self):
         return not self.is_zero()
@@ -157,10 +178,9 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         """
         return self._u.degree()
 
-    def __add__(self, other):
-        # Ensure we are adding two divisors
-        if not isinstance(other, type(self)):
-            raise ValueError("TODO")
+    def _add_(self, other):
+        # `other` should be coerced automatically before reaching here
+        assert isinstance(other, type(self))
 
         # Collect data from HyperellipticCurve
         H = self.parent().curve()
@@ -182,7 +202,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
 
         return self._parent(u3, v3, check=False)
 
-    def __neg__(self):
+    def _neg_(self):
         _, h = self.parent().curve().hyperelliptic_polynomials()
         u0, v0 = self.uv()
 
@@ -191,41 +211,6 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
 
         v1 = (-h - v0) % u0
         return self._parent(u0, v1, check=False)
-
-    def __sub__(self, other):
-        return self.__add__(-other)
-
-    def __rsub__(self, other):
-        return (-self).__add__(other)
-
-    def __mul__(self, n):
-        """ """
-        # TODO: is there a better handlings for this?
-        if not isinstance(n, (int, Integer)):
-            raise ValueError
-
-        if not n:
-            return self._parent.zero()
-
-        P = self
-
-        # Handle negative scalars
-        if n < 0:
-            n = -n
-            P = -P
-
-        # Double and Add
-        Q = P
-        R = self.parent().zero()
-        while n > 0:
-            if n % 2 == 1:
-                R = R + Q
-            Q = Q + Q
-            n = n // 2
-        return R
-
-    __rmul__ = __mul__
-
 
 
 # =======================================================================
@@ -256,15 +241,6 @@ class MumfordDivisorClassFieldInert(MumfordDivisorClassField):
     def __repr__(self):
         return f"({self._u}, {self._v} : {self._n})"
 
-    def __list__(self):
-        return list(self._u, self._v, self._n)
-
-    def __tuple__(self):
-        return tuple(self._u, self._v, self._n)
-
-    def __hash__(self):
-        return hash(tuple(self))
-
 
 class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
     def __init__(self, parent, u, v, n=0, check=True):
@@ -284,9 +260,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
 
     def is_zero(self):
         g = self._parent.curve().genus()
-        if self._n != (g + 1) // 2:
-            return False
-        return self._u.is_one() and self._v.is_zero()
+        return self._u.is_one() and self._v.is_zero() and self._n == (g + 1) // 2
 
     def __iter__(self):
         """
@@ -316,7 +290,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
     def __hash__(self):
         return hash(tuple(self))
 
-    def __add__(self, other):
+    def _add_(self, other):
         r"""
         Follows algorithm 3.7 of
 
@@ -325,8 +299,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
         """
         # Ensure we are adding two divisors
-        if not isinstance(other, type(self)):
-            raise ValueError("TODO")
+        assert isinstance(other, type(self))
 
         # Collect data from HyperellipticCurve
         H = self.parent().curve()
@@ -362,7 +335,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
 
         return self._parent(u3, v3, n3, check=False)
 
-    def __neg__(self):
+    def _neg_(self):
         r"""
         Follows algorithm 3.8 of
 

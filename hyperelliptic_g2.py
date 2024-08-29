@@ -20,7 +20,6 @@ invariants. I think we should fix this by putting the methods themseleves into t
 class HyperellipticCurveSmoothModel_g2(
     hyperelliptic_generic.HyperellipticCurveSmoothModel_generic
 ):
-
     def is_odd_degree(self):
         """
         Return ``True`` if the curve is an odd degree model.
@@ -42,11 +41,12 @@ class HyperellipticCurveSmoothModel_g2(
         else:
             a0 = f.leading_coefficient()
             c0 = h.leading_coefficient()
-            return (c0**2 + 4*a0) == 0
+            return (c0**2 + 4 * a0) == 0
 
     @cached_method
     def jacobian(self):
         from jacobian_g2_generic import HyperellipticJacobian_g2_generic
+
         return HyperellipticJacobian_g2_generic(self)
 
     # -----------------------------------
@@ -171,11 +171,19 @@ class HyperellipticCurveSmoothModel_g2(
         return invariants.absolute_igusa_invariants_kohel(4 * f + h**2)
 
 
-class HyperellipticCurveSmoothModel_g2_padic_field(HyperellipticCurveSmoothModel_g2, HyperellipticCurveSmoothModel_padic_field):
+class HyperellipticCurveSmoothModel_g2_padic_field(
+    HyperellipticCurveSmoothModel_g2, HyperellipticCurveSmoothModel_padic_field
+):
     pass
 
-class HyperellipticCurveSmoothModel_g2_finite_field(HyperellipticCurveSmoothModel_g2, HyperellipticCurveSmoothModel_finite_field):
+
+class HyperellipticCurveSmoothModel_g2_finite_field(
+    HyperellipticCurveSmoothModel_g2, HyperellipticCurveSmoothModel_finite_field
+):
     pass
 
-class HyperellipticCurveSmoothModel_g2_rational_field(HyperellipticCurveSmoothModel_g2, HyperellipticCurveSmoothModel_rational_field):
+
+class HyperellipticCurveSmoothModel_g2_rational_field(
+    HyperellipticCurveSmoothModel_g2, HyperellipticCurveSmoothModel_rational_field
+):
     pass

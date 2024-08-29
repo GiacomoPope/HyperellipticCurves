@@ -1,22 +1,21 @@
 import itertools
-from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
 
+from weighted_projective_point import SchemeMorphism_point_weighted_projective_ring
+
+from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
 from sage.misc.functional import symbolic_prod as product
 from sage.rings.integer import Integer
 from sage.structure.element import parent
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import choice
-from sage.misc.misc_c import prod
 from sage.schemes.generic.homset import SchemeHomset_points
 from sage.rings.polynomial.polynomial_ring import polygen
 
-# TODO should we make a hyperelliptic point class?
-# at the moment, this is the type we get from calling a point from the projective model
-from sage.schemes.toric.morphism import SchemeMorphism_point_toric_field
-
 from sage.misc.banner import SAGE_VERSION
 assert SAGE_VERSION.startswith("10."), "please update to Sage 10"
-assert int(SAGE_VERSION.lstrip("10.").split(".")[0]) >= 4, "please update to Sage 10.4+ (#37118)"
+assert (
+    int(SAGE_VERSION.lstrip("10.").split(".")[0]) >= 4
+), "please update to Sage 10.4+ (#37118)"
 
 
 class HyperellipticJacobianHomset(SchemeHomset_points):
@@ -36,7 +35,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
     def extended_curve(self):
         # Code from schemes/generic/homset.py
-        if '_extended_curve' in self.__dict__:
+        if "_extended_curve" in self.__dict__:
             return self._extended_curve
         R = self.domain().coordinate_ring()
         if R is not self.curve().base_ring():
@@ -61,6 +60,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         EXAMPLES::
         """
         from sage.rings.qqbar import QQbar
+
         roots = self.extended_curve().frobenius_polynomial().roots(QQbar)
         return [r for r, e in roots for _ in range(e)]
 
@@ -76,7 +76,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: J = H.jacobian()
             sage: J.count_points(10) == [J.change_ring(GF((5, k))).order() for k in range(1, 11)]
             True
-            sage: J2 = H(GF((5, 2)))
+            sage: J2 = J(GF((5, 2)))
             sage: J2.count_points(5) == J.count_points(10)[1::2]
             True
         """
@@ -86,7 +86,9 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
                 "cardinality is only implemented for Jacobians over finite fields"
             )
 
-        return Integer(product(1 - r**extension_degree for r in self._curve_frobenius_roots()))
+        return Integer(
+            product(1 - r**extension_degree for r in self._curve_frobenius_roots())
+        )
 
     def count_points(self, n=1):
         try:
@@ -173,7 +175,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         point::
 
             sage: P0 = H.distinguished_point(); P0
-            [0 : 1 : 1]
+            (0 : 1 : 1)
             sage: JH(P) == JH(P,P0)
             True
             sage: JH(P0)
@@ -218,7 +220,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         if len(args) == 0 or (len(args) == 1 and args[0] == ()):
             return self._morphism_element(self, R.one(), R.zero(), check=check)
 
-        if len(args) == 1 and isinstance(args[0], (list,tuple)):
+        if len(args) == 1 and isinstance(args[0], (list, tuple)):
             args = args[0]
 
         if len(args) == 1:
@@ -228,25 +230,33 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
                 v = R.zero()
             elif isinstance(P1, self._morphism_element):
                 return P1
-            elif isinstance(P1, SchemeMorphism_point_toric_field):
-                args = args + (self.extended_curve().distinguished_point(),) #this case will now be handled below.
+            elif isinstance(P1, SchemeMorphism_point_weighted_projective_ring):
+                args = args + (
+                    self.extended_curve().distinguished_point(),
+                )  # this case will now be handled below.
             else:
-                raise ValueError("the input must consist of one or two points, or Mumford coordinates")
+                raise ValueError(
+                    "the input must consist of one or two points, or Mumford coordinates"
+                )
 
         if len(args) == 2:
             P1 = args[0]
             P2 = args[1]
-            if isinstance(P1, SchemeMorphism_point_toric_field) and isinstance(P2, SchemeMorphism_point_toric_field):
-                u1,v1 = self.point_to_mumford_coordinates(P1)
+            if isinstance(P1, SchemeMorphism_point_weighted_projective_ring) and isinstance(
+                P2, SchemeMorphism_point_weighted_projective_ring
+            ):
+                u1, v1 = self.point_to_mumford_coordinates(P1)
                 P2_inv = self.extended_curve().hyperelliptic_involution(P2)
-                u2,v2 = self.point_to_mumford_coordinates(P2_inv)
-                u,v = self.cantor_composition(u1,v1,u2,v2)
+                u2, v2 = self.point_to_mumford_coordinates(P2_inv)
+                u, v = self.cantor_composition(u1, v1, u2, v2)
             # This checks whether P1 and P2 can be interpreted as polynomials
             elif R.coerce_map_from(parent(P1)) and R.coerce_map_from(parent(P2)):
                 u = R(P1)
                 v = R(P2)
             else:
-                raise ValueError("the input must consist of one or two points, or Mumford coordinates")
+                raise ValueError(
+                    "the input must consist of one or two points, or Mumford coordinates"
+                )
 
         if len(args) > 2:
             raise ValueError("at most two arguments are allowed as input")
@@ -418,13 +428,18 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             if H_is_split:
                 if not all:
                     return self._morphism_element(self, R.one(), R.zero(), 0)
-                return [self._morphism_element(self, R.one(), R.zero(), n) for n in range(g + 1)]
+                return [
+                    self._morphism_element(self, R.one(), R.zero(), n)
+                    for n in range(g + 1)
+                ]
             if not all:
                 return self.zero()
             return [self.zero()]
 
         if not isinstance(K, FiniteField_generic) or K.degree() != 1:
-            raise NotImplementedError("lift_u is only implemented for Jacobians over a finite field of prime order")
+            raise NotImplementedError(
+                "lift_u is only implemented for Jacobians over a finite field of prime order"
+            )
 
         R = H.polynomial_ring()
         f, h = H.hyperelliptic_polynomials()
@@ -455,7 +470,9 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             if H.is_split():
                 if n is None or not (0 <= n <= g - u1.degree()):
                     # this is an internal function
-                    raise ValueError(f"bug: n must be an integer between 0 and {g - u1.degree()}")
+                    raise ValueError(
+                        f"bug: n must be an integer between 0 and {g - u1.degree()}"
+                    )
                 return self._morphism_element(self, u1, v1, n, check=False)
 
             # We need to ensure the degree of u is even

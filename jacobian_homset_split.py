@@ -4,9 +4,7 @@ from sage.rings.integer import Integer
 from jacobian_homset_generic import HyperellipticJacobianHomset
 from jacobian_morphism import MumfordDivisorClassFieldSplit
 
-# TODO should we make a hyperelliptic point class?
-# at the moment, this is the type we get from calling a point from the projective model
-from sage.schemes.toric.morphism import SchemeMorphism_point_toric_field
+from weighted_projective_point import SchemeMorphism_point_weighted_projective_ring
 
 
 class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
@@ -125,9 +123,11 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             raise ValueError("at most three arguments are allowed as input")
 
         if len(args) == 0 or (len(args) == 1 and args[0] == ()):
-            return self._morphism_element(self, R.one(), R.zero(), n=(g + 1) // 2, check=check)
+            return self._morphism_element(
+                self, R.one(), R.zero(), n=(g + 1) // 2, check=check
+            )
 
-        if len(args) == 1 and isinstance(args[0], (list,tuple)):
+        if len(args) == 1 and isinstance(args[0], (list, tuple)):
             args = args[0]
 
         if len(args) == 1:
@@ -138,22 +138,28 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
                 n = (g + 1) // 2
             elif isinstance(P1, self._morphism_element):
                 return P1
-            elif isinstance(P1, SchemeMorphism_point_toric_field):
-                args = args + (self.curve().distinguished_point(),) #this case will now be handled below.
+            elif isinstance(P1, SchemeMorphism_point_weighted_projective_ring):
+                args = args + (
+                    self.curve().distinguished_point(),
+                )  # this case will now be handled below.
             else:
-                raise ValueError("the input must consist of one or two points, or Mumford coordinates")
+                raise ValueError(
+                    "the input must consist of one or two points, or Mumford coordinates"
+                )
 
         if len(args) == 2 or len(args) == 3:
             P1 = args[0]
             P2 = args[1]
-            if isinstance(P1, SchemeMorphism_point_toric_field) and isinstance(P2, SchemeMorphism_point_toric_field):
+            if isinstance(P1, SchemeMorphism_point_weighted_projective_ring) and isinstance(
+                P2, SchemeMorphism_point_weighted_projective_ring
+            ):
                 if len(args) == 3:
                     raise ValueError("the input must consist of at most two points")
                 u1, v1, n1 = self.point_to_mumford_coordinates(P1)
                 P2_inv = self.curve().hyperelliptic_involution(P2)
                 u2, v2, n2 = self.point_to_mumford_coordinates(P2_inv)
                 u, v, _ = self._cantor_composition_generic(u1, v1, u2, v2)
-                n = (g + 1) // 2 - 1 + n1 + n2 # this solution is a bit hacky
+                n = (g + 1) // 2 - 1 + n1 + n2  # this solution is a bit hacky
             # This checks whether P1 and P2 can be interpreted as polynomials
             elif R.coerce_map_from(parent(P1)) and R.coerce_map_from(parent(P2)):
                 u = R(P1)
@@ -161,12 +167,15 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
                 if len(args) == 3 and isinstance(args[2], (int, Integer)):
                     n = args[2]
                 else:
-                    n = (g - u.degree() + 1) // 2 # TODO: do we really want to allow this input?
+                    n = (
+                        g - u.degree() + 1
+                    ) // 2  # TODO: do we really want to allow this input?
             else:
-                raise ValueError("the input must consist of one or two points, or Mumford coordinates")
+                raise ValueError(
+                    "the input must consist of one or two points, or Mumford coordinates"
+                )
 
         return self._morphism_element(self, u, v, n=n, check=check)
-
 
     def cantor_composition(self, u1, v1, n1, u2, v2, n2):
         """

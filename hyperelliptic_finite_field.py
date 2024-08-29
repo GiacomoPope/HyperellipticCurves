@@ -14,9 +14,14 @@ from sage.misc.functional import rank
 from sage.libs.pari.all import pari
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
+
 class HyperellipticCurveSmoothModel_finite_field(
     hyperelliptic_generic.HyperellipticCurveSmoothModel_generic
 ):
+    """
+    TODO: write some examples of this class
+    """
+
     def __init__(self, projective_model, f, h, genus):
         super().__init__(projective_model, f, h, genus)
 
@@ -24,6 +29,16 @@ class HyperellipticCurveSmoothModel_finite_field(
         """
         Return a random point on this hyperelliptic curve, uniformly chosen
         among all rational points.
+
+        EXAMPLES::
+
+            sage: from hyperelliptic_constructor import HyperellipticCurveSmoothModel # TODO Remove this after global import
+            sage: x = polygen(GF(7))
+            sage: C = HyperellipticCurveSmoothModel(x^7 - x^2 - 1)
+            sage: C.random_point() # random
+            (4 : 1 : 1)
+            sage: type(C.random_point())
+            <class 'weighted_projective_point.SchemeMorphism_point_weighted_projective_ring'>
         """
         k = self.base_ring()
         n = 2 * k.order() + 1
@@ -32,7 +47,7 @@ class HyperellipticCurveSmoothModel_finite_field(
             # Choose the point at infinity with probability 1/(2q + 1)
             i = ZZ.random_element(n)
             if not i and not self.is_inert():
-                # TODO: deal with that there is more than one point at infinity
+                # Deal with that there is more than one point at infinity
                 return choice(self.points_at_infinity())
             v = self.lift_x(k.random_element(), all=True)
             try:
@@ -50,8 +65,8 @@ class HyperellipticCurveSmoothModel_finite_field(
             sage: x = polygen(GF(7))
             sage: C = HyperellipticCurveSmoothModel(x^7 - x^2 - 1)
             sage: list(C.rational_points_iterator())
-            [[1 : 0 : 0], [2 : 2 : 1], [2 : 5 : 1], [3 : 0 : 1], [4 : 1 : 1],
-             [4 : 6 : 1], [5 : 0 : 1], [6 : 2 : 1], [6 : 5 : 1]]
+            [(1 : 0 : 0), (2 : 2 : 1), (2 : 5 : 1), (3 : 0 : 1), (4 : 1 : 1),
+             (4 : 6 : 1), (5 : 0 : 1), (6 : 2 : 1), (6 : 5 : 1)]
             sage: _ == C.points()
             True
 
@@ -73,8 +88,8 @@ class HyperellipticCurveSmoothModel_finite_field(
             sage: x = polygen(GF(7))
             sage: C = HyperellipticCurveSmoothModel(x^7 - x^2 - 1)
             sage: C.points()
-            [[1 : 0 : 0], [2 : 2 : 1], [2 : 5 : 1], [3 : 0 : 1], [4 : 1 : 1],
-             [4 : 6 : 1], [5 : 0 : 1], [6 : 2 : 1], [6 : 5 : 1]]
+            [(1 : 0 : 0), (2 : 2 : 1), (2 : 5 : 1), (3 : 0 : 1), (4 : 1 : 1),
+             (4 : 6 : 1), (5 : 0 : 1), (6 : 2 : 1), (6 : 5 : 1)]
 
         ::
 
@@ -89,8 +104,8 @@ class HyperellipticCurveSmoothModel_finite_field(
             sage: x = polygen(GF(7))
             sage: C = HyperellipticCurveSmoothModel(x^6 - 1)
             sage: C.points()
-            [[1 : 1 : 0], [1 : 6 : 0], [1 : 0 : 1], [2 : 0 : 1], [3 : 0 : 1],
-             [4 : 0 : 1], [5 : 0 : 1], [6 : 0 : 1]]
+            [(1 : 1 : 0), (1 : 6 : 0), (1 : 0 : 1), (2 : 0 : 1), (3 : 0 : 1),
+             (4 : 0 : 1), (5 : 0 : 1), (6 : 0 : 1)]
 
         Conics are allowed (the issue reported at :issue:`11800`
         has been resolved)::
@@ -98,17 +113,8 @@ class HyperellipticCurveSmoothModel_finite_field(
             sage: R.<x> = GF(7)[]
             sage: H = HyperellipticCurveSmoothModel(3*x^2 + 5*x + 1)
             sage: H.points()
-            [[0 : 1 : 1], [0 : 6 : 1], [1 : 3 : 1], [1 : 4 : 1], [2 : 3 : 1],
-             [2 : 4 : 1], [3 : 1 : 1], [3 : 6 : 1]]
-
-        .. TODO::
-
-            Giacomo: The original implementation has a method which caches all
-            square roots to make this whole thing run faster, but I'm not sure
-            it's really worth it considering for large fields this is too slow
-            to use anyway?
-
-            Gareth: +1
+            [(0 : 1 : 1), (0 : 6 : 1), (1 : 3 : 1), (1 : 4 : 1), (2 : 3 : 1),
+             (2 : 4 : 1), (3 : 1 : 1), (3 : 6 : 1)]
 
         .. SEEALSO:: :meth:`rational_points_iterator`
         """
@@ -162,9 +168,9 @@ class HyperellipticCurveSmoothModel_finite_field(
             t.append(Mpow.trace())
 
         t = [x.lift() for x in t]
-        t = [x if 2*x < ppow else x - ppow for x in t]
+        t = [x if 2 * x < ppow else x - ppow for x in t]
 
-        return [q**(i+1) + 1 - t[i] for i in range(n)]
+        return [q ** (i + 1) + 1 - t[i] for i in range(n)]
 
     def count_points_frobenius_polynomial(self, n=1, f=None):
         r"""
@@ -212,13 +218,13 @@ class HyperellipticCurveSmoothModel_finite_field(
             f = self.frobenius_polynomial()
 
         q = self.base_ring().cardinality()
-        S = PowerSeriesRing(QQ, default_prec=n+1, names='t')
+        S = PowerSeriesRing(QQ, default_prec=n + 1, names="t")
         frev = f.reverse()
         # the coefficients() method of power series only returns
         # non-zero coefficients so let us use the list() method but
         # this does not work for zero which gives the empty list
         flog = S(frev).log()
-        return [q**(i+1) + 1 + ZZ((i+1)*flog[i+1]) for i in range(n)]
+        return [q ** (i + 1) + 1 + ZZ((i + 1) * flog[i + 1]) for i in range(n)]
 
     def count_points_exhaustive(self, n=1, naive=False):
         r"""
@@ -265,13 +271,21 @@ class HyperellipticCurveSmoothModel_finite_field(
            [9, 27, 108, 675, 3069, 16302]
         """
         g = self.genus()
-        a = [self.cardinality_exhaustive(extension_degree=i) for i in range(1, min(n, g) + 1)]
+        a = [
+            self.cardinality_exhaustive(extension_degree=i)
+            for i in range(1, min(n, g) + 1)
+        ]
 
         if n <= g:
             return a
 
         if naive:
-            a.extend([self.cardinality_exhaustive(extension_degree=i) for i in range(g + 1, n + 1)])
+            a.extend(
+                [
+                    self.cardinality_exhaustive(extension_degree=i)
+                    for i in range(g + 1, n + 1)
+                ]
+            )
 
         # let's not be too naive and compute the frobenius polynomial
         f = self.frobenius_polynomial_cardinalities(a=a)
@@ -341,27 +355,30 @@ class HyperellipticCurveSmoothModel_finite_field(
 
         if algorithm is None:
             if n < g:
-                algorithm = 'traces'
+                algorithm = "traces"
             else:
-                algorithm = 'charpoly'
+                algorithm = "charpoly"
 
         if N is None:
-            if algorithm == 'traces':
+            if algorithm == "traces":
                 N = self._frobenius_coefficient_bound_traces(n)
-            elif algorithm == 'charpoly':
+            elif algorithm == "charpoly":
                 N = self._frobenius_coefficient_bound_charpoly()
             else:
                 raise ValueError("Unknown algorithm")
 
-        if p <= (2*g+1)*(2*N-1):
-            raise ValueError("p=%d should be greater than (2*g+1)(2*N-1)=%d" % (p,(2*g+1)*(2*N-1)))
+        if p <= (2 * g + 1) * (2 * N - 1):
+            raise ValueError(
+                "p=%d should be greater than (2*g+1)(2*N-1)=%d"
+                % (p, (2 * g + 1) * (2 * N - 1))
+            )
 
-        if algorithm == 'traces':
-            M = self.frobenius_matrix(N=N, algorithm='hypellfrob')
-            return self.count_points_matrix_traces(n=n,M=M,N=N)
-        elif algorithm == 'charpoly':
-            f = self.frobenius_polynomial_matrix(algorithm='hypellfrob')
-            return self.count_points_frobenius_polynomial(n=n,f=f)
+        if algorithm == "traces":
+            M = self.frobenius_matrix(N=N, algorithm="hypellfrob")
+            return self.count_points_matrix_traces(n=n, M=M, N=N)
+        elif algorithm == "charpoly":
+            f = self.frobenius_polynomial_matrix(algorithm="hypellfrob")
+            return self.count_points_frobenius_polynomial(n=n, f=f)
         else:
             raise ValueError("Unknown algorithm")
 
@@ -442,10 +459,10 @@ class HyperellipticCurveSmoothModel_finite_field(
         if e == 1 and h == 0 and f.degree() % 2 == 1:
             N1 = self._frobenius_coefficient_bound_traces(n)
             N2 = self._frobenius_coefficient_bound_charpoly()
-            if n < g and q > (2*g+1)*(2*N1-1):
-                return self.count_points_hypellfrob(n, N=N1, algorithm='traces')
-            elif q > (2*g+1)*(2*N2-1):
-                return self.count_points_hypellfrob(n, N=N2, algorithm='charpoly')
+            if n < g and q > (2 * g + 1) * (2 * N1 - 1):
+                return self.count_points_hypellfrob(n, N=N1, algorithm="traces")
+            elif q > (2 * g + 1) * (2 * N2 - 1):
+                return self.count_points_hypellfrob(n, N=N2, algorithm="charpoly")
 
         # No smart method available
         return self.count_points_exhaustive(n)
@@ -519,8 +536,9 @@ class HyperellipticCurveSmoothModel_finite_field(
         else:
             # extension of the base field
             from sage.categories.homset import Hom
-            L = GF(K.cardinality()**n, names='z')
-            P = L['t']
+
+            L = GF(K.cardinality() ** n, names="z")
+            P = L["t"]
             emb = Hom(K, L)[0]
             fext = P([emb(c) for c in f])
             hext = P([emb(c) for c in h])
@@ -533,10 +551,10 @@ class HyperellipticCurveSmoothModel_finite_field(
 
         if K.characteristic() == 2:
             # points at infinity
-            r = h[g+1]
+            r = h[g + 1]
             if not r:
                 a += 1
-            elif n % 2 == 0 or (f[2*g+2]/r**2).trace() == 0:
+            elif n % 2 == 0 or (f[2 * g + 2] / r**2).trace() == 0:
                 # Artin-Schreier equation t^2 + t = s/r^2
                 # always has a solution in extensions of even degree
                 a += 2
@@ -545,18 +563,18 @@ class HyperellipticCurveSmoothModel_finite_field(
                 r = hext(x)
                 if not r:
                     a += 1
-                elif (fext(x)/r**2).trace() == 0:
+                elif (fext(x) / r**2).trace() == 0:
                     a += 2
         else:
             # points at infinity
-            d = h[g+1]**2 + 4*f[2*g+2]
+            d = h[g + 1] ** 2 + 4 * f[2 * g + 2]
             if not d:
                 a += 1
             elif n % 2 == 0 or d.is_square():
                 a += 2
             # affine points
             for x in L:
-                d = hext(x)**2 + 4*fext(x)
+                d = hext(x) ** 2 + 4 * fext(x)
                 if not d:
                     a += 1
                 elif d.is_square():
@@ -638,10 +656,10 @@ class HyperellipticCurveSmoothModel_finite_field(
         if e == 1 and h == 0 and f.degree() % 2 == 1:
             N1 = self._frobenius_coefficient_bound_traces(n)
             N2 = self._frobenius_coefficient_bound_charpoly()
-            if n < g and q > (2*g+1)*(2*N1-1):
-                return self.cardinality_hypellfrob(n, algorithm='traces')
-            elif q > (2*g+1)*(2*N2-1):
-                return self.cardinality_hypellfrob(n, algorithm='charpoly')
+            if n < g and q > (2 * g + 1) * (2 * N1 - 1):
+                return self.cardinality_hypellfrob(n, algorithm="traces")
+            elif q > (2 * g + 1) * (2 * N2 - 1):
+                return self.cardinality_hypellfrob(n, algorithm="charpoly")
 
         # No smart method available
         return self.cardinality_exhaustive(n)
@@ -687,11 +705,7 @@ class HyperellipticCurveSmoothModel_finite_field(
         q = self.base_ring().cardinality()
         P = self.frobenius_polynomial()
         x = P.parent().gen(0)
-        return P.reverse() / ((1-x)*(1-q*x))
-
-    # -------------------------------------------
-    # Frobenius Computations
-    # -------------------------------------------
+        return P.reverse() / ((1 - x) * (1 - q * x))
 
     def _frobenius_coefficient_bound_charpoly(self):
         r"""
@@ -742,12 +756,11 @@ class HyperellipticCurveSmoothModel_finite_field(
 
         # note: this bound is from Kedlaya's paper, but he tells me it's not
         # the best possible
-        M = 2 * binomial(2*g, g) * sqrtq**g
+        M = 2 * binomial(2 * g, g) * sqrtq**g
         B = ZZ(M.ceil()).exact_log(p)
         if p**B < M:
             B += 1
         return B
-
 
     def _frobenius_coefficient_bound_traces(self, n=1):
         r"""
@@ -851,7 +864,9 @@ class HyperellipticCurveSmoothModel_finite_field(
         p = self.base_ring().characteristic()
         e = self.base_ring().degree()
         if e != 1:
-            raise NotImplementedError("Computation of Frobenius matrix only implemented for hyperelliptic curves defined over prime fields.")
+            raise NotImplementedError(
+                "Computation of Frobenius matrix only implemented for hyperelliptic curves defined over prime fields."
+            )
 
         f, h = self.hyperelliptic_polynomials()
         if h != 0:
@@ -881,8 +896,7 @@ class HyperellipticCurveSmoothModel_finite_field(
         matrix_of_frobenius = sign * matrix_of_frobenius
         return matrix_of_frobenius
 
-
-    def frobenius_matrix(self, N=None, algorithm='hypellfrob'):
+    def frobenius_matrix(self, N=None, algorithm="hypellfrob"):
         r"""
         Compute `p`-adic frobenius matrix to precision `p^N`.
         If `N` not supplied, a default value is selected, which is the
@@ -926,7 +940,7 @@ class HyperellipticCurveSmoothModel_finite_field(
             ...
             ValueError: In the current implementation, p must be greater than (2g+1)(2N-1) = 81
         """
-        if algorithm != 'hypellfrob':
+        if algorithm != "hypellfrob":
             raise ValueError("Unknown algorithm")
 
         # By default, use precision enough to be able to compute the
@@ -992,18 +1006,18 @@ class HyperellipticCurveSmoothModel_finite_field(
             # of number of points so it does not really matter
 
         # computation of the reciprocal polynomial
-        s = [ai - q**(i+1) - 1 for i, ai in enumerate(a)]
+        s = [ai - q ** (i + 1) - 1 for i, ai in enumerate(a)]
         coeffs = [1]
         for i in range(1, g + 1):
             c = 0
             for j in range(i):
-                c += s[i-1-j]*coeffs[j]
-            coeffs.append(c/i)
-        coeffs = coeffs + [coeffs[g-i] * q**(i) for i in range(1, g + 1)]
+                c += s[i - 1 - j] * coeffs[j]
+            coeffs.append(c / i)
+        coeffs = coeffs + [coeffs[g - i] * q ** (i) for i in range(1, g + 1)]
 
-        return ZZ['x'](coeffs).reverse()
+        return ZZ["x"](coeffs).reverse()
 
-    def frobenius_polynomial_matrix(self, M=None, algorithm='hypellfrob'):
+    def frobenius_polynomial_matrix(self, M=None, algorithm="hypellfrob"):
         r"""
         Compute the charpoly of frobenius, as an element of `\ZZ[x]`,
         by computing the charpoly of the frobenius matrix.
@@ -1062,15 +1076,15 @@ class HyperellipticCurveSmoothModel_finite_field(
         M = self.frobenius_matrix(N=N, algorithm=algorithm).change_ring(ZZ)
 
         # get a_g, ..., a_0 in ZZ (i.e. with correct signs)
-        f = M.charpoly().list()[g:2*g+1]
+        f = M.charpoly().list()[g : 2 * g + 1]
         ppow = p**N
         f = [x % ppow for x in f]
-        f = [x if 2*x < ppow else x - ppow for x in f]
+        f = [x if 2 * x < ppow else x - ppow for x in f]
 
         # get a_{2g}, ..., a_{g+1}
-        f = [f[g-i] * q**(g-i) for i in range(g)] + f
+        f = [f[g - i] * q ** (g - i) for i in range(g)] + f
 
-        return ZZ['x'](f)
+        return ZZ["x"](f)
 
     def frobenius_polynomial_pari(self):
         r"""
@@ -1132,7 +1146,7 @@ class HyperellipticCurveSmoothModel_finite_field(
             x^8 + 2*x^7 + 6*x^6 + 9*x^5 + 18*x^4 + 27*x^3 + 54*x^2 + 54*x + 81
         """
         f, h = self.hyperelliptic_polynomials()
-        return ZZ['x'](pari([f, h]).hyperellcharpoly())
+        return ZZ["x"](pari([f, h]).hyperellcharpoly())
 
     @cached_method
     def frobenius_polynomial(self):
@@ -1219,9 +1233,13 @@ class HyperellipticCurveSmoothModel_finite_field(
         g = self.genus()
         f, h = self.hyperelliptic_polynomials()
 
-        if (e == 1 and
-            q >= (2*g+1)*(2*self._frobenius_coefficient_bound_charpoly()-1) and
-            h == 0 and f.degree() % 2):
+        if (
+            e == 1
+            and q
+            >= (2 * g + 1) * (2 * self._frobenius_coefficient_bound_charpoly() - 1)
+            and h == 0
+            and f.degree() % 2
+        ):
             return self.frobenius_polynomial_matrix()
         elif q % 2 == 1:
             return self.frobenius_polynomial_pari()
@@ -1319,52 +1337,52 @@ class HyperellipticCurveSmoothModel_finite_field(
         # Compute the finite field and prime p.
         Fq = self.base_ring()
         p = Fq.characteristic()
-        #checks
+        # checks
 
         if p == 2:
             raise ValueError("p must be odd")
 
         g = self.genus()
 
-        #retrieve the function f(x) ,where y^2=f(x)
-        f,h = self.hyperelliptic_polynomials()
-        #This implementation only deals with h=0
+        # retrieve the function f(x) ,where y^2=f(x)
+        f, h = self.hyperelliptic_polynomials()
+        # This implementation only deals with h=0
         if h != 0:
             raise ValueError("E must be of the form y^2 = f(x)")
 
         d = f.degree()
-        #this implementation is for odd degree only, even degree will be handled later.
+        # this implementation is for odd degree only, even degree will be handled later.
         if d % 2 == 0:
             raise ValueError("In this implementation the degree of f must be odd")
-        #Compute resultant to make sure no repeated roots
+        # Compute resultant to make sure no repeated roots
         df = f.derivative()
         R = df.resultant(f)
         if R == 0:
             raise ValueError("curve is not smooth")
 
-        #computing F, since the entries of the matrix are c_i where F= \sum c_i x^i
+        # computing F, since the entries of the matrix are c_i where F= \sum c_i x^i
 
-        F = f**((p-1)/2)
+        F = f ** ((p - 1) / 2)
 
-        #coefficients returns a_0, ... , a_n where f(x) = a_n x^n + ... + a_0
+        # coefficients returns a_0, ... , a_n where f(x) = a_n x^n + ... + a_0
 
         Coeff = F.list()
 
-        #inserting zeros when necessary-- that is, when deg(F) < p*g-1, (simplified if p <2g-1)
-        #which is the highest powered coefficient needed for our matrix
-        #So we don't have enough coefficients we add extra zeros to have the same poly,
-        #but enough coeff.
+        # inserting zeros when necessary-- that is, when deg(F) < p*g-1, (simplified if p <2g-1)
+        # which is the highest powered coefficient needed for our matrix
+        # So we don't have enough coefficients we add extra zeros to have the same poly,
+        # but enough coeff.
 
-        zeros = [0 for i in range(p*g-len(Coeff))]
+        zeros = [0 for i in range(p * g - len(Coeff))]
         Coeff = Coeff + zeros
 
         # compute each row of matrix as list and then M=list of lists(rows)
 
         M = []
-        for j in range(1,g+1):
-            H = [Coeff[i] for i in range((p*j-1), (p*j-g-1),-1)]
+        for j in range(1, g + 1):
+            H = [Coeff[i] for i in range((p * j - 1), (p * j - g - 1), -1)]
             M.append(H)
-        return matrix(Fq,M), Coeff, g, Fq,p, self
+        return matrix(Fq, M), Coeff, g, Fq, p, self
 
     # This is what is called from command line
     def Cartier_matrix(self):
@@ -1445,17 +1463,17 @@ class HyperellipticCurveSmoothModel_finite_field(
             ...
             ValueError: curve is not smooth
         """
-        #checking first that Cartier matrix is not already cached. Since
-        #it can be called by either Hasse_Witt or a_number.
-        #This way it does not matter which function is called first
-        #in the code.
+        # checking first that Cartier matrix is not already cached. Since
+        # it can be called by either Hasse_Witt or a_number.
+        # This way it does not matter which function is called first
+        # in the code.
         # Github Issue #11115: Why shall we waste time by studying
         # the cache manually? We only need to check whether the cached
         # data belong to self.
-        M, Coeffs,g, Fq, p, E = self._Cartier_matrix_cached()
+        M, Coeffs, g, Fq, p, E = self._Cartier_matrix_cached()
         if E != self:
             self._Cartier_matrix_cached.clear_cache()
-            M, Coeffs,g, Fq, p, E = self._Cartier_matrix_cached()
+            M, Coeffs, g, Fq, p, E = self._Cartier_matrix_cached()
         return M
 
     @cached_method
@@ -1529,38 +1547,38 @@ class HyperellipticCurveSmoothModel_finite_field(
             0
         """
         # If Cartier Matrix is already cached for this curve, use that or evaluate it to get M,
-        #Coeffs, genus, Fq=base field of self, p=char(Fq). This is so we have one less matrix to
-        #compute.
+        # Coeffs, genus, Fq=base field of self, p=char(Fq). This is so we have one less matrix to
+        # compute.
 
-        #We use caching here since Cartier matrix is needed to compute Hasse Witt. So if the Cartier
-        #is already computed it is stored in list A. If it was not cached (i.e. A is empty), we simply
-        #compute it. If it is cached then we need to make sure that we have the correct one. So check
-        #which curve does the matrix correspond to. Since caching stores a lot of stuff, we only check
-        #the last entry in A. If it does not match, clear A and compute Cartier.
+        # We use caching here since Cartier matrix is needed to compute Hasse Witt. So if the Cartier
+        # is already computed it is stored in list A. If it was not cached (i.e. A is empty), we simply
+        # compute it. If it is cached then we need to make sure that we have the correct one. So check
+        # which curve does the matrix correspond to. Since caching stores a lot of stuff, we only check
+        # the last entry in A. If it does not match, clear A and compute Cartier.
         #
-        #Since Github Issue #11115, there is a different cache for methods
-        #that don't  accept arguments. Anyway, the easiest is to call
-        #the cached method and simply see whether the data belong to self.
+        # Since Github Issue #11115, there is a different cache for methods
+        # that don't  accept arguments. Anyway, the easiest is to call
+        # the cached method and simply see whether the data belong to self.
         M, Coeffs, g, Fq, p, E = self._Cartier_matrix_cached()
         if E != self:
             self._Cartier_matrix_cached.clear_cache()
             M, Coeffs, g, Fq, p, E = self._Cartier_matrix_cached()
 
-        #This compute the action of p^kth Frobenius  on list of coefficients
+        # This compute the action of p^kth Frobenius  on list of coefficients
         def frob_mat(Coeffs, k):
-            a = p ** k
+            a = p**k
             mat = []
-            Coeffs_pow = [c ** a for c in Coeffs]
+            Coeffs_pow = [c**a for c in Coeffs]
             for i in range(1, g + 1):
-                H = [(Coeffs_pow[j]) for j in range((p*i-1), (p*i - g-1), -1)]
+                H = [(Coeffs_pow[j]) for j in range((p * i - 1), (p * i - g - 1), -1)]
                 mat.append(H)
             return matrix(Fq, mat)
 
-        #Computes all the different possible action of frobenius on matrix M and stores in list Mall
+        # Computes all the different possible action of frobenius on matrix M and stores in list Mall
         Mall = [M] + [frob_mat(Coeffs, k) for k in range(1, g)]
         Mall = reversed(Mall)
-        #initial N=I, so we can go through Mall and multiply all matrices with I and
-        #get the Hasse-Witt matrix.
+        # initial N=I, so we can go through Mall and multiply all matrices with I and
+        # get the Hasse-Witt matrix.
         N = identity_matrix(Fq, g)
         for l in Mall:
             N = N * l
@@ -1655,18 +1673,19 @@ class HyperellipticCurveSmoothModel_finite_field(
             sage: E.a_number()
             5
         """
-        #We use caching here since Cartier matrix is needed to compute a_number. So if the Cartier
-        #is already computed it is stored in list A. If it was not cached (i.e. A is empty), we simply
-        #compute it. If it is cached then we need to make sure that we have the correct one. So check
-        #which curve does the matrix correspond to. Since caching stores a lot of stuff, we only check
-        #the last entry in A. If it does not match, clear A and compute Cartier.
+        # We use caching here since Cartier matrix is needed to compute a_number. So if the Cartier
+        # is already computed it is stored in list A. If it was not cached (i.e. A is empty), we simply
+        # compute it. If it is cached then we need to make sure that we have the correct one. So check
+        # which curve does the matrix correspond to. Since caching stores a lot of stuff, we only check
+        # the last entry in A. If it does not match, clear A and compute Cartier.
+        #
         # Since Github Issue #11115, there is a special cache for methods
         # that don't accept arguments. The easiest is: Call the cached
         # method, and test whether the last entry is self.
-        M,Coeffs,g, Fq, p,E = self._Cartier_matrix_cached()
+        M, Coeffs, g, Fq, p, E = self._Cartier_matrix_cached()
         if E != self:
             self._Cartier_matrix_cached.clear_cache()
-            M,Coeffs,g, Fq, p,E = self._Cartier_matrix_cached()
+            M, Coeffs, g, Fq, p, E = self._Cartier_matrix_cached()
         return g - rank(M)
 
     def p_rank(self):
@@ -1697,11 +1716,11 @@ class HyperellipticCurveSmoothModel_finite_field(
             sage: E.p_rank()
             0
         """
-        #We use caching here since Hasse Witt is needed to compute p_rank. So if the Hasse Witt
-        #is already computed it is stored in list A. If it was not cached (i.e. A is empty), we simply
-        #compute it. If it is cached then we need to make sure that we have the correct one. So check
-        #which curve does the matrix correspond to. Since caching stores a lot of stuff, we only check
-        #the last entry in A. If it does not match, clear A and compute Hasse Witt.
+        # We use caching here since Hasse Witt is needed to compute p_rank. So if the Hasse Witt
+        # is already computed it is stored in list A. If it was not cached (i.e. A is empty), we simply
+        # compute it. If it is cached then we need to make sure that we have the correct one. So check
+        # which curve does the matrix correspond to. Since caching stores a lot of stuff, we only check
+        # the last entry in A. If it does not match, clear A and compute Hasse Witt.
         # However, it seems a waste of time to manually analyse the cache
         # -- See Github Issue #11115
         N, E = self._Hasse_Witt_cached()

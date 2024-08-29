@@ -168,10 +168,12 @@ import jacobian_homset_ramified
 import jacobian_homset_split
 import jacobian_homset_inert
 
+
 class HyperellipticJacobian_generic(Jacobian_generic):
     """
     This is the base class for Jacobians of hyperelliptic curves. 
     """
+
     def dimension(self):
         """
         Return the dimension of this Jacobian.
@@ -189,7 +191,9 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         # TODO: make a constructor for this??
         H = self.curve()
         if H.is_ramified():
-            return jacobian_homset_ramified.HyperellipticJacobianHomsetRamified(*args, **kwds)
+            return jacobian_homset_ramified.HyperellipticJacobianHomsetRamified(
+                *args, **kwds
+            )
         elif H.is_split():
             return jacobian_homset_split.HyperellipticJacobianHomsetSplit(*args, **kwds)
         return jacobian_homset_inert.HyperellipticJacobianHomsetInert(*args, **kwds)
