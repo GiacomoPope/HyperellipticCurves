@@ -218,7 +218,10 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         R = self.extended_curve().polynomial_ring()
 
         if len(args) == 0 or (len(args) == 1 and args[0] == ()):
-            return self._morphism_element(self, R.one(), R.zero(), check=check)
+            # this returns the incorrect result because subclasses like the inert case may implement
+            # .zero differently
+            # return self._morphism_element(self, R.one(), R.zero(), check=check)
+            return self.zero()
 
         if len(args) == 1 and isinstance(args[0], (list, tuple)):
             args = args[0]
@@ -226,8 +229,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         if len(args) == 1:
             P1 = args[0]
             if P1 == 0:
-                u = R.one()
-                v = R.zero()
+                return self.zero()
             elif isinstance(P1, self._morphism_element):
                 return P1
             elif isinstance(P1, SchemeMorphism_point_weighted_projective_ring):
@@ -260,7 +262,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
         if len(args) > 2:
             raise ValueError("at most two arguments are allowed as input")
-        
+
         return self._morphism_element(self, u, v, check=check)
 
     def __cantor_double_generic(self, u1, v1):
