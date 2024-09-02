@@ -17,4 +17,4 @@ class HyperellipticJacobianHomsetInert(HyperellipticJacobianHomset):
                 "unable to perform arithmetic for inert models of odd genus"
             )
         R = self.curve().polynomial_ring()
-        return self._morphism_element(self, R.one(), R.zero(), g // 2, check=check)
+        return self._morphism_element(self, R.one(), R.zero(), check=check)
