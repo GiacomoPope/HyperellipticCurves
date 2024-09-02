@@ -7,7 +7,7 @@ class HyperellipticJacobianHomsetInert(HyperellipticJacobianHomset):
         super().__init__(Y, X, **kwds)
         self._morphism_element = MumfordDivisorClassFieldInert
 
-    def zero(self):
+    def zero(self, check=True):
         """
         Return the zero element of the Jacobian
         """
@@ -17,4 +17,4 @@ class HyperellipticJacobianHomsetInert(HyperellipticJacobianHomset):
                 "unable to perform arithmetic for inert models of odd genus"
             )
         R = self.curve().polynomial_ring()
-        return self._morphism_element(self, R.one(), R.zero(), g // 2)
+        return self._morphism_element(self, R.one(), R.zero(), g // 2, check=check)
