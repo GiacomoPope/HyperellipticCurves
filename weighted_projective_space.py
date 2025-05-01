@@ -12,14 +12,7 @@ from sage.structure.category_object import normalize_names
 
 from weighted_projective_homset import SchemeHomset_points_weighted_projective_ring
 
-try:
-    # TODO: Remove this
-    from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
-except ImportError:
-    # print("Please merge #38207 to your local Sage installation.")
-    from sage.rings.polynomial.polynomial_ring import (
-        PolynomialRing_general as PolynomialRing_generic,
-    )
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 
 
 def WeightedProjectiveSpace(weights, R=None, names=None):
