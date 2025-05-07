@@ -19,6 +19,7 @@ AUTHORS:
 
 from sage.schemes.generic.homset import SchemeHomset_points
 
+
 class SchemeHomset_points_weighted_projective_ring(SchemeHomset_points):
     """
     Set of rational points of a weighted projective variety over a ring.
@@ -29,17 +30,10 @@ class SchemeHomset_points_weighted_projective_ring(SchemeHomset_points):
 
     EXAMPLES::
 
-        sage: # TODO
+        sage: from weighted_projective_space import WeightedProjectiveSpace
+        sage: W = WeightedProjectiveSpace([3, 4, 5], QQ)
+        sage: W.point_homset()
+        Set of rational points of Weighted Projective Space of dimension 2 with weights (3, 4, 5) over Rational Field
+        sage: W.an_element().parent() is W.point_homset()
+        True
     """
-
-    def points(self, **__):
-        """
-        Return some or all rational points of this weighted projective scheme.
-
-        For dimension 0 subschemes points are determined through a groebner
-        basis calculation. For schemes or subschemes with dimension greater than 1
-        points are determined through enumeration up to the specified bound.
-
-        TODO: modify implementation from projective space
-        """
-        raise NotImplementedError("enumerating points on weighted projective scheme is not implemented")
