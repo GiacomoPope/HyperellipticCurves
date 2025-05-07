@@ -1,3 +1,4 @@
+from sage.categories.map import Map
 from sage.misc.latex import latex
 from sage.misc.prandom import shuffle
 from sage.rings.integer import Integer
@@ -21,7 +22,7 @@ def WeightedProjectiveSpace(weights, R=None, names=None):
 
     EXAMPLES::
 
-        sage: # TODO: add example of point on this space (it doesn't work right now)
+        sage: from weighted_projective_space import WeightedProjectiveSpace
         sage: WP = WeightedProjectiveSpace([1, 3, 1]); WP
         Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Integer Ring
     """
@@ -65,9 +66,7 @@ def WeightedProjectiveSpace(weights, R=None, names=None):
     if names is None:
         names = "x"
 
-    # TODO: Specialise implementation to projective spaces over non-rings. But
-    # since we don't really implement extra functionalities, I don't think we
-    # care.
+    # TODO: Specialise implementation to projective spaces over non-rings.
     if R in _CommRings:
         return WeightedProjectiveSpace_ring(weights, R=R, names=names)
 
@@ -82,11 +81,10 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         # weights should be a tuple, also because it should be hashable
         if not isinstance(weights, tuple):
             raise TypeError(
-                f"weights(={weights}) is not a tuple. Please use the `WeightedProjectiveSpace`"
-                " constructor"
+                f"weights(={weights}) is not a tuple. Please use the"
+                "`WeightedProjectiveSpace` constructor"
             )
 
-        # TODO: Do we normalise the weights to make it coprime?
         normalized_names = normalize_names(len(weights), names)
         return super().__classcall__(cls, weights, R, normalized_names)
 
@@ -96,6 +94,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
+            sage: from weighted_projective_space import WeightedProjectiveSpace
             sage: WeightedProjectiveSpace(Zp(5), [1, 3, 1], 'y')                        # needs sage.rings.padics
             Weighted Projective Space of dimension 2 with weights (1, 3, 1) over 5-adic Ring with
             capped relative precision 20
@@ -114,6 +113,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
+            sage: from weighted_projective_space import WeightedProjectiveSpace
             sage: WeightedProjectiveSpace(QQ, [1, 3, 1]).weights()
             (1, 3, 1)
         """
@@ -127,6 +127,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
+            sage: from weighted_projective_space import WeightedProjectiveSpace
             sage: WeightedProjectiveSpace(QQ, [1, 3, 1]).ngens()
             3
             sage: WeightedProjectiveSpace(ZZ, 5).ngens()
@@ -141,6 +142,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
+            sage: from weighted_projective_space import WeightedProjectiveSpace
             sage: P = WeightedProjectiveSpace(ZZ, [1, 3, 1])
             sage: P._check_satisfies_equations([1, 1, 0])
             True
@@ -174,6 +176,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
+            sage: from weighted_projective_space import WeightedProjectiveSpace
             sage: WP = WeightedProjectiveSpace(GF(19^2, 'α'), [1, 3, 4, 1], 'abcd')
             sage: # needs sage.rings.finite_rings
             sage: R = WP.coordinate_ring(); R
@@ -218,6 +221,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
+            sage: from weighted_projective_space import WeightedProjectiveSpace
             sage: P.<x, y, z> = WeightedProjectiveSpace(QQ, [1, 3, 1])
             sage: P._validate([x*y - z^4, x])
             [x*y - z^4, x]
@@ -248,11 +252,13 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
+            sage: from weighted_projective_space import WeightedProjectiveSpace
             sage: print(latex(WeightedProjectiveSpace(ZZ, [1, 3, 1], 'x')))
             {\mathbf P}_{\Bold{Z}}^{[1, 3, 1]}
 
         TESTS::
 
+            sage: from weighted_projective_space import WeightedProjectiveSpace
             sage: WeightedProjectiveSpace(Zp(5), [2, 1, 3], 'y')._latex_()              # needs sage.rings.padics
             '{\\mathbf P}_{\\Bold{Z}_{5}}^{[2, 1, 3]}'
         """
@@ -304,6 +310,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
+            sage: from weighted_projective_space import WeightedProjectiveSpace
             sage: WP = WeightedProjectiveSpace(QQ, [1, 3, 1])
             sage: WP.point([2, 3, 1])
             (2 : 3 : 1)
@@ -334,6 +341,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
+            sage: from weighted_projective_space import WeightedProjectiveSpace
             sage: WeightedProjectiveSpace(Qp(5), [1, 3, 1], 'x')                        # needs sage.rings.padics
             Weighted Projective Space of dimension 2 with weights (1, 3, 1)
             over 5-adic Field with capped relative precision 20
@@ -342,6 +350,39 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             f"Weighted Projective Space of dimension {self.dimension_relative()} with weights"
             f" {self.weights()} over {self.base_ring()}"
         )
+
+    def change_ring(self, R):
+        r"""
+        Return a weighted projective space over ring ``R``.
+
+        INPUT:
+
+        - ``R`` -- commutative ring or morphism
+
+        OUTPUT: weighted projective space over ``R``
+
+        .. NOTE::
+
+            There is no need to have any relation between ``R`` and the base ring
+            of this space, if you want to have such a relation, use
+            ``self.base_extend(R)`` instead.
+
+        EXAMPLES::
+
+            sage: from weighted_projective_space import WeightedProjectiveSpace
+            sage: WP = WeightedProjectiveSpace([1, 3, 1], ZZ); WP
+            Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Integer Ring
+            sage: WP.change_ring(QQ)
+            Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Rational Field
+            sage: WP.change_ring(GF(5))
+            Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Finite Field of size 5
+        """
+        if isinstance(R, Map):
+            return WeightedProjectiveSpace(self.weights(), R.codomain(),
+                                           self.variable_names())
+        else:
+            return WeightedProjectiveSpace(self.weights(), R,
+                                           self.variable_names())
 
     def _an_element_(self):
         r"""
@@ -353,15 +394,15 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         EXAMPLES::
 
-            sage: # TODO: Enable this
+            sage: from weighted_projective_space import WeightedProjectiveSpace
             sage: WeightedProjectiveSpace(ZZ, [1, 3, 1], 'x').an_element()  # random
-            (7 : 6 : 5 : 1)
+            (1 : 2 : 3)
             sage: WeightedProjectiveSpace(ZZ["y"], [2, 3, 1], 'x').an_element()  # random
-            (7*y : 6*y : 5*y : 1)
+            (3*y : 2*y : y)
         """
         n = self.dimension_relative()
         R = self.base_ring()
-        coords = [(n + 1 - i) * R.an_element() for i in range(n)] + [R.one()]
+        coords = [(n + 1 - i) * R.an_element() for i in range(n + 1)]
         shuffle(coords)
         return self(coords)
 

@@ -21,23 +21,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.categories.integral_domains import IntegralDomains
-from sage.categories.number_fields import NumberFields
-from sage.rings.integer_ring import ZZ
+from sage.categories.fields import Fields
 from sage.rings.fraction_field import FractionField
-from sage.rings.number_field.order import Order as NumberFieldOrder
-from sage.rings.qqbar import number_field_elements_from_algebraics
-from sage.rings.quotient_ring import QuotientRing_generic
-from sage.rings.rational_field import QQ
-from sage.arith.misc import GCD as gcd
-from sage.arith.functions import lcm
 from sage.misc.misc_c import prod
 
-from copy import copy
 from sage.schemes.generic.morphism import (SchemeMorphism,
-                                           is_SchemeMorphism,
                                            SchemeMorphism_point)
-from sage.structure.element import AdditiveGroupElement
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp, op_EQ, op_NE
 
@@ -48,20 +37,21 @@ from sage.structure.richcmp import richcmp, op_EQ, op_NE
 
 class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
     """
-    A rational point of projective space over a ring.
+    A rational point of weighted projective space over a ring.
 
     INPUT:
 
-    -  ``X`` -- a homset of a subscheme of an ambient projective space over a ring `K`.
+    - ``X`` -- a homset of a subscheme of an ambient weighted projective space over a ring `R`.
 
-    - ``v`` -- a list or tuple of coordinates in `K`.
+    - ``v`` -- a list or tuple of coordinates in `R`.
 
     - ``check`` -- boolean (default:``True``). Whether to check the input for consistency.
 
     EXAMPLES::
 
-        sage: P = ProjectiveSpace(2, ZZ)
-        sage: P(2,3,4)
+        sage: from weighted_projective_space import WeightedProjectiveSpace
+        sage: WP = WeightedProjectiveSpace(2, ZZ)
+        sage: WP(2, 3, 4)
         (2 : 3 : 4)
     """
 
@@ -71,9 +61,27 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
 
         EXAMPLES::
 
-            TODO
+            sage: from weighted_projective_space import WeightedProjectiveSpace
+            sage: WP = WeightedProjectiveSpace([3, 4, 5], QQ)
+            sage: P1 = WP(2, 3, 4); P1
+            (2 : 3 : 4)
+            sage: P2 = WP(2000, 30000, 400000); P2
+            (2000 : 30000 : 400000)
+            sage: P1 == P2
+            True
+
+        The point constructor normalises coordinates at the last position with
+        weight `1`::
+
+            sage: WP = WeightedProjectiveSpace([3, 1, 4, 1], QQ)
+            sage: P = WP(8, 3, 16, 2); P
+            (1 : 3/2 : 1 : 1)
+            sage: P == WP(1, 3 / 2, 1, 1)
+            True
         """
         SchemeMorphism.__init__(self, X)
+
+        self._normalized = False
 
         if check:
             # check parent
@@ -81,10 +89,9 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             if not isinstance(X, SchemeHomset_points_weighted_projective_ring):
                 raise TypeError(f"ambient space {X} must be a weighted projective space")
 
-            from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
             from sage.rings.ring import CommutativeRing
             d = X.codomain().ambient_space().ngens()
-            if isinstance(v, SchemeMorphism) or isinstance(v, EllipticCurvePoint_field):
+            if isinstance(v, SchemeMorphism):
                 v = list(v)
             else:
                 try:
@@ -102,35 +109,34 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             if len(v) == d-1:     # very common special case
                 v.append(R.one())
 
-            if R in IntegralDomains():
-                # Over integral domains, any tuple with at least one
-                # non-zero coordinate is a valid projective point.
-                if not any(v):
-                    raise ValueError(f"{v} does not define a valid projective "
-                                     "point since all entries are zero")
-            else:
-                # Over rings with zero divisors, a more careful check
-                # is required: We test whether the coordinates of the
-                # point generate the unit ideal. See #31576.
-                if 1 not in R.ideal(v):
-                    raise ValueError(f"{v} does not define a valid projective point "
-                                     "since it is a multiple of a zero divisor")
+            # (0 : 0 : ... : 0) is not a valid (weighted) projective point
+            if not any(v):
+                raise ValueError(f"{v} does not define a valid projective "
+                                 "point since all entries are zero")
 
+            # over other rings, we do not have a generic method to check
+            # whether the given coordinates is a multiple of a zero divisor
+            # so we just let it pass.
             X.extended_codomain()._check_satisfies_equations(v)
 
-        self._coords = tuple(v)
-        self._normalized = False
+            self._coords = tuple(v)
+
+            # we (try to) normalise coordinates!
+            self.normalize_coordinates()
+
+        else:
+            self._coords = tuple(v)
 
     def _repr_(self):
         return "({})".format(" : ".join(map(repr, self._coords)))
 
     def _richcmp_(self, other, op):
         """
-        Test the projective equality of two points.
+        Test the weighted projective equality of two points.
 
         INPUT:
 
-        - ``right`` -- a point on projective space
+        - ``other`` -- a point on weighted projective space
 
         OUTPUT:
 
@@ -139,30 +145,30 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         EXAMPLES::
 
             sage: from weighted_projective_space import WeightedProjectiveSpace
-            sage: P = WeightedProjectiveSpace([3, 4, 5], QQ)
+            sage: WP = WeightedProjectiveSpace([3, 4, 5], QQ)
             sage: u = abs(QQ.random_element()) + 1 / 4 # nonzero
-            sage: Q, R = P(2, 3, 4), P(2 * u^3, 3 * u^4, 4 * u^5)
-            sage: Q == R
+            sage: P, Q = WP(2, 3, 4), WP(2 * u^3, 3 * u^4, 4 * u^5)
+            sage: P == Q
             True
-            sage: Q != R
-            True
+            sage: P != Q
+            False
 
         ::
 
-            sage: Q, R = P(2, 3, 4), P(2, 3, 5)
-            sage: Q < R
+            sage: P, Q = WP(2, 3, 4), WP(2, 3, 5)
+            sage: P < Q
             True
-            sage: Q <= R
+            sage: P <= Q
             True
-            sage: Q > R
+            sage: P > Q
             False
-            sage: Q >= R
+            sage: P >= Q
             False
         """
         assert isinstance(other, SchemeMorphism_point)
 
         space = self.codomain()
-        if space != other.codomain():
+        if space is not other.codomain():
             return op == op_NE
 
         if op in [op_EQ, op_NE]:
@@ -195,243 +201,103 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         """
         Compute the hash value of this point.
 
-        If the base ring has a fraction field, normalize the point in
-        the fraction field and then hash so that equal points have
-        equal hash values. If the base ring is not an integral domain,
-        return the hash of the parent.
+        We attempt to normalise the coordinates of this point over the field of
+        fractions of the base ring. If this is not possible, return the hash of
+        the parent. See :meth:`normalize_coordinates` for more details.
 
         OUTPUT: Integer.
 
+        .. SEEALSO ::
+
+            :meth:`normalize_coordinates`
+
         EXAMPLES::
 
-            sage: P.<x,y> = ProjectiveSpace(ZZ, 1)
-            sage: hash(P([1, 1])) == hash(P.point([2, 2], False))
+            sage: from weighted_projective_space import WeightedProjectiveSpace
+            sage: WP = WeightedProjectiveSpace([1, 3, 1], QQ)
+            sage: hash(WP(6, 24, 2)) == hash(WP(3, 3, 1))
             True
-
-        ::
-
-            sage: # needs sage.rings.number_field
-            sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<w> = NumberField(x^2 + 3)
-            sage: O = K.maximal_order()
-            sage: P.<x,y> = ProjectiveSpace(O, 1)
-            sage: hash(P([1 + w, 2])) == hash(P([2, 1 - w]))
-            True
-
-        TESTS::
-
-            sage: P.<x,y> = ProjectiveSpace(Zmod(10), 1)
-            sage: Q.<x,y> = ProjectiveSpace(Zmod(10), 1)
-            sage: hash(P([2, 5])) == hash(Q([2, 5]))
-            True
-            sage: hash(P([2, 5])) == hash(P([2, 5]))
-            True
-            sage: hash(P([3, 7])) == hash(P([2, 5]))
+            sage: WP = WeightedProjectiveSpace([1, 3, 1], ZZ)
+            sage: hash(WP(6, 24, 2)) == hash(WP(3, 3, 1))
             True
         """
         R = self.codomain().base_ring()
-        #if there is a fraction field normalize the point so that
-        #equal points have equal hash values
-        if R in IntegralDomains():
-            P = self.change_ring(FractionField(R))
-            P.normalize_coordinates()
+        P = self.change_ring(FractionField(R))
+        P.normalize_coordinates()
+        if P._normalized:
             return hash(tuple(P))
-        #if there is no good way to normalize return
-        #a constant value
+        # if there is no good way to normalize return a constant value
         return hash(self.codomain())
 
-class SchemeMorphism_point_weighted_projective_field(SchemeMorphism_point_weighted_projective_ring):
-    """
-    A rational point of projective space over a field.
-
-    INPUT:
-
-    - ``X`` -- a homset of a subscheme of an ambient projective space
-       over a field `K`.
-
-    - ``v`` -- a list or tuple of coordinates in `K`.
-
-    - ``check`` -- boolean (default:``True``). Whether to
-      check the input for consistency.
-
-    EXAMPLES::
-
-        sage: # needs sage.rings.real_mpfr
-        sage: P = ProjectiveSpace(3, RR)
-        sage: P(2, 3, 4, 5)
-        (0.400000000000000 : 0.600000000000000 : 0.800000000000000 : 1.00000000000000)
-    """
-
-    def __init__(self, X, v, check=True):
+    def scale_by(self, t):
         """
-        The Python constructor.
+        Scale the coordinates of the point by ``t``.
 
-        See :class:`SchemeMorphism_point_projective_ring` for details.
+        A :exc:`TypeError` occurs if the point is not in the
+        base_ring of the codomain after scaling.
 
-        This function still normalizes points so that the rightmost non-zero coordinate is 1.
-        This is to maintain functionality with current
-        implementations of curves in projectives space (plane, conic, elliptic, etc).
-        The :class:`SchemeMorphism_point_projective_ring` is for general use.
+        INPUT:
+
+        - ``t`` -- a ring element
+
+        OUTPUT: none
 
         EXAMPLES::
 
-            sage: P = ProjectiveSpace(2, QQ)
-            sage: P(2, 3/5, 4)
-            (1/2 : 3/20 : 1)
-
-        ::
-
-            sage: P = ProjectiveSpace(3, QQ)
-            sage: P(0, 0, 0, 0)
-            Traceback (most recent call last):
-            ...
-            ValueError: [0, 0, 0, 0] does not define a valid projective point since all entries are zero
-
-        ::
-
-            sage: P.<x, y, z> = ProjectiveSpace(2, QQ)
-            sage: X = P.subscheme([x^2 - y*z])
-            sage: X([2, 2, 2])
+            sage: from weighted_projective_space import WeightedProjectiveSpace
+            sage: WP = WeightedProjectiveSpace([3, 4, 5], ZZ)
+            sage: P = WP([8, 16, 32]); P
+            (8 : 16 : 32)
+            sage: P.scale_by(1 / 2); P
             (1 : 1 : 1)
-
-        ::
-
-            sage: P = ProjectiveSpace(1, GF(7))
-            sage: Q = P([2, 1])
-            sage: Q[0].parent()
-            Finite Field of size 7
-
-        ::
-
-            sage: P = ProjectiveSpace(QQ, 1)
-            sage: P.point(Infinity)
-            (1 : 0)
-            sage: P(infinity)
-            (1 : 0)
-
-        ::
-
-            sage: P = ProjectiveSpace(QQ, 2)
-            sage: P(infinity)
+            sage: P.scale_by(1 / 3); P
             Traceback (most recent call last):
             ...
-            ValueError: +Infinity not well defined in dimension > 1
-            sage: P.point(infinity)
-            Traceback (most recent call last):
-            ...
-            ValueError: +Infinity not well defined in dimension > 1
+            TypeError: ...
         """
-        SchemeMorphism.__init__(self, X)
-
+        if t.is_zero():
+            raise ValueError("Cannot scale by 0")
+        R = self.codomain().base_ring()
+        self._coords = tuple([R(u * t**w) for u, w in zip(self._coords, self.codomain()._weights)])
         self._normalized = False
 
-        if check:
-            from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
-            from sage.rings.ring import CommutativeRing
-            d = X.codomain().ambient_space().ngens()
-            if is_SchemeMorphism(v) or isinstance(v, EllipticCurvePoint_field):
-                v = list(v)
-            else:
-                try:
-                    if isinstance(v.parent(), CommutativeRing):
-                        v = [v]
-                except AttributeError:
-                    pass
-            if not isinstance(v, (list,tuple)):
-                raise TypeError("argument v (= %s) must be a scheme point, list, or tuple" % str(v))
-            if len(v) != d and len(v) != d-1:
-                raise TypeError("v (=%s) must have %s components" % (v, d))
-
-            R = X.value_ring()
-            v = Sequence(v, R)
-            if len(v) == d-1:     # very common special case
-                v.append(R.one())
-
-            for last in reversed(range(len(v))):
-                c = v[last]
-                if c.is_one():
-                    break
-                if c:
-                    for j in range(last):
-                        v[j] /= c
-                    v[last] = R.one()
-                    break
-            else:
-                raise ValueError(f"{v} does not define a valid projective "
-                                 "point since all entries are zero")
-            self._normalized = True
-
-            X.extended_codomain()._check_satisfies_equations(v)
-
-        self._coords = tuple(v)
-
-    def __hash__(self):
-        """
-        Computes the hash value of this point.
-
-        OUTPUT: Integer.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: hash(P([1/2, 1])) == hash(P.point([1, 2], False))
-            True
-        """
-        P = copy(self)
-        P.normalize_coordinates()
-        return hash(tuple(P))
-
     def normalize_coordinates(self):
-        r"""
-        Normalizes the point so that the last non-zero coordinate is `1`.
+        """
+        Normalise coordinates of this weighted projective point if possible.
 
-        OUTPUT: None.
+        Currently, this method checks if (1) the ambient weighted projective
+        space is defined over a field and (2) the weight of any index is `1`.
+        If so, the last of which is rescaled to `1`.
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
-            sage: Q = P.point([GF(5)(1), GF(5)(3), GF(5)(0)], False); Q
-            (1 : 3 : 0)
-            sage: Q.normalize_coordinates(); Q
-            (2 : 1 : 0)
+            sage: from weighted_projective_space import WeightedProjectiveSpace
+            sage: WP = WeightedProjectiveSpace([3, 1, 5], QQ)
+            sage: P = WP([8, 16, 32]); P
+            (1/512 : 1 : 1/32768)
+            sage: P.scale_by(13); P
+            (2197/512 : 13 : 371293/32768)
+            sage: P.normalize_coordinates(); P
+            (1/512 : 1 : 1/32768)
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: X = P.subscheme(x^2 - y^2);
-            sage: Q = X.point([23, 23, 46], False); Q
-            (23 : 23 : 46)
-            sage: Q.normalize_coordinates(); Q
-            (1/2 : 1/2 : 1)
+            sage: WP = WeightedProjectiveSpace([3, 4, 5], ZZ)
+            sage: P = WP([8, 16, 32]); P
+            (8 : 16 : 32)
+            sage: P.normalize_coordinates(); P
+            (8 : 16 : 32)
         """
         if self._normalized:
             return
-        for index in reversed(range(len(self._coords))):
-            c = self._coords[index]
-            if c.is_one():
-                break
-            if c:
-                inv = c.inverse()
-                new_coords = [d * inv for d in self._coords[:index]]
-                new_coords.append(self.base_ring().one())
-                new_coords.extend(self._coords[index+1:])
-                self._coords = tuple(new_coords)
-                break
-        else:
-            assert False, 'bug: invalid projective point'
-        self._normalized = True
 
-
-class SchemeMorphism_point_weighted_projective_finite_field(SchemeMorphism_point_weighted_projective_field):
-
-    def __hash__(self):
-        r"""
-        Returns the integer hash of this point.
-
-        OUTPUT: Integer.
-
-        EXAMPLES: TODO
-        """
-        p = self.codomain().base_ring().order()
-        N = self.codomain().ambient_space().dimension_relative()
-        return hash(sum(hash(self[i]) * p**i for i in range(N + 1)))
+        if self.base_ring() in Fields():
+            weights = self.codomain()._weights
+            coords = self._coords
+            for i in reversed(range(len(coords))):
+                w, c = weights[i], coords[i]
+                if w.is_one() and not c.is_zero():
+                    # we normalise w.r.t this coordinate
+                    self.scale_by(~c)
+                    self._normalized = True
+                    return
