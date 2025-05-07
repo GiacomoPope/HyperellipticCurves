@@ -138,18 +138,57 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
 
         EXAMPLES::
 
-            TODO
+            sage: from weighted_projective_space import WeightedProjectiveSpace
+            sage: P = WeightedProjectiveSpace([3, 4, 5], QQ)
+            sage: u = abs(QQ.random_element()) + 1 / 4 # nonzero
+            sage: Q, R = P(2, 3, 4), P(2 * u^3, 3 * u^4, 4 * u^5)
+            sage: Q == R
+            True
+            sage: Q != R
+            True
+
+        ::
+
+            sage: Q, R = P(2, 3, 4), P(2, 3, 5)
+            sage: Q < R
+            True
+            sage: Q <= R
+            True
+            sage: Q > R
+            False
+            sage: Q >= R
+            False
         """
         assert isinstance(other, SchemeMorphism_point)
 
-        if self.codomain() != other.codomain():
+        space = self.codomain()
+        if space != other.codomain():
             return op == op_NE
 
-        n = len(self._coords)
         if op in [op_EQ, op_NE]:
-            b = all(self[i] * other[j] == self[j] * other[i]
-                    for i in range(n) for j in range(i + 1, n))
-            return b == (op == op_EQ)
+            weights = space._weights
+            # (other[i] / self[i])^(1 / weight[i]) all equal
+            prod_weights = prod(weights)
+            # check weights
+            bw = weights == other.codomain()._weights
+            if bw != (op == op_EQ):
+                return False
+
+            # check zeros
+            b1 = all(c1 == c2
+                     for c1, c2 in zip(self._coords, other._coords)
+                     if c1 == 0 or c2 == 0)
+            if b1 != (op == op_EQ):
+                return False
+
+            # check nonzeros
+            ratio = [(c1 / c2) ** (prod_weights // w)
+                     for c1, c2, w in zip(self._coords, other._coords, weights)
+                     if c1 != 0 and c2 != 0]
+            r0 = ratio[0]
+            b2 = all(r == r0 for r in ratio)
+            return b2 == (op == op_EQ)
+
         return richcmp(self._coords, other._coords, op)
 
     def __hash__(self):
