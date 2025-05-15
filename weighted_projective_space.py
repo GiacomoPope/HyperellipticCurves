@@ -1,9 +1,11 @@
+from sage.categories.fields import Fields
 from sage.categories.map import Map
 from sage.misc.latex import latex
 from sage.misc.prandom import shuffle
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
 from sage.schemes.generic.ambient_space import AmbientSpace
@@ -13,7 +15,6 @@ from sage.structure.category_object import normalize_names
 
 from weighted_projective_homset import SchemeHomset_points_weighted_projective_ring
 
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 
 
 def WeightedProjectiveSpace(weights, R=None, names=None):
@@ -408,3 +409,25 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
     def subscheme(self, *_, **__):
         raise NotImplementedError("subscheme of weighted projective space has not been implemented")
+
+    def curve(self, F):
+        r"""
+        Return a curve defined by ``F`` in this weighted projective space.
+
+        INPUT:
+
+        - ``F`` -- a polynomial, or a list or tuple of polynomials in
+          the coordinate ring of this weighted projective space
+
+        EXAMPLES::
+
+            sage: WP.<x, y, z> = WeightedProjectiveSpace(QQ, 2)
+            sage: P.curve(y^2 - x^5 * z - 3 * x^2 * z^4 - 2 * z^6)                                                  # needs sage.schemes
+            Projective Plane Curve over Rational Field defined by y^2 - x^5*z - 3*x^2*z^4 - 2*z^6
+        """
+        if self.base_ring() not in Fields():
+            raise NotImplementedError("curves in weighted projective space over"
+                                      "rings not implemented")
+        from sage.schemes.curves.constructor import Curve
+        return Curve(F, self)
+
